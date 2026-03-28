@@ -1,5 +1,6 @@
 import { ArrowLeftIcon, EnvelopeSimpleIcon, FacebookLogoIcon, GoogleLogoIcon, LockKeyIcon } from 'phosphor-react-native';
 import { StyleSheet, TouchableOpacity, View, Text, SafeAreaViewBase, TextInput } from "react-native";
+import { styles } from "../../../styles/screens/LoginScreen.styles"
 
 export const LoginScreen = () => {
     return ( 
@@ -7,7 +8,7 @@ export const LoginScreen = () => {
 
       {/* seta de voltar */}
       <TouchableOpacity style={styles.header}>
-        <ArrowLeftIcon size={32} color="#f4f4f4" weight="regular"/>
+        <ArrowLeftIcon size={32} color="#e0e7b9" weight="regular"/>
       </TouchableOpacity>
 
       {/* texto da tela */}
@@ -16,16 +17,16 @@ export const LoginScreen = () => {
       {/* compo do email */}
       <View style={styles.content}>
         <View style={styles.contentInput}>
-          <EnvelopeSimpleIcon size={32} color='#a0a0a0'/>
-          <TextInput placeholder='Seu e-mail' style={styles.input} placeholderTextColor='#757575'></TextInput>
+          <EnvelopeSimpleIcon size={32} color='#e0e7b9'/>
+          <TextInput placeholder='Seu e-mail' style={styles.input} placeholderTextColor='#e0e7b9'></TextInput>
         </View>
       </View>
 
       {/* campo da senha */}
       <View style={styles.content}>
         <View style={styles.contentInput}>
-          <LockKeyIcon size={32} color='#a0a0a0'/>
-          <TextInput placeholder='Sua senha' style={styles.input} placeholderTextColor='#757575'></TextInput>
+          <LockKeyIcon size={32} color='#e0e7b9'/>
+          <TextInput placeholder='Sua senha' style={styles.input} placeholderTextColor='#e0e7b9'></TextInput>
         </View>
       </View>
 
@@ -62,97 +63,3 @@ export const LoginScreen = () => {
     </View>
     );
 }
-
-export const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: "#ebffe4",
-      alignItems: 'center',
-      paddingHorizontal: 20,
-    },
-    header:{
-      alignSelf: "flex-start",
-      marginTop: 50,
-    },
-    wellcome:{
-      color: "#143110",
-      marginTop: 50,
-      fontSize: 24,
-      fontWeight: "600",
-    },
-    content:{
-      width: '100%',
-      marginTop: 50,
-      alignItems: 'center',
-      gap: 20,
-    },
-    contentInput:{
-      width: '100%',
-      height: 56,
-      backgroundColor: "#4a5349",
-      borderRadius: 12,
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingHorizontal: 20,
-      gap: 10,
-      elevation: 10,
-    },
-    input:{
-      flex: 1,
-      color: "#a0a0a0"
-    },
-    buttonSignIn:{
-      backgroundColor: "#1ab55c",
-      width: '100%',
-      height: 56,
-      borderRadius: 36,
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginTop: 40,
-    },
-    buttonSignInText:{
-      color: '#143110',
-      fontSize: 16,
-      fontWeight: '800'
-    },
-    containerSeparator:{
-      width: '100%',
-      marginTop:50,
-      flexDirection: 'row',
-      justifyContent: 'center',
-      alignItems: 'center',
-      gap: 10,
-    },
-    separator:{
-      height: 1,
-      backgroundColor: '#a0a0a0',
-      flex: 1,
-    },
-    separatorText: {
-      color: '#143110',
-      fontSize: 16,
-      fontWeight: '400'
-    },
-    footer:{
-      marginTop: 50,
-      flexDirection: 'row',
-      gap: 10
-    },
-    footerButton:{
-      width: 100,
-      height: 60,
-      backgroundColor: "#9fd3a4",
-      justifyContent: 'center',
-      alignItems: 'center'
-    },
-    footerText:{
-      color: '#143110',
-      fontSize: 16,
-      fontWeight: "400"
-    },
-    footerButtonText:{
-      color: "#1ab55c",
-      fontSize: 16,
-      fontWeight: "400"
-    }
-})

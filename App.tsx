@@ -1,6 +1,8 @@
 import React from 'react';
+import { firebase } from '@react-native-firebase/app';
 import { View, StatusBar } from 'react-native';
 import { LoginScreen } from './src/views/screens/auth/LoginScreen';
+import { RegisterScreen } from './src/views/screens/auth/Register';
 
 export default function App() {
   return (
@@ -8,7 +10,7 @@ export default function App() {
       <StatusBar barStyle="dark-content" />
       
       {/* chamando a sua tela de login*/}
-      <LoginScreen />
+      <RegisterScreen />
       
     </View>
   );
