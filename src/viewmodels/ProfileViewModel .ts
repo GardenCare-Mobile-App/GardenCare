@@ -1,18 +1,18 @@
 import { useState, useEffect } from 'react';
 import { PerfilUsuario } from '../models/User';
 import { ProfileBusiness } from '../business/ProfileBusiness';
- 
+
 const profileBusiness = new ProfileBusiness();
- 
+
 export function useProfileViewModel(uid: string) {
   const [perfil, setPerfil] = useState<PerfilUsuario | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
- 
+
   useEffect(() => {
     carregarPerfil();
   }, [uid]);
- 
+
   async function carregarPerfil() {
     try {
       setLoading(true);
@@ -25,7 +25,6 @@ export function useProfileViewModel(uid: string) {
       setLoading(false);
     }
   }
- 
+
   return { perfil, loading, error, recarregar: carregarPerfil };
 }
- 

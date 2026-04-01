@@ -6,7 +6,6 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
-
   header: {
     backgroundColor: COLORS.primary,
     paddingTop: SIZES.padding,
@@ -14,18 +13,15 @@ export const styles = StyleSheet.create({
     paddingHorizontal: SIZES.padding,
     alignItems: "center",
   },
-
   headerActions: {
     flexDirection: "row",
     justifyContent: "flex-end",
     width: "100%",
     marginBottom: SIZES.radius,
   },
-
   settingsButton: {
     padding: 4,
   },
-
   avatar: {
     width: SIZES.avatarSize,
     height: SIZES.avatarSize,
@@ -34,7 +30,6 @@ export const styles = StyleSheet.create({
     borderColor: COLORS.verdeClaro,
     marginBottom: SIZES.radius,
   },
-
   avatarFallback: {
     width: SIZES.avatarSize,
     height: SIZES.avatarSize,
@@ -51,7 +46,6 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
     color: COLORS.amareloMuitoClaro,
   },
-
   name: {
     fontSize: SIZES.fontTitle,
     fontWeight: "bold",
@@ -61,18 +55,8 @@ export const styles = StyleSheet.create({
   pronomes: {
     fontSize: SIZES.fontSubtitle,
     color: COLORS.verdeClaro,
-    marginBottom: 4,
-  },
-  email: {
-    fontSize: SIZES.fontCaption,
-    marginBottom: 4,
-  },
-  membroDesde: {
-    fontSize: SIZES.fontSmall,
-    color: COLORS.amarelo,
     marginBottom: SIZES.padding,
   },
-
   headerButtons: {
     flexDirection: "row",
     gap: 10,
@@ -97,7 +81,6 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     gap: 6,
   },
-
   gardenButtonText: {
     color: COLORS.white,
     fontWeight: "bold",
@@ -121,7 +104,6 @@ export const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: SIZES.radiusLarge,
   },
-
   retryButtonText: {
     color: COLORS.white,
     fontWeight: "bold",
