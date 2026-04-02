@@ -1,7 +1,5 @@
 import { PerfilUsuario } from "../models/User";
 
-// import axios from 'axios';
-
 const mockPerfil: PerfilUsuario = {
   uid: "1",
   nome: "Gustavo Monteiro",
@@ -9,6 +7,7 @@ const mockPerfil: PerfilUsuario = {
   fotoURL: undefined,
   email: "gustavo@email.com",
   criadoEm: new Date("2024-03-01"),
+  bio: "Sou apaixonado por plantas e natureza",
 };
 
 export class ProfileBusiness {
