@@ -67,11 +67,11 @@ export const RegisterScreen: React.FC = ({ navigation }: any) => {
 
             {/* campo da pronomes */}
             <View style={styles.content}>
-              <View style={styles.contentInput}>
-                <LockKeyIcon size={32} color='#636363'/>
-                <TextInput placeholder='Pronomes (Opcional)' style={styles.input} placeholderTextColor='#e0e7b9'></TextInput>
-              </View>
+             <View style={styles.contentInput}>
+             <LockKeyIcon size={32} color='#e0e7b9'/>
+             <TextInput placeholder='Sua senha' style={styles.input} placeholderTextColor='#e0e7b9'></TextInput>
             </View>
+           </View>
 
 
             {/* botão de logar */}
