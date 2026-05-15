@@ -1,13 +1,19 @@
 import { ArrowLeftIcon, EnvelopeSimpleIcon, FacebookLogoIcon, GoogleLogoIcon, LockKeyIcon } from 'phosphor-react-native';
 import { StyleSheet, TouchableOpacity, View, Text, SafeAreaViewBase, TextInput } from "react-native";
 import { styles } from "../../../styles/screens/LoginScreen.styles"
+import { InitialScreen } from './InitialScreen';
 
-export const LoginScreen = () => {
+export const LoginScreen = ({ navigation }: any) => {
     return ( 
     <View style={styles.container}>
 
       {/* seta de voltar */}
-      <TouchableOpacity style={styles.header}>
+      <TouchableOpacity 
+        style={styles.header}
+        onPress={() => {navigation.navigate('inicio')
+          console.log('você está tentando voltar para tela de inicio')
+        }}
+      >
         <ArrowLeftIcon size={32} color="#e0e7b9" weight="regular"/>
       </TouchableOpacity>
 

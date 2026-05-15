@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "PlantApp",
-    "slug": "PlantApp",
+    "name": "Plantapp",
+    "slug": "Plantapp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -27,8 +27,8 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "@react-native-firebase/app",
-      "@react-native-firebase/auth"
+      "expo-font",
+      "expo-asset"
     ]
   }
 }

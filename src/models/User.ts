@@ -2,7 +2,8 @@ export interface PerfilUsuario {
   uid: string;
   nome: string;
   pronomes: string;
-  fotoURL?: string; // o ? significa que é opcional
+  fotoURL?: string; // opcional a foto
   email: string;
   criadoEm: any;
+  bio?: string;
 }
