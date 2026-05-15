@@ -1,82 +1,153 @@
-import { useState, useEffect } from "react";
-import { PerfilUsuario } from "../models/User";
-import { Plant } from "../models/Plant";
-import { ProfileBusiness } from "../business/ProfileBusiness";
-import { GardenBusiness } from "../business/MyGardenBusiness";
-import { NotificacaoBusiness, PreferenciasNotificacao } from "../business/NotificacaoBusiness";
+import { useReducer, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import { PerfilUsuario } from '../models/User';
+import { Plant } from '../models/Plant';
+import { ProfileBusiness } from '../business/ProfileBusiness';
+import { GardenBusiness } from '../business/MyGardenBusiness';
+import { NotificacaoBusiness, PreferenciasNotificacao } from '../business/NotificacaoBusiness';
+import { auth } from '../business/firebaseConfig';
 
 const profileBusiness = new ProfileBusiness();
 const gardenBusiness = new GardenBusiness();
 const notificacaoBusiness = new NotificacaoBusiness();
 
-const UID_MOCK = "1";
+interface ProfileState {
+  perfil: PerfilUsuario | null;
+  plantas: Plant[];
+  totalPosts: number;
+  totalSeguidores: number;
+  notificacoes: PreferenciasNotificacao;
+  loading: boolean;
+  error: string | null;
+}
 
-export function useProfileViewModel() {
-  const [perfil, setPerfil] = useState<PerfilUsuario | null>(null);
-  const [plantas, setPlantas] = useState<Plant[]>([]);
-  const [totalPosts, setTotalPosts] = useState(34);
-  const [totalSeguidores, setTotalSeguidores] = useState(210);
-  const [notificacoes, setNotificacoes] = useState<PreferenciasNotificacao>({
+type ProfileAction =
+  | { type: 'CARREGAR_INICIO' }
+  | {
+      type: 'CARREGAR_SUCESSO';
+      perfil: PerfilUsuario;
+      plantas: Plant[];
+      notificacoes: PreferenciasNotificacao;
+    }
+  | { type: 'CARREGAR_ERRO'; error: string }
+  | { type: 'TOGGLE_FAVORITA'; id: string; valor: boolean }
+  | { type: 'ALTERAR_NOTIFICACAO'; chave: keyof PreferenciasNotificacao; valor: boolean };
+
+const estadoInicial: ProfileState = {
+  perfil: null,
+  plantas: [],
+  totalPosts: 0,
+  totalSeguidores: 0,
+  notificacoes: {
     lembreteDeRega: true,
     alertasSensor: true,
     novosPosts: false,
-  });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  },
+  loading: true,
+  error: null,
+};
+function profileReducer(state: ProfileState, action: ProfileAction): ProfileState {
+  switch (action.type) {
+    case 'CARREGAR_INICIO':
+      return { ...state, loading: true, error: null };
 
-  useEffect(() => {
-    carregarPerfil(UID_MOCK);
-  }, []);
+    case 'CARREGAR_SUCESSO':
+      return {
+        ...state,
+        loading: false,
+        perfil: action.perfil,
+        plantas: action.plantas,
+        notificacoes: action.notificacoes,
+      };
 
-  async function carregarPerfil(uid: string) {
+    case 'CARREGAR_ERRO':
+      return { ...state, loading: false, error: action.error };
+
+    case 'TOGGLE_FAVORITA':
+      return {
+        ...state,
+        plantas: state.plantas.map((p) =>
+          p.id === action.id ? { ...p, favorita: action.valor } : p
+        ),
+      };
+
+    case 'ALTERAR_NOTIFICACAO':
+      return {
+        ...state,
+        notificacoes: { ...state.notificacoes, [action.chave]: action.valor },
+      };
+
+    default:
+      return state;
+  }
+}
+export function useProfileViewModel() {
+  const [state, dispatch] = useReducer(profileReducer, estadoInicial);
+
+  useFocusEffect(
+    useCallback(() => {
+      carregarPerfil();
+    }, [])
+  );
+
+  async function carregarPerfil() {
+    dispatch({ type: 'CARREGAR_INICIO' });
     try {
-      setLoading(true);
-      setError(null);
+      const uid = auth.currentUser?.uid;
+
+      if (!uid) {
+        dispatch({ type: 'CARREGAR_ERRO', error: 'Usuário não autenticado.' });
+        return;
+      }
+
       const [dadosPerfil, dadosPlantas, dadosNotificacoes] = await Promise.all([
-        profileBusiness.getPerfil(uid),
+        profileBusiness.getPerfil(),
         gardenBusiness.getPlants(),
         notificacaoBusiness.getPreferencias(uid),
       ]);
-      setPerfil(dadosPerfil);
-      setPlantas(dadosPlantas);
-      setNotificacoes(dadosNotificacoes);
-    } catch (e) {
-      setError("Erro ao carregar perfil. Tente novamente.");
-    } finally {
-      setLoading(false);
+
+      dispatch({
+        type: 'CARREGAR_SUCESSO',
+        perfil: dadosPerfil,
+        plantas: dadosPlantas,
+        notificacoes: dadosNotificacoes,
+      });
+    } catch (e: any) {
+      dispatch({
+        type: 'CARREGAR_ERRO',
+        error: e.message ?? 'Erro ao carregar perfil. Tente novamente.',
+      });
     }
   }
 
   async function toggleFavorita(id: string, valor: boolean) {
     await gardenBusiness.toggleFavorita(id, valor);
-    setPlantas((anterior) =>
-      anterior.map((p) => (p.id === id ? { ...p, favorita: valor } : p)),
-    );
+    dispatch({ type: 'TOGGLE_FAVORITA', id, valor });
   }
 
   async function alterarNotificacao(
     chave: keyof PreferenciasNotificacao,
-    valor: boolean,
+    valor: boolean
   ) {
-    const novasPreferencias = { ...notificacoes, [chave]: valor };
-    setNotificacoes(novasPreferencias);
-    await notificacaoBusiness.salvarPreferencias(UID_MOCK, novasPreferencias);
+    dispatch({ type: 'ALTERAR_NOTIFICACAO', chave, valor });
+    const uid = auth.currentUser?.uid;
+    if (uid) {
+      await notificacaoBusiness.salvarPreferencias(uid, {
+        ...state.notificacoes,
+        [chave]: valor,
+      });
+    }
   }
 
-  const plantasFavoritas = plantas.filter((p) => p.favorita);
-  const totalPlantas = plantas.length;
+  const plantasFavoritas = state.plantas.filter((p) => p.favorita);
+  const totalPlantas = state.plantas.length;
 
   return {
-    perfil,
+    ...state,
     totalPlantas,
-    totalPosts,
-    totalSeguidores,
     plantasFavoritas,
-    notificacoes,
     toggleFavorita,
     alterarNotificacao,
-    loading,
-    error,
-    recarregar: () => carregarPerfil(UID_MOCK),
+    recarregar: carregarPerfil,
   };
 }
