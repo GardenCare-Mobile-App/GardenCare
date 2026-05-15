@@ -12,7 +12,6 @@ interface GardenState {
   plantas: Plant[];
   sensorData: SensorData | null;
   alertas: string[];
-  regando: boolean;
   loading: boolean;
   error: string | null;
 }
@@ -21,16 +20,12 @@ type GardenAction =
   | { type: 'CARREGAR_INICIO' }
   | { type: 'CARREGAR_SUCESSO'; plantas: Plant[]; sensorData: SensorData; alertas: string[] }
   | { type: 'CARREGAR_ERRO'; error: string }
-  | { type: 'REGAR_INICIO' }
-  | { type: 'REGAR_FIM' }
-  | { type: 'REGAR_ERRO'; error: string }
   | { type: 'TOGGLE_FAVORITA'; id: string; valor: boolean };
 
 const estadoInicial: GardenState = {
   plantas: [],
   sensorData: null,
   alertas: [],
-  regando: false,
   loading: true,
   error: null,
 };
@@ -50,15 +45,6 @@ function gardenReducer(state: GardenState, action: GardenAction): GardenState {
 
     case 'CARREGAR_ERRO':
       return { ...state, loading: false, error: action.error };
-
-    case 'REGAR_INICIO':
-      return { ...state, regando: true };
-
-    case 'REGAR_FIM':
-      return { ...state, regando: false };
-
-    case 'REGAR_ERRO':
-      return { ...state, regando: false, error: action.error };
 
     case 'TOGGLE_FAVORITA':
       return {
@@ -95,16 +81,6 @@ export function useGardenViewModel() {
     }
   }
 
-  async function regar() {
-    dispatch({ type: 'REGAR_INICIO' });
-    try {
-      await arduinoBusiness.regar();
-      dispatch({ type: 'REGAR_FIM' });
-    } catch (e) {
-      dispatch({ type: 'REGAR_ERRO', error: 'Erro ao enviar comando de rega.' });
-    }
-  }
-
   async function toggleFavorita(id: string, valor: boolean) {
     await gardenBusiness.toggleFavorita(id, valor);
     dispatch({ type: 'TOGGLE_FAVORITA', id, valor });
@@ -119,7 +95,6 @@ export function useGardenViewModel() {
     totalSaudaveis,
     totalAtencao,
     totalCritico,
-    regar,
     toggleFavorita,
     recarregar: carregarDados,
   };
