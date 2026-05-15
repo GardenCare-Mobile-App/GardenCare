@@ -16,6 +16,7 @@ import { Plant } from '../../models/Plant';
 import { styles } from '../../styles/screens/ProfileScreen.styles';
 import { COLORS } from '../../styles/globalStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { getStatusColor, getStatusLabel } from '../../utils/PlantUtils';
 
 type RootStackParamList = {
   Profile: undefined;
@@ -23,24 +24,6 @@ type RootStackParamList = {
 };
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Profile'>;
-
-function getStatusColor(status: Plant['statusSaude']): string {
-  switch (status) {
-    case 'saudavel': return COLORS.verdeClaro;
-    case 'atencao': return COLORS.attention;
-    case 'critico': return COLORS.critical;
-    default: return COLORS.verdeClaro;
-  }
-}
-
-function getStatusLabel(status: Plant['statusSaude']): string {
-  switch (status) {
-    case 'saudavel': return 'Saudável';
-    case 'atencao': return 'Atenção';
-    case 'critico': return 'Crítico';
-    default: return '';
-  }
-}
 
 export default function ProfileScreen() {
   const navigation = useNavigation<NavigationProp>();
