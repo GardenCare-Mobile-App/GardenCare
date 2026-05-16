@@ -8,17 +8,33 @@ export const styles = StyleSheet.create({
     padding: 16,
     justifyContent: 'center', 
   },
+  logo: {
+    flex: 0.3,
+    transform:[
+      {scale:1.3}, // aumenta o tamanho
+      {rotate: '-19deg'} // rodopia a imagem
+    ],
+    width: 400,
+    height: 30,
+    marginLeft: 5,
+    borderRadius: 50, // Metade do tamanho para ficar redondo
+    // borderWidth: 2,
+  },
   content: {
     alignItems: 'center',
     gap: 15
   },
   botao: {
-    backgroundColor: '#aaaaaa',
+    borderStyle: 'dotted',
+    backgroundColor: COLORS.verdeClaro,
+    color: COLORS.white,
     paddingVertical: 15,
     paddingHorizontal: 40,
     borderRadius: 25,
     width: '80%', // Deixa o botão mais apresentável
     alignItems: 'center',
+    borderWidth: 5,
+    borderColor: COLORS.verdeEscuro
   },
   texto: { 
     color: COLORS.amarelo,

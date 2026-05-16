@@ -27,7 +27,7 @@ export const styles = StyleSheet.create({
     contentInput:{
       width: '100%',
       height: 56,
-      backgroundColor: "#677765ff",
+      backgroundColor: COLORS.fundoCampo,
       borderRadius: 12,
       flexDirection: 'row',
       alignItems: 'center',
@@ -37,10 +37,14 @@ export const styles = StyleSheet.create({
     },
     input:{
       flex: 1,
-      color: "#a0a0a0"
+      color: COLORS.white,
     },
     buttonSignIn:{
-      backgroundColor: "#1ab55c",
+      color: COLORS.white,
+      borderWidth: 5,
+      borderColor: COLORS.verdeEscuro,
+      borderStyle: 'dotted',
+      backgroundColor: COLORS.verdeClaro,
       width: '100%',
       height: 56,
       borderRadius: 36,
@@ -49,7 +53,7 @@ export const styles = StyleSheet.create({
       marginTop: 40,
     },
     buttonSignInText:{
-      color: '#143110',
+      color: COLORS.black,
       fontSize: 16,
       fontWeight: '800'
     },

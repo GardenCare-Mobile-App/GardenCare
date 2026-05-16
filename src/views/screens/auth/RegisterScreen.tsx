@@ -3,8 +3,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScrollView,StyleSheet,TouchableOpacity,View, TextInput, Button, Text, ActivityIndicator } from 'react-native';
 import { ArrowLeftIcon, EnvelopeSimpleIcon, FacebookLogoIcon, GoogleLogoIcon, LockKeyIcon } from 'phosphor-react-native';
 // import { useAuthViewModel } from '../../../viewmodels/AuthViewModeels';
-import { useAuthViewModel } from '../../../viewmodels/AuthViewModeels';
+import { useAuthViewModel } from '../../../viewmodels/AuthViewModels';
 import { styles } from "../../../styles/screens/RegisterScreen.styles"
+import { COLORS } from '../../../styles/globalStyles';
 
 export const RegisterScreen: React.FC = ({ navigation }: any) => {
 // estados locais para controlar o que o usuário digita
@@ -45,14 +46,14 @@ export const RegisterScreen: React.FC = ({ navigation }: any) => {
             <ArrowLeftIcon size={32} color="#e0e7b9" weight="regular"/>
           </TouchableOpacity>
             
-          <ScrollView style={styles.campos}>
             {/* texto da tela */}
             <Text style={styles.wellcome}>Faça um novo registro</Text>
+          <ScrollView contentContainerStyle={styles.campos}>
         
             {/* compo do email */}
             <View style={styles.content}>
               <View style={styles.contentInput}>
-                <EnvelopeSimpleIcon size={32} color='#636363'/>
+                <EnvelopeSimpleIcon size={32} color={COLORS.iconesCampo}/>
                 <TextInput placeholder='Seu e-mail' style={styles.input} placeholderTextColor='#e0e7b9'></TextInput>
               </View>
             </View>
@@ -60,7 +61,7 @@ export const RegisterScreen: React.FC = ({ navigation }: any) => {
             {/* campo da senha */}
             <View style={styles.content}>
               <View style={styles.contentInput}>
-                <LockKeyIcon size={32} color='#636363'/>
+                <LockKeyIcon size={32} color={COLORS.iconesCampo}/>
                 <TextInput placeholder='Sua senha' style={styles.input} placeholderTextColor='#e0e7b9'></TextInput>
               </View>
             </View>
@@ -68,11 +69,10 @@ export const RegisterScreen: React.FC = ({ navigation }: any) => {
             {/* campo da pronomes */}
             <View style={styles.content}>
              <View style={styles.contentInput}>
-             <LockKeyIcon size={32} color='#e0e7b9'/>
+             <LockKeyIcon size={32} color={COLORS.iconesCampo}/>
              <TextInput placeholder='Sua senha' style={styles.input} placeholderTextColor='#e0e7b9'></TextInput>
             </View>
            </View>
-
 
             {/* botão de logar */}
             <TouchableOpacity style={styles.buttonSignIn}>

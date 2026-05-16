@@ -2,6 +2,7 @@ import { ArrowLeftIcon, EnvelopeSimpleIcon, FacebookLogoIcon, GoogleLogoIcon, Lo
 import { StyleSheet, TouchableOpacity, View, Text, SafeAreaViewBase, TextInput } from "react-native";
 import { styles } from "../../../styles/screens/LoginScreen.styles"
 import { InitialScreen } from './InitialScreen';
+import { COLORS } from '../../../styles/globalStyles';
 
 export const LoginScreen = ({ navigation }: any) => {
     return ( 
@@ -23,7 +24,7 @@ export const LoginScreen = ({ navigation }: any) => {
       {/* compo do email */}
       <View style={styles.content}>
         <View style={styles.contentInput}>
-          <EnvelopeSimpleIcon size={32} color='#e0e7b9'/>
+          <EnvelopeSimpleIcon size={32} color={COLORS.iconesCampo}/>
           <TextInput placeholder='Seu e-mail' style={styles.input} placeholderTextColor='#e0e7b9'></TextInput>
         </View>
       </View>
@@ -31,7 +32,7 @@ export const LoginScreen = ({ navigation }: any) => {
       {/* campo da senha */}
       <View style={styles.content}>
         <View style={styles.contentInput}>
-          <LockKeyIcon size={32} color='#e0e7b9'/>
+          <LockKeyIcon size={32} color={COLORS.iconesCampo}/>
           <TextInput placeholder='Sua senha' style={styles.input} placeholderTextColor='#e0e7b9'></TextInput>
         </View>
       </View>
@@ -44,12 +45,12 @@ export const LoginScreen = ({ navigation }: any) => {
       {/* linha antes de conectar com outras redes */}
       <View style={styles.containerSeparator}>
         <View style={styles.separator}></View>
-        <Text style={styles.separatorText}>ou continuar com</Text>
+        {/* <Text style={styles.separatorText}>ou continuar com</Text> */}
         <View style={styles.separator}></View>
       </View>
 
       {/* conectar com facebook e google */}
-      <View style={styles.footer}>
+      {/* <View style={styles.footer}>
         <TouchableOpacity style={styles.footerButton}>
           <GoogleLogoIcon size={32} color='#143110' weight='fill'/>
         </TouchableOpacity>
@@ -57,13 +58,17 @@ export const LoginScreen = ({ navigation }: any) => {
         <TouchableOpacity style={styles.footerButton}>
           <FacebookLogoIcon size={32} color='#143110' weight='fill'/>
         </TouchableOpacity>
-      </View>
+      </View> */}
 
       <View style={styles.footer}>
         <Text style={styles.footerText}>Não possui conta?</Text>
-        <TouchableOpacity>
-          <Text style={styles.footerButtonText}>Cadastre-se</Text>
-        </TouchableOpacity>
+      <TouchableOpacity
+          onPress={() => {navigation.navigate('Register')
+          console.log('indo fazer uma conta')
+      }}
+      >
+        <Text style={styles.footerButtonText}>Cadastre-se</Text>
+      </TouchableOpacity>
       </View>
 
     </View>

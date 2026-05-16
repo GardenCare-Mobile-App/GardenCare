@@ -1,7 +1,7 @@
 export const COLORS = {
   primary: "#014040", // Verde escuro para botões
-  verdeEscuro: "#1B8C6C",
-  verdeClaro: "#91BF63",
+  verdeEscuro: "#2F732D",
+  verdeClaro: "#A5CF47",
   amarelo: "#EFF294",
   amareloMuitoClaro: "#F2EFC4",
   error: "#FF5252",
@@ -16,6 +16,9 @@ export const COLORS = {
   border: "#E8F5E9",
   attention: "#F4A261",
   critical: "#FF5252",
+  fundoCampo: "#2f732d65",
+  iconesCampo: "#e0e7b9",
+  textosCampo: "#e0e7b9"
 };
 
 export const SIZES = {

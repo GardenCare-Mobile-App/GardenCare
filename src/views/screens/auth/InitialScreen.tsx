@@ -1,12 +1,14 @@
 import React from 'react'; // Sempre bom importar o React
-import { StyleSheet, TouchableOpacity, View, Text } from "react-native";
+import { StyleSheet, TouchableOpacity, View, Text, Image } from "react-native";
 import { styles } from "../../../styles/screens/InitialScreen.styles"
 
 export const InitialScreen = ({ navigation }: any) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.texto}>Bem-vindo ao GardenCare</Text>
-
+      <Image style={styles.logo}
+        source={require('../../../../assets/logoGardenCare.png')}
+      />
+        <Text style={styles.texto}>Bem-vindo ao GardenCare</Text>
       <View style={styles.content}>
         <TouchableOpacity 
           style={styles.botao}
