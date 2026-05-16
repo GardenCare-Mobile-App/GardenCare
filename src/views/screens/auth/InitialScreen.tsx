@@ -10,7 +10,7 @@ export const InitialScreen = ({ navigation }: any) => {
       <View style={styles.content}>
         <TouchableOpacity 
           style={styles.botao}
-          onPress={() => {navigation.navigate('login')
+          onPress={() => {navigation.navigate('Login')
             console.log('indo para tela de login')
           }} // Chama o nome que está no App.tsx
         >
@@ -19,7 +19,7 @@ export const InitialScreen = ({ navigation }: any) => {
 
         <TouchableOpacity 
           style={styles.botao}
-          onPress={() => {navigation.navigate('registrar')
+          onPress={() => {navigation.navigate('Register')
             console.log('indo para tela de registro')
           }} // Chama o nome que está no App.tsx
         >

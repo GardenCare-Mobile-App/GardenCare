@@ -10,7 +10,7 @@ export const LoginScreen = ({ navigation }: any) => {
       {/* seta de voltar */}
       <TouchableOpacity 
         style={styles.header}
-        onPress={() => {navigation.navigate('inicio')
+        onPress={() => {navigation.navigate('Inicio')
           console.log('você está tentando voltar para tela de inicio')
         }}
       >
