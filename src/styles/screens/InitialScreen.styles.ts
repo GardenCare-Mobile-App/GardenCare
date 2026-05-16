@@ -11,12 +11,12 @@ export const styles = StyleSheet.create({
   logo: {
     flex: 0.3,
     transform:[
-      {scale:1.3}, // aumenta o tamanho
+      // {scale:1.3}, // aumenta o tamanho
       {rotate: '-19deg'} // rodopia a imagem
     ],
     width: 400,
     height: 30,
-    marginLeft: 5,
+    marginRight: 5,
     borderRadius: 50, // Metade do tamanho para ficar redondo
     // borderWidth: 2,
   },
