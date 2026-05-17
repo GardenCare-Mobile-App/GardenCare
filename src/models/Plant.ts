@@ -1,14 +1,11 @@
-export type TipoPlanta = 'tropical' | 'exterior' | 'interior' | 'suculenta' | 'aquatica';
-
 export interface Plant {
   id: string;
   nome: string;
   especie: string;
-  imagemUrl?: string;
-  tipo: TipoPlanta;
-  limiteUmidade: number;
-  observacoes: string;
+  imagemUrl: string;
+  frequenciaRegaDias: number;
   ultimaRega: string;
   statusSaude: 'saudavel' | 'atencao' | 'critico';
+  observacoes: string;
   favorita?: boolean;
 }

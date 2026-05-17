@@ -1,153 +1,92 @@
-import { useReducer, useCallback } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
-import { PerfilUsuario } from '../models/User';
-import { Plant } from '../models/Plant';
-import { ProfileBusiness } from '../business/ProfileBusiness';
-import { GardenBusiness } from '../business/MyGardenBusiness';
-import { NotificacaoBusiness, PreferenciasNotificacao } from '../business/NotificacaoBusiness';
-import { auth } from '../business/firebaseConfig';
+import { useState, useEffect } from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { PerfilUsuario } from "../models/User";
+import { Plant } from "../models/Plant";
+import { ProfileBusiness } from "../business/ProfileBusiness";
+import { GardenBusiness } from "../business/MyGardenBusiness";
+import { NotificacaoBusiness, PreferenciasNotificacao } from "../business/NotificacaoBusiness";
 
 const profileBusiness = new ProfileBusiness();
 const gardenBusiness = new GardenBusiness();
 const notificacaoBusiness = new NotificacaoBusiness();
 
-interface ProfileState {
-  perfil: PerfilUsuario | null;
-  plantas: Plant[];
-  totalPosts: number;
-  totalSeguidores: number;
-  notificacoes: PreferenciasNotificacao;
-  loading: boolean;
-  error: string | null;
-}
+const UID_MOCK = "1";
 
-type ProfileAction =
-  | { type: 'CARREGAR_INICIO' }
-  | {
-      type: 'CARREGAR_SUCESSO';
-      perfil: PerfilUsuario;
-      plantas: Plant[];
-      notificacoes: PreferenciasNotificacao;
-    }
-  | { type: 'CARREGAR_ERRO'; error: string }
-  | { type: 'TOGGLE_FAVORITA'; id: string; valor: boolean }
-  | { type: 'ALTERAR_NOTIFICACAO'; chave: keyof PreferenciasNotificacao; valor: boolean };
-
-const estadoInicial: ProfileState = {
-  perfil: null,
-  plantas: [],
-  totalPosts: 0,
-  totalSeguidores: 0,
-  notificacoes: {
+export function useProfileViewModel() {
+  const [perfil, setPerfil] = useState<PerfilUsuario | null>(null);
+  const [plantas, setPlantas] = useState<Plant[]>([]);
+  const [totalPosts, setTotalPosts] = useState(34);
+  const [totalSeguidores, setTotalSeguidores] = useState(210);
+  const [notificacoes, setNotificacoes] = useState<PreferenciasNotificacao>({
     lembreteDeRega: true,
     alertasSensor: true,
     novosPosts: false,
-  },
-  loading: true,
-  error: null,
-};
-function profileReducer(state: ProfileState, action: ProfileAction): ProfileState {
-  switch (action.type) {
-    case 'CARREGAR_INICIO':
-      return { ...state, loading: true, error: null };
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-    case 'CARREGAR_SUCESSO':
-      return {
-        ...state,
-        loading: false,
-        perfil: action.perfil,
-        plantas: action.plantas,
-        notificacoes: action.notificacoes,
-      };
+  useEffect(() => {
+    carregarPerfil(UID_MOCK);
+  }, []);
 
-    case 'CARREGAR_ERRO':
-      return { ...state, loading: false, error: action.error };
-
-    case 'TOGGLE_FAVORITA':
-      return {
-        ...state,
-        plantas: state.plantas.map((p) =>
-          p.id === action.id ? { ...p, favorita: action.valor } : p
-        ),
-      };
-
-    case 'ALTERAR_NOTIFICACAO':
-      return {
-        ...state,
-        notificacoes: { ...state.notificacoes, [action.chave]: action.valor },
-      };
-
-    default:
-      return state;
-  }
-}
-export function useProfileViewModel() {
-  const [state, dispatch] = useReducer(profileReducer, estadoInicial);
-
-  useFocusEffect(
-    useCallback(() => {
-      carregarPerfil();
-    }, [])
-  );
-
-  async function carregarPerfil() {
-    dispatch({ type: 'CARREGAR_INICIO' });
+  async function carregarPerfil(uid: string) {
     try {
-      const uid = auth.currentUser?.uid;
+      setLoading(true);
+      setError(null);
 
-      if (!uid) {
-        dispatch({ type: 'CARREGAR_ERRO', error: 'Usuário não autenticado.' });
-        return;
-      }
-
+      // buscando do fire base
       const [dadosPerfil, dadosPlantas, dadosNotificacoes] = await Promise.all([
-        profileBusiness.getPerfil(),
+        profileBusiness.getPerfil(uid),
         gardenBusiness.getPlants(),
         notificacaoBusiness.getPreferencias(uid),
       ]);
 
-      dispatch({
-        type: 'CARREGAR_SUCESSO',
-        perfil: dadosPerfil,
-        plantas: dadosPlantas,
-        notificacoes: dadosNotificacoes,
-      });
-    } catch (e: any) {
-      dispatch({
-        type: 'CARREGAR_ERRO',
-        error: e.message ?? 'Erro ao carregar perfil. Tente novamente.',
-      });
+      // salvando no local
+      if (dadosPerfil){
+        await AsyncStorage.setItem('@usuario_perfil', JSON.stringify(dadosPerfil));
+      }
+
+      setPerfil(dadosPerfil);
+      setPlantas(dadosPlantas);
+      setNotificacoes(dadosNotificacoes);
+      
+    } catch (e) {
+      setError("Erro ao carregar perfil. Tente novamente.");
+    } finally {
+      setLoading(false);
     }
   }
 
   async function toggleFavorita(id: string, valor: boolean) {
     await gardenBusiness.toggleFavorita(id, valor);
-    dispatch({ type: 'TOGGLE_FAVORITA', id, valor });
+    setPlantas((anterior) =>
+      anterior.map((p) => (p.id === id ? { ...p, favorita: valor } : p)),
+    );
   }
 
   async function alterarNotificacao(
     chave: keyof PreferenciasNotificacao,
-    valor: boolean
+    valor: boolean,
   ) {
-    dispatch({ type: 'ALTERAR_NOTIFICACAO', chave, valor });
-    const uid = auth.currentUser?.uid;
-    if (uid) {
-      await notificacaoBusiness.salvarPreferencias(uid, {
-        ...state.notificacoes,
-        [chave]: valor,
-      });
-    }
+    const novasPreferencias = { ...notificacoes, [chave]: valor };
+    setNotificacoes(novasPreferencias);
+    await notificacaoBusiness.salvarPreferencias(UID_MOCK, novasPreferencias);
   }
 
-  const plantasFavoritas = state.plantas.filter((p) => p.favorita);
-  const totalPlantas = state.plantas.length;
+  const plantasFavoritas = plantas.filter((p) => p.favorita);
+  const totalPlantas = plantas.length;
 
   return {
-    ...state,
+    perfil,
     totalPlantas,
+    totalPosts,
+    totalSeguidores,
     plantasFavoritas,
+    notificacoes,
     toggleFavorita,
     alterarNotificacao,
-    recarregar: carregarPerfil,
+    loading,
+    error,
+    recarregar: () => carregarPerfil(UID_MOCK),
   };
 }

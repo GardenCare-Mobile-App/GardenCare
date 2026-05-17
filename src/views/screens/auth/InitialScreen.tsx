@@ -5,12 +5,10 @@ import { styles } from "../../../styles/screens/InitialScreen.styles"
 export const InitialScreen = ({ navigation }: any) => {
   return (
     <View style={styles.container}>
-      <View>
       <Image style={styles.logo}
         source={require('../../../../assets/logoGardenCare.png')}
       />
         <Text style={styles.texto}>Bem-vindo ao GardenCare</Text>
-      </View>
       <View style={styles.content}>
         <TouchableOpacity 
           style={styles.botao}

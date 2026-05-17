@@ -1,32 +1,17 @@
-import { doc, getDoc } from 'firebase/firestore';
-import { auth, db } from './firebaseConfig';
-import { PerfilUsuario } from '../models/User';
+import { PerfilUsuario } from "../models/User";
+
+const mockPerfil: PerfilUsuario = {
+  uid: "1",
+  nome: "Gustavo Monteiro",
+  pronomes: "ele/dele",
+  fotoURL: undefined,
+  email: "gustavo@email.com",
+  criadoEm: new Date("2024-03-01"),
+  bio: "Sou apaixonado por plantas e natureza",
+};
 
 export class ProfileBusiness {
-  async getPerfil(): Promise<PerfilUsuario> {
-    const uid = auth.currentUser?.uid;
-
-    if (!uid) {
-      throw new Error('Usuário não autenticado.');
-    }
-
-    const docRef = doc(db, 'Usuarios', uid);
-    const docSnap = await getDoc(docRef);
-
-    if (!docSnap.exists()) {
-      throw new Error('Perfil não encontrado.');
-    }
-
-    const dados = docSnap.data();
-
-    return {
-      uid,
-      nome: dados.nome,
-      pronomes: dados.pronomes ?? '',
-      fotoURL: dados.fotoURL ?? undefined,
-      email: dados.email,
-      criadoEm: dados.criadoEm,
-      bio: dados.bio ?? undefined,
-    };
+  async getPerfil(uid: string): Promise<PerfilUsuario> {
+    return Promise.resolve(mockPerfil);
   }
 }
