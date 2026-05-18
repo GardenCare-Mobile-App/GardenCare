@@ -5,7 +5,6 @@ import { Plant } from '../models/Plant';
 import { ProfileBusiness } from '../business/ProfileBusiness';
 import { GardenBusiness } from '../business/MyGardenBusiness';
 import { NotificacaoBusiness, PreferenciasNotificacao } from '../business/NotificacaoBusiness';
-import { auth } from '../business/firebaseConfig';
 
 const profileBusiness = new ProfileBusiness();
 const gardenBusiness = new GardenBusiness();
@@ -46,6 +45,7 @@ const estadoInicial: ProfileState = {
   loading: true,
   error: null,
 };
+
 function profileReducer(state: ProfileState, action: ProfileAction): ProfileState {
   switch (action.type) {
     case 'CARREGAR_INICIO':
@@ -81,6 +81,7 @@ function profileReducer(state: ProfileState, action: ProfileAction): ProfileStat
       return state;
   }
 }
+
 export function useProfileViewModel() {
   const [state, dispatch] = useReducer(profileReducer, estadoInicial);
 
@@ -93,7 +94,8 @@ export function useProfileViewModel() {
   async function carregarPerfil() {
     dispatch({ type: 'CARREGAR_INICIO' });
     try {
-      const uid = auth.currentUser?.uid;
+      // uid vem do Business, não do Firebase direto
+      const uid = profileBusiness.getUidAtual();
 
       if (!uid) {
         dispatch({ type: 'CARREGAR_ERRO', error: 'Usuário não autenticado.' });
@@ -130,7 +132,7 @@ export function useProfileViewModel() {
     valor: boolean
   ) {
     dispatch({ type: 'ALTERAR_NOTIFICACAO', chave, valor });
-    const uid = auth.currentUser?.uid;
+    const uid = profileBusiness.getUidAtual();
     if (uid) {
       await notificacaoBusiness.salvarPreferencias(uid, {
         ...state.notificacoes,
