@@ -11,16 +11,18 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useProfileViewModel } from '../../viewmodels/ProfileViewModel ';
+import { useProfileViewModel } from '../../viewmodels/ProfileViewModel';
 import { Plant } from '../../models/Plant';
 import { styles } from '../../styles/screens/ProfileScreen.styles';
 import { COLORS } from '../../styles/globalStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getStatusColor, getStatusLabel } from '../../utils/PlantUtils';
+import { AvatarPerfil } from '../components/AvatarPerfil';
 
 type RootStackParamList = {
   Profile: undefined;
   MyGarden: undefined;
+  EditarPerfil: { perfil: any };
 };
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Profile'>;
@@ -71,15 +73,7 @@ export default function ProfileScreen() {
             </Pressable>
           </View>
 
-          {perfil.fotoURL ? (
-            <Image source={{ uri: perfil.fotoURL }} style={styles.avatar} />
-          ) : (
-            <View style={styles.avatarFallback}>
-              <Text style={styles.avatarFallbackText}>
-                {perfil.nome.charAt(0).toUpperCase()}
-              </Text>
-            </View>
-          )}
+          <AvatarPerfil fotoURL={perfil.fotoURL} nome={perfil.nome} />
 
           <Text style={styles.name}>{perfil.nome}</Text>
           <Text style={styles.pronomes}>{perfil.pronomes}</Text>
@@ -89,7 +83,10 @@ export default function ProfileScreen() {
           ) : null}
 
           <View style={styles.headerButtons}>
-            <Pressable style={styles.editButton}>
+            <Pressable
+              style={styles.editButton}
+              onPress={() => navigation.navigate('EditarPerfil', { perfil })}
+            >
               <Text style={styles.editButtonText}>Editar Perfil</Text>
             </Pressable>
             <Pressable
