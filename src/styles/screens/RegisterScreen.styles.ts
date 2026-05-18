@@ -103,5 +103,32 @@ export const styles = StyleSheet.create({
       color: "#1ab55c",
       fontSize: 16,
       fontWeight: "400"
-    }
+    },
+
+    
+  titulo: { fontSize: 20, fontWeight: 'bold', color: '#6C5CE7', marginBottom: 16 },
+  label: { fontSize: 10, color: '#888', fontWeight: '600', marginBottom: 4, letterSpacing: 0.5 },
+    inputFocado: { borderColor: '#6C5CE7', backgroundColor: '#F5F3FF' },
+  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 14 },
+  chip: {
+    borderWidth: 1.5, borderColor: '#ddd', borderRadius: 20,
+    paddingHorizontal: 12, paddingVertical: 5, backgroundColor: 'white',
+  },
+  chipAtivo: { borderColor: '#6C5CE7', backgroundColor: '#EDE9FE' },
+  chipAtivoRosa: { borderColor: '#e84393', backgroundColor: '#FFF0F8' },
+  chipTexto: { fontSize: 12, color: '#666' },
+  chipTextoAtivo: { color: '#333', fontWeight: 'bold' },
+  senhaRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 },
+  olho: { padding: 8 },
+  btnLocal: {
+    backgroundColor: '#00B894', borderRadius: 12,
+    padding: 14, alignItems: 'center', marginBottom: 8,
+  },
+  btnFirebase: {
+    backgroundColor: '#6C5CE7', borderRadius: 12,
+    padding: 14, alignItems: 'center', marginBottom: 20,
+  },
+  btnTexto: { color: 'white', fontWeight: 'bold', fontSize: 14 },
+
+
 });

@@ -5,9 +5,11 @@ import { styles } from "../../../styles/screens/InitialScreen.styles"
 export const InitialScreen = ({ navigation }: any) => {
   return (
     <View style={styles.container}>
+      <View style={styles.containerLogo}>
       <Image style={styles.logo}
         source={require('../../../../assets/logoGardenCare.png')}
       />
+      </View>
         <Text style={styles.texto}>Bem-vindo ao GardenCare</Text>
       <View style={styles.content}>
         <TouchableOpacity 

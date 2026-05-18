@@ -2,18 +2,21 @@ import React from 'react';
 import { StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import ProfileScreen from './src/views/screens/ProfileScreen';
-import MyGardenScreen from './src/views/screens/MyGardenScreen';
+import { InitialScreen } from './src/views/screens/auth/InitialScreen';
+import { LoginScreen } from './src/views/screens/auth/LoginScreen';
+import { RegisterScreen } from './src/views/screens/auth/RegisterScreen';
  
 const Stack = createNativeStackNavigator();
  
 export default function App() {
   return (
     <NavigationContainer>
-      <StatusBar barStyle="light-content" />
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Profile" component={ProfileScreen} />
-        <Stack.Screen name="MyGarden" component={MyGardenScreen} />
+      <Stack.Navigator
+        initialRouteName="Inicio"
+        screenOptions={{ headerShown: false}}>
+        <Stack.Screen name="Inicio" component={InitialScreen} />
+        <Stack.Screen name="Register" component={RegisterScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

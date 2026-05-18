@@ -8,14 +8,20 @@ export const styles = StyleSheet.create({
     padding: 16,
     justifyContent: 'center', 
   },
+  containerLogo:{
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 30,
+  },
   logo: {
     flex: 0.3,
     transform:[
-      {scale:1.3}, // aumenta o tamanho
+      //{scale:1.3}, // aumenta o tamanho
       {rotate: '-19deg'} // rodopia a imagem
     ],
-    width: 400,
     height: 30,
+    width: 400,
     marginLeft: 5,
     borderRadius: 50, // Metade do tamanho para ficar redondo
     // borderWidth: 2,

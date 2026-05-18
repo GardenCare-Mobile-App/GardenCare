@@ -16,7 +16,7 @@ import { Plant } from '../../models/Plant';
 import { styles } from '../../styles/screens/ProfileScreen.styles';
 import { COLORS } from '../../styles/globalStyles';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { getStatusColor, getStatusLabel } from '../../utils/PlantUtils';
+// import { getStatusLabel } from '../../utils/PlantUtils';
 
 type RootStackParamList = {
   Profile: undefined;

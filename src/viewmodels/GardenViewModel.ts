@@ -2,11 +2,11 @@ import { useReducer, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { Plant } from '../models/Plant';
 import { SensorData } from '../models/SensorData';
-import { GardenBusiness } from '../business/MyGardenBusiness';
-import { ArduinoBusiness } from '../business/ArduinoBusiness';
+// import { GardenBusiness } from '../business/MyGardenBusiness';
+// import { ArduinoBusiness } from '../business/ArduinoBusiness';
 
-const gardenBusiness = new GardenBusiness();
-const arduinoBusiness = new ArduinoBusiness();
+// const gardenBusiness = new GardenBusiness();
+// const arduinoBusiness = new ArduinoBusiness();
 
 interface GardenState {
   plantas: Plant[];
@@ -59,43 +59,43 @@ function gardenReducer(state: GardenState, action: GardenAction): GardenState {
   }
 }
 export function useGardenViewModel() {
-  const [state, dispatch] = useReducer(gardenReducer, estadoInicial);
+//   const [state, dispatch] = useReducer(gardenReducer, estadoInicial);
 
-  useFocusEffect(
-    useCallback(() => {
-      carregarDados();
-    }, [])
-  );
+//   useFocusEffect(
+//     useCallback(() => {
+//       carregarDados();
+//     }, [])
+//   );
 
-  async function carregarDados() {
-    dispatch({ type: 'CARREGAR_INICIO' });
-    try {
-      const [dadosPlantas, dadosSensor] = await Promise.all([
-        gardenBusiness.getPlants(),
-        arduinoBusiness.getSensorData(),
-      ]);
-      const alertas = gardenBusiness.verificarAlertas(dadosPlantas, dadosSensor);
-      dispatch({ type: 'CARREGAR_SUCESSO', plantas: dadosPlantas, sensorData: dadosSensor, alertas });
-    } catch (e) {
-      dispatch({ type: 'CARREGAR_ERRO', error: 'Erro ao carregar jardim. Tente novamente.' });
-    }
-  }
+  // async function carregarDados() {
+  //   dispatch({ type: 'CARREGAR_INICIO' });
+  //   try {
+  //     const [dadosPlantas, dadosSensor] = await Promise.all([
+  //       gardenBusiness.getPlants(),
+  //       arduinoBusiness.getSensorData(),
+  //     ]);
+  //     const alertas = gardenBusiness.verificarAlertas(dadosPlantas, dadosSensor);
+  //     dispatch({ type: 'CARREGAR_SUCESSO', plantas: dadosPlantas, sensorData: dadosSensor, alertas });
+  //   } catch (e) {
+  //     dispatch({ type: 'CARREGAR_ERRO', error: 'Erro ao carregar jardim. Tente novamente.' });
+  //   }
+  // }
 
-  async function toggleFavorita(id: string, valor: boolean) {
-    await gardenBusiness.toggleFavorita(id, valor);
-    dispatch({ type: 'TOGGLE_FAVORITA', id, valor });
-  }
+  // async function toggleFavorita(id: string, valor: boolean) {
+  //   await gardenBusiness.toggleFavorita(id, valor);
+  //   dispatch({ type: 'TOGGLE_FAVORITA', id, valor });
+  // }
 
-  const totalSaudaveis = state.plantas.filter((p) => p.statusSaude === 'saudavel').length;
-  const totalAtencao = state.plantas.filter((p) => p.statusSaude === 'atencao').length;
-  const totalCritico = state.plantas.filter((p) => p.statusSaude === 'critico').length;
+  // const totalSaudaveis = state.plantas.filter((p) => p.statusSaude === 'saudavel').length;
+  // const totalAtencao = state.plantas.filter((p) => p.statusSaude === 'atencao').length;
+  // const totalCritico = state.plantas.filter((p) => p.statusSaude === 'critico').length;
 
-  return {
-    ...state,
-    totalSaudaveis,
-    totalAtencao,
-    totalCritico,
-    toggleFavorita,
-    recarregar: carregarDados,
-  };
+  // return {
+  //   ...state,
+  //   totalSaudaveis,
+  //   totalAtencao,
+  //   totalCritico,
+    // toggleFavorita,
+    // recarregar: carregarDados,
+  // };
 }

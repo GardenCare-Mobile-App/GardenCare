@@ -6,32 +6,71 @@ import { ArrowLeftIcon, EnvelopeSimpleIcon, FacebookLogoIcon, GoogleLogoIcon, Lo
 import { useAuthViewModel } from '../../../viewmodels/AuthViewModels';
 import { styles } from "../../../styles/screens/RegisterScreen.styles"
 import { COLORS } from '../../../styles/globalStyles';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
+import { getFirestore } from 'firebase/firestore';
+import { initializeApp } from 'firebase/app';
+import { auth, db } from '../../../business/firebaseConfig'; // ajuste o caminho para o seu arquivo de config
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
+const SEXOS = ['Masculino', 'Feminino', 'Não-binário', 'Prefiro não dizer'];
+const PRONOMES = ['ele/dele', 'ela/dela', 'elu/delu', 'they/them', 'Prefiro não dizer'];
+
 
 export const RegisterScreen: React.FC = ({ navigation }: any) => {
-// estados locais para controlar o que o usuário digita
-  const [nome, setNome] = useState('');
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
-  const [pronomes, setPronomes] = useState('');
 
-  const { registrar, loading, erro } = useAuthViewModel();
+  const [campos, setCampos] = useState({
+    nome: '', email: '', sexo: '',
+    pronomes: '', senha: '', confirmarSenha:'',
+  });
+  const [foco, setFoco] = useState(null);
+  const [senhaVisivel, setSenhaVisivel] = useState(null)
+  const [confirmarSenhaVisivel, setConfirmarSenhaVisivel] = useState(null)
 
-  const handleRegistro = async () => {
-    // validação simples
-    if (!nome || !email || !senha){
-      alert("preencha os campos obrigatorios");
-      return
+  const set = (campo: string, val: any) => setCampos(c => ({ ...c, [campo]: val }));
+
+  // salvando localmente
+  const salvarLocal = async () => {
+    const dados = {nome: campos.nome, sexo: campos.sexo, pronomes: campos.pronomes}
+    await AsyncStorage.setItem('perfil', JSON.stringify(dados))
+  };
+
+  // enviando para o firebase
+  const cadastrarFirebase = async () => {
+    if (campos.senha!==campos.confirmarSenha) {
+      alert("as senhas não coincidem")
+      return;
     }
 
-    // enviando para o business
-    await registrar(email, senha, nome, pronomes)
+    try {
 
-    if(!erro){
-      // se não deu erro pode navegar
-      navigation.navigate('Login')
+      const userCredential = await createUserWithEmailAndPassword(auth, campos.email, campos.senha);
+      const user = userCredential.user;
+
+      // salvando o resto no fire
+      await setDoc(doc(db, "usuario", user.uid), {
+        nome: campos.nome,  
+        sexo: campos.sexo,  
+        pronomes: campos.pronomes,  
+        email: campos.email,  
+        criadoEm: serverTimestamp(),  
+      });
+
+      await salvarLocal();
+      alert("usuário cadastrado com sucesso!")
+
+    } catch (error) {
+      console.error(error);
+      // alert("erro ao cadastrar: " + error.message)
     }
 
   }
+
+  // const inputStyle = (campo) => [
+  //   styles.input,
+  //   foco === campo && styles.inputFoco
+  // ];
 
   return (
     <View style={styles.container}>
@@ -57,13 +96,19 @@ export const RegisterScreen: React.FC = ({ navigation }: any) => {
                 <TextInput placeholder='Seu e-mail' style={styles.input} placeholderTextColor='#e0e7b9'></TextInput>
               </View>
             </View>
-        
-            {/* campo da senha */}
-            <View style={styles.content}>
-              <View style={styles.contentInput}>
-                <LockKeyIcon size={32} color={COLORS.iconesCampo}/>
-                <TextInput placeholder='Sua senha' style={styles.input} placeholderTextColor='#e0e7b9'></TextInput>
-              </View>
+
+            {/* Sexo — campo de seleção */}
+            <Text style={styles.label}>SEXO</Text>
+            <View style={styles.chips}>
+              {SEXOS.map(op => (
+                <TouchableOpacity key={op}
+                  style={[styles.chip, campos.sexo === op && styles.chipAtivo]}
+                  onPress={() => set('sexo', op)}>
+                  <Text style={[styles.chipTexto, campos.sexo === op && styles.chipTextoAtivo]}>
+                    {op}
+                  </Text>
+                </TouchableOpacity>
+              ))}
             </View>
 
             {/* campo da pronomes */}
@@ -79,6 +124,23 @@ export const RegisterScreen: React.FC = ({ navigation }: any) => {
               <Text style={styles.buttonSignInText}>Criar conta</Text>
             </TouchableOpacity>
         
+            {/* Senha com censura (secureTextEntry) */}
+      <Text style={styles.label}>SENHA</Text>
+      <View style={styles.senhaRow}>
+        <TextInput
+          // style={[inputStyle('senha'), { flex: 1 }]}
+          style={styles.input}
+          placeholder="Digite sua senha"
+          value={campos.senha}
+          secureTextEntry={!senhaVisivel}   // ← CENSURA AQUI!
+          onChangeText={v => set('senha', v)}
+          // onFocus={() => setFoco('senha')} onBlur={() => setFoco(null)}
+        />
+        {/* <TouchableOpacity onPress={() => setSenhaVisivel(v => !v)} style={styles.olho}>
+          <Text>{senhaVisivel ? '🙈' : '👁️'}</Text>
+        </TouchableOpacity> */}
+      </View>
+
           </ScrollView>
         </View>
         );
