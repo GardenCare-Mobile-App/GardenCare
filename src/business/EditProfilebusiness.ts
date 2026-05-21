@@ -3,7 +3,7 @@ import { RegraValidacao } from '../models/RegraValidacao';
 
 export { RegraValidacao };
 
-export const PRONOMES_VALIDOS = ['ele/dele', 'ela/dela'];
+export const PRONOMES_VALIDOS = ['ele/dele', 'ela/dela', 'prefiro não dizer'];
 
 const profileRepository = new ProfileRepository();
 
@@ -25,14 +25,15 @@ export class EditProfileBusiness {
     ];
   }
   validarPronomes(pronomes: string): RegraValidacao[] {
+    const pronomeNormalizado = pronomes.trim().toLowerCase();
     return [
       {
         mensagem: 'Não pode estar vazio',
         valida: pronomes.trim().length > 0,
       },
       {
-        mensagem: `Apenas "${PRONOMES_VALIDOS[0]}" ou "${PRONOMES_VALIDOS[1]}"`,
-        valida: PRONOMES_VALIDOS.includes(pronomes.trim()),
+        mensagem: `Apenas: ele/dele, ela/dela ou prefiro não dizer`,
+        valida: PRONOMES_VALIDOS.includes(pronomeNormalizado),
       },
     ];
   }
@@ -64,9 +65,12 @@ export class EditProfileBusiness {
       throw new Error('Esse nome já está sendo usado por outro usuário.');
     }
 
-    await profileRepository.atualizarPerfil(dados);
+    await profileRepository.atualizarPerfil({
+      nome: dados.nome.trim(),
+      pronomes: dados.pronomes.trim().toLowerCase(),
+      bio: dados.bio.trim(),
+    });
   }
-
   async uploadFoto(imagemUri: string): Promise<string> {
     return profileRepository.uploadFoto(imagemUri);
   }

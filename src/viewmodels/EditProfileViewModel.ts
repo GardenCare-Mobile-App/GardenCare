@@ -1,7 +1,7 @@
-import { useReducer, useCallback } from 'react';
-import * as ImagePicker from 'expo-image-picker';
+import { useReducer } from 'react';
 import { EditProfileBusiness, RegraValidacao } from '../business/EditProfilebusiness';
 import { PerfilUsuario } from '../models/User';
+import { verificarPermissoesParaFoto } from '../utils/PermissionUtils';
 
 const editProfileBusiness = new EditProfileBusiness();
 
@@ -12,9 +12,13 @@ interface EditProfileState {
   pronomes: string;
   bio: string;
   fotoUri: string | undefined;
+  modalVisivel: boolean;
   salvando: boolean;
   erro: string | null;
   sucesso: boolean;
+  nomeTocado: boolean;
+  pronomesTocado: boolean;
+  bioTocado: boolean;
 }
 
 type EditProfileAction =
@@ -22,6 +26,8 @@ type EditProfileAction =
   | { type: 'SET_PRONOMES'; valor: string }
   | { type: 'SET_BIO'; valor: string }
   | { type: 'SET_FOTO'; uri: string }
+  | { type: 'ABRIR_MODAL' }
+  | { type: 'FECHAR_MODAL' }
   | { type: 'SALVAR_INICIO' }
   | { type: 'SALVAR_SUCESSO' }
   | { type: 'SALVAR_ERRO'; erro: string };
@@ -32,13 +38,17 @@ function editProfileReducer(
 ): EditProfileState {
   switch (action.type) {
     case 'SET_NOME':
-      return { ...state, nome: action.valor };
+      return { ...state, nome: action.valor, nomeTocado: true };
     case 'SET_PRONOMES':
-      return { ...state, pronomes: action.valor };
+      return { ...state, pronomes: action.valor, pronomesTocado: true };
     case 'SET_BIO':
-      return { ...state, bio: action.valor.slice(0, LIMITE_BIO) };
+      return { ...state, bio: action.valor.replace(/['"]/g, '').slice(0, LIMITE_BIO), bioTocado: true };
     case 'SET_FOTO':
       return { ...state, fotoUri: action.uri };
+    case 'ABRIR_MODAL':
+      return { ...state, modalVisivel: true };
+    case 'FECHAR_MODAL':
+      return { ...state, modalVisivel: false };
     case 'SALVAR_INICIO':
       return { ...state, salvando: true, erro: null, sucesso: false };
     case 'SALVAR_SUCESSO':
@@ -49,15 +59,20 @@ function editProfileReducer(
       return state;
   }
 }
+
 export function useEditProfileViewModel(perfil: PerfilUsuario) {
   const [state, dispatch] = useReducer(editProfileReducer, {
     nome: perfil.nome,
     pronomes: perfil.pronomes,
     bio: perfil.bio ?? '',
     fotoUri: perfil.fotoURL,
+    modalVisivel: false,
     salvando: false,
     erro: null,
     sucesso: false,
+    nomeTocado: false,
+    pronomesTocado: false,
+    bioTocado: false,
   });
 
   const regrasNome: RegraValidacao[] = editProfileBusiness.validarNome(state.nome);
@@ -70,32 +85,8 @@ export function useEditProfileViewModel(perfil: PerfilUsuario) {
     state.bio
   );
 
-  async function tirarFoto() {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== 'granted') {
-      dispatch({ type: 'SALVAR_ERRO', erro: 'Permissão de câmera negada.' });
-      return;
-    }
-    const resultado = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.7,
-    });
-    if (!resultado.canceled) {
-      dispatch({ type: 'SET_FOTO', uri: resultado.assets[0].uri });
-    }
-  }
-
-  async function escolherDaGaleria() {
-    const resultado = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.7,
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-    });
-    if (!resultado.canceled) {
-      dispatch({ type: 'SET_FOTO', uri: resultado.assets[0].uri });
-    }
+  function onFotoSelecionada(uri: string) {
+    dispatch({ type: 'SET_FOTO', uri });
   }
 
   async function salvar() {
@@ -103,7 +94,6 @@ export function useEditProfileViewModel(perfil: PerfilUsuario) {
       dispatch({ type: 'SALVAR_ERRO', erro: 'Corrija os campos antes de salvar.' });
       return;
     }
-
     dispatch({ type: 'SALVAR_INICIO' });
     try {
       if (state.fotoUri && state.fotoUri !== perfil.fotoURL) {
@@ -120,6 +110,13 @@ export function useEditProfileViewModel(perfil: PerfilUsuario) {
     }
   }
 
+  async function abrirModal() {
+    const temPermissao = await verificarPermissoesParaFoto();
+    if (temPermissao) {
+      dispatch({ type: 'ABRIR_MODAL' });
+    }
+  }
+
   return {
     ...state,
     limiteBio: LIMITE_BIO,
@@ -130,8 +127,9 @@ export function useEditProfileViewModel(perfil: PerfilUsuario) {
     setNome: (valor: string) => dispatch({ type: 'SET_NOME', valor }),
     setPronomes: (valor: string) => dispatch({ type: 'SET_PRONOMES', valor }),
     setBio: (valor: string) => dispatch({ type: 'SET_BIO', valor }),
-    tirarFoto,
-    escolherDaGaleria,
+    abrirModal,
+    fecharModal: () => dispatch({ type: 'FECHAR_MODAL' }),
+    onFotoSelecionada,
     salvar,
   };
 }
