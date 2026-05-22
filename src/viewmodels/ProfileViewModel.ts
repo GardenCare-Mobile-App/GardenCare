@@ -5,6 +5,7 @@ import { Plant } from '../models/Plant';
 import { ProfileBusiness } from '../business/ProfileBusiness';
 import { GardenBusiness } from '../business/MyGardenBusiness';
 import { NotificacaoBusiness, PreferenciasNotificacao } from '../business/NotificacaoBusiness';
+import { useAuth } from '../context/AuthContext';
 
 const profileBusiness = new ProfileBusiness();
 const gardenBusiness = new GardenBusiness();
@@ -84,6 +85,7 @@ function profileReducer(state: ProfileState, action: ProfileAction): ProfileStat
 
 export function useProfileViewModel() {
   const [state, dispatch] = useReducer(profileReducer, estadoInicial);
+  const { usuario, login, logout } = useAuth();
 
   useFocusEffect(
     useCallback(() => {
@@ -94,8 +96,8 @@ export function useProfileViewModel() {
   async function carregarPerfil() {
     dispatch({ type: 'CARREGAR_INICIO' });
     try {
-      // uid vem do Business, não do Firebase direto
-      const uid = profileBusiness.getUidAtual();
+      
+      const uid = usuario?.uid ?? profileBusiness.getUidAtual();
 
       if (!uid) {
         dispatch({ type: 'CARREGAR_ERRO', error: 'Usuário não autenticado.' });
