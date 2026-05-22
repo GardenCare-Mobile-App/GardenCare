@@ -52,8 +52,15 @@ export class GardenBusiness {
     const frequencia = this.calcularFrequenciaRega(planta.tipo, sensorData.temperatura);
     return diasSemRegar >= frequencia || sensorData.umidade < planta.limiteUmidade;
   }
-  verificarAlertas(plantas: Plant[], sensorData: SensorData): string[] {
+  verificarAlertas(plantas: Plant[], sensorData: SensorData, limites?: {
+    temperaturaMax: number;
+    umidadeMin: number;
+    luminosidadeMin: number;
+  }): string[] {
     const alertas: string[] = [];
+    const tempMax = limites?.temperaturaMax ?? 35;
+    const umidadeMin = limites?.umidadeMin ?? 30;
+    const luzMin = limites?.luminosidadeMin ?? 200;
 
     plantas.forEach((planta) => {
       if (sensorData.umidade < planta.limiteUmidade) {
@@ -63,11 +70,15 @@ export class GardenBusiness {
       }
     });
 
-    if (sensorData.temperatura > 35) {
+    if (sensorData.temperatura > tempMax) {
       alertas.push(`Temperatura muito alta: ${sensorData.temperatura}°C`);
     }
 
-    if (sensorData.luminosidade < 200) {
+    if (sensorData.umidade < umidadeMin) {
+      alertas.push(`Umidade do ambiente baixa: ${sensorData.umidade}%`);
+    }
+
+    if (sensorData.luminosidade < luzMin) {
       alertas.push(`Luminosidade baixa: ${sensorData.luminosidade} lux`);
     }
 

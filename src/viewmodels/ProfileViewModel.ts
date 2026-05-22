@@ -96,8 +96,7 @@ export function useProfileViewModel() {
   async function carregarPerfil() {
     dispatch({ type: 'CARREGAR_INICIO' });
     try {
-      
-      const uid = usuario?.uid ?? profileBusiness.getUidAtual();
+      const uid = usuario?.uid;
 
       if (!uid) {
         dispatch({ type: 'CARREGAR_ERRO', error: 'Usuário não autenticado.' });
@@ -134,7 +133,7 @@ export function useProfileViewModel() {
     valor: boolean
   ) {
     dispatch({ type: 'ALTERAR_NOTIFICACAO', chave, valor });
-    const uid = profileBusiness.getUidAtual();
+    const uid = usuario?.uid;
     if (uid) {
       await notificacaoBusiness.salvarPreferencias(uid, {
         ...state.notificacoes,

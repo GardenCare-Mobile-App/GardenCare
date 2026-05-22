@@ -4,9 +4,11 @@ import { Plant } from '../models/Plant';
 import { SensorData } from '../models/SensorData';
 import { GardenBusiness } from '../business/MyGardenBusiness';
 import { ArduinoBusiness } from '../business/ArduinoBusiness';
+import { SensorLimitesBusiness } from '../business/SensorLimitesBusiness';
 
 const gardenBusiness = new GardenBusiness();
 const arduinoBusiness = new ArduinoBusiness();
+const sensorLimitesBusiness = new SensorLimitesBusiness();
 
 interface GardenState {
   plantas: Plant[];
@@ -29,6 +31,7 @@ const estadoInicial: GardenState = {
   loading: true,
   error: null,
 };
+
 function gardenReducer(state: GardenState, action: GardenAction): GardenState {
   switch (action.type) {
     case 'CARREGAR_INICIO':
@@ -70,11 +73,12 @@ export function useGardenViewModel() {
   async function carregarDados() {
     dispatch({ type: 'CARREGAR_INICIO' });
     try {
-      const [dadosPlantas, dadosSensor] = await Promise.all([
+      const [dadosPlantas, dadosSensor, limites] = await Promise.all([
         gardenBusiness.getPlants(),
         arduinoBusiness.getSensorData(),
+        sensorLimitesBusiness.getLimites(),
       ]);
-      const alertas = gardenBusiness.verificarAlertas(dadosPlantas, dadosSensor);
+      const alertas = gardenBusiness.verificarAlertas(dadosPlantas, dadosSensor, limites);
       dispatch({ type: 'CARREGAR_SUCESSO', plantas: dadosPlantas, sensorData: dadosSensor, alertas });
     } catch (e) {
       dispatch({ type: 'CARREGAR_ERRO', error: 'Erro ao carregar jardim. Tente novamente.' });
