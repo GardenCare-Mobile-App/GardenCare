@@ -13,7 +13,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useGardenViewModel } from '../../viewmodels/GardenViewModel';
 import { Plant } from '../../models/Plant';
-import { getStatusColor, getStatusLabel } from '../../utils/PlantUtils';
+import { getStatusColor, getStatusLabel, diasDesdeRega } from '../../utils/PlantUtils';
 import { styles } from '../../styles/screens/MyGardenScreen.styles';
 import { COLORS } from '../../styles/globalStyles';
 
@@ -25,16 +25,7 @@ type RootStackParamList = {
 };
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'MyGarden'>;
-function diasDesdeRega(ultimaRega: string): string {
-  const hoje = new Date();
-  const rega = new Date(ultimaRega);
-  const dias = Math.floor(
-    (hoje.getTime() - rega.getTime()) / (1000 * 60 * 60 * 24)
-  );
-  if (dias === 0) return 'Regada hoje';
-  if (dias === 1) return 'Regada há 1 dia';
-  return `Regada há ${dias} dias`;
-}
+
 function PlantaCard({
   planta,
   onToggleFavorita,
@@ -45,7 +36,7 @@ function PlantaCard({
   onVerDetalhes: (id: string) => void;
 }) {
   return (
-    <View style={styles.plantaCard}>
+    <Pressable style={styles.plantaCard} onPress={() => onVerDetalhes(planta.id)}>
       {planta.imagemUrl ? (
         <Image source={{ uri: planta.imagemUrl }} style={styles.plantaImagem} />
       ) : (
@@ -71,13 +62,6 @@ function PlantaCard({
       </View>
 
       <Pressable
-        style={styles.detalhesButton}
-        onPress={() => onVerDetalhes(planta.id)}
-      >
-        <Ionicons name="chevron-forward" size={20} color={COLORS.textSecondary} />
-      </Pressable>
-
-      <Pressable
         style={styles.favButton}
         onPress={() => onToggleFavorita(planta.id, !planta.favorita)}
       >
@@ -87,7 +71,9 @@ function PlantaCard({
           color={planta.favorita ? COLORS.error : COLORS.textSecondary}
         />
       </Pressable>
-    </View>
+
+      <Ionicons name="chevron-forward" size={18} color={COLORS.textSecondary} />
+    </Pressable>
   );
 }
 export default function MyGardenScreen() {

@@ -23,6 +23,7 @@ type RootStackParamList = {
   Profile: undefined;
   MyGarden: undefined;
   EditarPerfil: { perfil: any };
+  Settings: undefined;
 };
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Profile'>;
@@ -68,7 +69,7 @@ export default function ProfileScreen() {
 
         <View style={styles.header}>
           <View style={styles.headerActions}>
-            <Pressable style={styles.settingsButton}>
+            <Pressable style={styles.settingsButton} onPress={() => navigation.navigate('Settings')}>
               <Ionicons name="settings-outline" size={22} color={COLORS.white} />
             </Pressable>
           </View>
@@ -132,7 +133,13 @@ export default function ProfileScreen() {
                   index === plantasFavoritas.length - 1 && styles.plantCardLast,
                 ]}
               >
-                <Image source={{ uri: planta.imagemUrl }} style={styles.plantImage} />
+                {planta.imagemUrl ? (
+                  <Image source={{ uri: planta.imagemUrl }} style={styles.plantImage} />
+                ) : (
+                  <View style={[styles.plantImage, { backgroundColor: '#C8E6C9', alignItems: 'center', justifyContent: 'center' }]}>
+                    <Ionicons name="leaf-outline" size={20} color="#2E7D32" />
+                  </View>
+                )}
                 <View style={styles.plantInfo}>
                   <Text style={styles.plantName}>{planta.nome}</Text>
                   <Text style={styles.plantSpecies}>{planta.especie}</Text>

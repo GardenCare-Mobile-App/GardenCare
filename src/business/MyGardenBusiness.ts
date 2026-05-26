@@ -1,24 +1,9 @@
 import { Plant, TipoPlanta } from '../models/Plant';
 import { SensorData } from '../models/SensorData';
 import { GardenRepository } from '../repository/GardenRepository';
+import { LIMITE_UMIDADE_PADRAO, TEMPERATURA_IDEAL_PADRAO, LUMINOSIDADE_IDEAL_PADRAO, calcularFrequenciaRega, calcularStatus, precisaRegar, } from '../utils/PlantBusinessUtils';
 
 const gardenRepository = new GardenRepository();
-
-const FREQUENCIA_REGA_BASE: Record<TipoPlanta, number> = {
-  tropical: 2,
-  interior: 3,
-  exterior: 4,
-  suculenta: 14,
-  aquatica: 1,
-};
-
-const LIMITE_UMIDADE_PADRAO: Record<TipoPlanta, number> = {
-  tropical: 60,
-  interior: 40,
-  exterior: 35,
-  suculenta: 20,
-  aquatica: 80,
-};
 
 export class GardenBusiness {
 
@@ -26,32 +11,39 @@ export class GardenBusiness {
     return gardenRepository.getPlantas();
   }
 
+  async getPlanta(id: string): Promise<Plant | null> {
+    return gardenRepository.getPlanta(id);
+  }
+
   async cadastrarPlanta(
     planta: Omit<Plant, 'id' | 'statusSaude' | 'ultimaRega'>,
-    imagemUri?: string
+    imagemBase64?: string,
+    ultimaRega?: string
   ): Promise<Plant> {
-    return gardenRepository.adicionarPlanta(planta, imagemUri);
+    return gardenRepository.adicionarPlanta(planta, imagemBase64, ultimaRega);
   }
 
   async toggleFavorita(id: string, valor: boolean): Promise<void> {
     return gardenRepository.atualizarFavorita(id, valor);
   }
+
+  async registrarRega(planta: Plant, sensorData: SensorData | null): Promise<void> {
+    const novoStatus = calcularStatus(planta, sensorData);
+    return gardenRepository.registrarRega(planta.id, novoStatus);
+  }
+
   calcularFrequenciaRega(tipo: TipoPlanta, temperatura?: number): number {
-    let dias = FREQUENCIA_REGA_BASE[tipo];
-    if (temperatura && temperatura > 30) {
-      dias = Math.max(1, Math.floor(dias / 2));
-    }
-    return dias;
+    return calcularFrequenciaRega(tipo, temperatura);
   }
+
+  calcularStatus(planta: Plant, sensorData: SensorData | null): Plant['statusSaude'] {
+    return calcularStatus(planta, sensorData);
+  }
+
   precisaRegar(planta: Plant, sensorData: SensorData): boolean {
-    const hoje = new Date();
-    const ultimaRega = new Date(planta.ultimaRega);
-    const diasSemRegar = Math.floor(
-      (hoje.getTime() - ultimaRega.getTime()) / (1000 * 60 * 60 * 24)
-    );
-    const frequencia = this.calcularFrequenciaRega(planta.tipo, sensorData.temperatura);
-    return diasSemRegar >= frequencia || sensorData.umidade < planta.limiteUmidade;
+    return precisaRegar(planta, sensorData);
   }
+
   verificarAlertas(plantas: Plant[], sensorData: SensorData, limites?: {
     temperaturaMax: number;
     umidadeMin: number;
@@ -87,5 +79,13 @@ export class GardenBusiness {
 
   getLimiteUmidadePadrao(tipo: TipoPlanta): number {
     return LIMITE_UMIDADE_PADRAO[tipo];
+  }
+
+  getSugestoesTipo(tipo: TipoPlanta) {
+    return {
+      umidade: LIMITE_UMIDADE_PADRAO[tipo],
+      temperatura: TEMPERATURA_IDEAL_PADRAO[tipo],
+      luminosidade: LUMINOSIDADE_IDEAL_PADRAO[tipo],
+    };
   }
 }

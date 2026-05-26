@@ -71,7 +71,7 @@ export class EditProfileBusiness {
       bio: dados.bio.trim(),
     });
   }
-  async uploadFoto(imagemUri: string): Promise<string> {
-    return profileRepository.uploadFoto(imagemUri);
+  async uploadFoto(base64: string): Promise<string> {
+    return profileRepository.uploadFoto(base64);
   }
 }

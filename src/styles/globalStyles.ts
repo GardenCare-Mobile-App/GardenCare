@@ -16,6 +16,9 @@ export const COLORS = {
   border: "#E8F5E9",
   attention: "#F4A261",
   critical: "#FF5252",
+  fundoCampo: "#2f732d65",
+  iconesCampo: "#e0e7b9",
+  textosCampo: "#e0e7b9"
 };
 
 export const SIZES = {

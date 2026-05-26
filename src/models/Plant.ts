@@ -7,6 +7,8 @@ export interface Plant {
   imagemUrl?: string;
   tipo: TipoPlanta;
   limiteUmidade: number;
+  limiteTemperatura?: number;
+  limiteLuminosidade?: number;
   observacoes: string;
   ultimaRega: string;
   statusSaude: 'saudavel' | 'atencao' | 'critico';
