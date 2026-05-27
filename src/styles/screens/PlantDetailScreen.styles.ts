@@ -306,6 +306,24 @@ export const createStyles = (cores: Cores, escuro: boolean) =>
       lineHeight: 20,
     },
 
+    excluirButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 8,
+      marginHorizontal: SIZES.padding,
+      marginTop: 8,
+      paddingVertical: 14,
+      borderRadius: SIZES.radius,
+      borderWidth: 1.5,
+      borderColor: cores.error,
+    },
+    excluirButtonTexto: {
+      fontSize: SIZES.fontBody,
+      fontWeight: '600',
+      color: cores.error,
+    },
+
     bottomPadding: {
       height: SIZES.padding,
     },

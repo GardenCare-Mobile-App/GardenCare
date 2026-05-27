@@ -1,4 +1,4 @@
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { ref, get } from 'firebase/database';
 import { db, database } from '../business/firebaseConfig';
 import { Plant } from '../models/Plant';
@@ -37,5 +37,9 @@ export class PlantDetailRepository {
 
   async registrarRega(id: string, ultimaRega: string, novoStatus: Plant['statusSaude']): Promise<void> {
     await updateDoc(doc(db, 'Plantas', id), { ultimaRega, statusSaude: novoStatus });
+  }
+
+  async deletarPlanta(id: string): Promise<void> {
+    await deleteDoc(doc(db, 'Plantas', id));
   }
 }

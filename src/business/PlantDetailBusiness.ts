@@ -45,4 +45,8 @@ export class PlantDetailBusiness {
   calcularUmidadePorcentagem(sensorData: SensorData, planta: Plant): number {
     return calcularUmidadePorcentagem(sensorData, planta);
   }
+
+  async deletarPlanta(id: string): Promise<void> {
+    return repository.deletarPlanta(id);
+  }
 }
