@@ -1,15 +1,15 @@
-import { collection, addDoc, getDocs, getDoc, updateDoc, doc, deleteDoc } from 'firebase/firestore';
-import { db } from '../business/firebaseConfig';
+import { collection, addDoc, getDocs, getDoc, updateDoc, doc, deleteDoc, query, where } from 'firebase/firestore';
+import { auth, db } from '../business/firebaseConfig';
 import { Plant } from '../models/Plant';
 
 export class GardenRepository {
 
   async getPlantas(): Promise<Plant[]> {
-    const snapshot = await getDocs(collection(db, 'Plantas'));
-    return snapshot.docs.map((d) => ({
-      id: d.id,
-      ...d.data(),
-    })) as Plant[];
+    const uid = auth.currentUser?.uid;
+    if (!uid) return [];
+    const q = query(collection(db, 'Plantas'), where('uid', '==', uid));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((d) => ({ id: d.id, ...d.data() })) as Plant[];
   }
 
   async adicionarPlanta(
@@ -17,9 +17,12 @@ export class GardenRepository {
     imagemBase64?: string,
     ultimaRega?: string
   ): Promise<Plant> {
+    const uid = auth.currentUser?.uid;
+    if (!uid) throw new Error('Usuário não autenticado.');
     const imagemUrl = imagemBase64 ? `data:image/jpeg;base64,${imagemBase64}` : null;
     const novaPlanta = {
       ...planta,
+      uid,
       imagemUrl,
       statusSaude: 'saudavel',
       ultimaRega: ultimaRega ?? new Date().toISOString().split('T')[0],

@@ -1,5 +1,5 @@
 import { doc, getDoc, updateDoc, collection, query, where, getDocs, deleteDoc } from 'firebase/firestore';
-import { deleteUser } from 'firebase/auth';
+import { deleteUser, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
 import { auth, db } from '../business/firebaseConfig';
 import { PerfilUsuario } from '../models/User';
 
@@ -57,18 +57,23 @@ export class ProfileRepository {
     await updateDoc(doc(db, 'Usuarios', uid), { fotoURL: dataUri });
     return dataUri;
   }
+  async reautenticar(senha: string): Promise<void> {
+    const user = auth.currentUser;
+    if (!user || !user.email) throw new Error('Usuário não autenticado.');
+    const credencial = EmailAuthProvider.credential(user.email, senha);
+    await reauthenticateWithCredential(user, credencial);
+  }
+
   async excluirConta(): Promise<void> {
-    const uid = auth.currentUser?.uid;
-    if (!uid) throw new Error('Usuário não autenticado.');
+    const user = auth.currentUser;
+    if (!user) throw new Error('Usuário não autenticado.');
+    const uid = user.uid;
 
-    const plantasSnap = await getDocs(collection(db, 'Plantas'));
-    const deletarPlantas = plantasSnap.docs.map((d) =>
-      deleteDoc(doc(db, 'Plantas', d.id))
-    );
-    await Promise.all(deletarPlantas);
-  
+    // Auth primeiro — se falhar, Firestore não é tocado
+    await deleteUser(user);
+
+    const plantasSnap = await getDocs(query(collection(db, 'Plantas'), where('uid', '==', uid)));
+    await Promise.all(plantasSnap.docs.map((d) => deleteDoc(doc(db, 'Plantas', d.id))));
     await deleteDoc(doc(db, 'Usuarios', uid));
-
-    await deleteUser(auth.currentUser!);
   }
 }

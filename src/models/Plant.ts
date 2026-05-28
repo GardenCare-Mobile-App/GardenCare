@@ -2,6 +2,7 @@ export type TipoPlanta = 'tropical' | 'exterior' | 'interior' | 'suculenta' | 'a
 
 export interface Plant {
   id: string;
+  uid: string;
   nome: string;
   especie: string;
   imagemUrl?: string;

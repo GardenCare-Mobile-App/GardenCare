@@ -224,20 +224,20 @@ export default function MyGardenScreen() {
 
         {!modoSelecao && sensorData && (
           <View style={styles.sensoresContainer}>
-            <View style={[styles.sensorCard, { backgroundColor: '#EAF3DE' }]}>
-              <Ionicons name="water-outline" size={20} color="#3B6D11" />
-              <Text style={[styles.sensorValor, { color: '#27500A' }]}>{sensorData.umidade}%</Text>
-              <Text style={[styles.sensorLabel, { color: '#3B6D11' }]}>Umidade</Text>
+            <View style={[styles.sensorCard, { backgroundColor: '#3B6D11' }]}>
+              <Ionicons name="water-outline" size={20} color="#EAF3DE" />
+              <Text style={[styles.sensorValor, { color: '#EAF3DE' }]}>{sensorData.umidade}%</Text>
+              <Text style={[styles.sensorLabel, { color: '#EAF3DE' }]}>Umidade</Text>
             </View>
-            <View style={[styles.sensorCard, { backgroundColor: '#FFF8E1' }]}>
-              <Ionicons name="thermometer-outline" size={20} color="#854F0B" />
-              <Text style={[styles.sensorValor, { color: '#633806' }]}>{sensorData.temperatura}°C</Text>
-              <Text style={[styles.sensorLabel, { color: '#854F0B' }]}>Temperatura</Text>
+            <View style={[styles.sensorCard, { backgroundColor: '#854F0B' }]}>
+              <Ionicons name="thermometer-outline" size={20} color="#FFF8E1" />
+              <Text style={[styles.sensorValor, { color: '#FFF8E1' }]}>{sensorData.temperatura}°C</Text>
+              <Text style={[styles.sensorLabel, { color: '#FFF8E1' }]}>Temperatura</Text>
             </View>
-            <View style={[styles.sensorCard, { backgroundColor: '#FFF3E0' }]}>
-              <Ionicons name="sunny-outline" size={20} color="#BA7517" />
-              <Text style={[styles.sensorValor, { color: '#412402' }]}>{sensorData.luminosidade} lx</Text>
-              <Text style={[styles.sensorLabel, { color: '#BA7517' }]}>Luminosidade</Text>
+            <View style={[styles.sensorCard, { backgroundColor: '#BA7517' }]}>
+              <Ionicons name="sunny-outline" size={20} color="#FFF3E0" />
+              <Text style={[styles.sensorValor, { color: '#FFF3E0' }]}>{sensorData.luminosidade} lx</Text>
+              <Text style={[styles.sensorLabel, { color: '#FFF3E0' }]}>Luminosidade</Text>
             </View>
           </View>
         )}
