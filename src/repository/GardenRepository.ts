@@ -1,4 +1,4 @@
-import { collection, addDoc, getDocs, getDoc, updateDoc, doc } from 'firebase/firestore';
+import { collection, addDoc, getDocs, getDoc, updateDoc, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../business/firebaseConfig';
 import { Plant } from '../models/Plant';
 
@@ -43,5 +43,9 @@ export class GardenRepository {
       ultimaRega: new Date().toISOString().split('T')[0],
       statusSaude: novoStatus,
     });
+  }
+
+  async deletarPlanta(id: string): Promise<void> {
+    await deleteDoc(doc(db, 'Plantas', id));
   }
 }

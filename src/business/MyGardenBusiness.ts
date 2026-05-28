@@ -27,6 +27,10 @@ export class GardenBusiness {
     return gardenRepository.atualizarFavorita(id, valor);
   }
 
+  async deletarPlanta(id: string): Promise<void> {
+    return gardenRepository.deletarPlanta(id);
+  }
+
   async registrarRega(planta: Plant, sensorData: SensorData | null): Promise<void> {
     const novoStatus = calcularStatus(planta, sensorData);
     return gardenRepository.registrarRega(planta.id, novoStatus);

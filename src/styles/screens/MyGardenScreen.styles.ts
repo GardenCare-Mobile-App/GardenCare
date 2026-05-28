@@ -226,4 +226,92 @@ export const styles = StyleSheet.create({
     color: COLORS.white,
     fontWeight: 'bold',
   },
+
+  // Sort chips
+  ordenacaoRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: SIZES.radius,
+  },
+  chipOrdenacao: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: SIZES.radiusLarge,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.cardBackground,
+  },
+  chipOrdenacaoAtivo: {
+    backgroundColor: COLORS.primary,
+    borderColor: COLORS.primary,
+  },
+  chipOrdenacaoTexto: {
+    fontSize: SIZES.fontSmall,
+    color: COLORS.textSecondary,
+    fontWeight: '600',
+  },
+  chipOrdenacaoTextoAtivo: {
+    color: COLORS.white,
+  },
+
+  // Selection mode
+  plantaCardSelecionada: {
+    borderWidth: 2,
+    borderColor: COLORS.error,
+  },
+  checkbox: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 2,
+    borderColor: COLORS.textSecondary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkboxSelecionado: {
+    backgroundColor: COLORS.error,
+    borderColor: COLORS.error,
+  },
+  selecaoBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: SIZES.radius,
+  },
+  selecionarTudoTexto: {
+    fontSize: SIZES.fontSmall,
+    color: COLORS.verdeEscuro,
+    fontWeight: 'bold',
+  },
+  contadorSelecao: {
+    fontSize: SIZES.fontSmall,
+    color: COLORS.textSecondary,
+  },
+  cancelarTexto: {
+    fontSize: SIZES.fontBody,
+    color: COLORS.amareloMuitoClaro,
+    fontWeight: 'bold',
+  },
+  excluirButton: {
+    backgroundColor: COLORS.error,
+    marginHorizontal: SIZES.padding,
+    marginBottom: SIZES.padding,
+    borderRadius: SIZES.radiusLarge,
+    paddingVertical: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  excluirButtonDisabled: {
+    opacity: 0.4,
+  },
+  excluirButtonTexto: {
+    fontSize: SIZES.fontBody,
+    fontWeight: 'bold',
+    color: COLORS.white,
+  },
 });
