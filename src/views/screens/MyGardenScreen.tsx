@@ -15,8 +15,9 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useGardenViewModel, Ordenacao } from '../../viewmodels/GardenViewModel';
 import { Plant } from '../../models/Plant';
 import { getStatusColor, getStatusLabel, diasDesdeRega } from '../../utils/PlantUtils';
-import { styles } from '../../styles/screens/MyGardenScreen.styles';
-import { COLORS } from '../../styles/globalStyles';
+import { createStyles } from '../../styles/screens/MyGardenScreen.styles';
+import { useTheme } from '../../context/Themecontext';
+import { Cores } from '../../styles/ThemeStyles';
 
 type RootStackParamList = {
   Profile: undefined;
@@ -26,6 +27,8 @@ type RootStackParamList = {
 };
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'MyGarden'>;
+
+type Styles = ReturnType<typeof createStyles>;
 
 const CHIPS: { label: string; valor: Ordenacao; icone: string }[] = [
   { label: 'A → Z',    valor: 'nome_asc',       icone: 'text-outline' },
@@ -37,10 +40,14 @@ function ChipOrdenacao({
   chip,
   ativo,
   onPress,
+  styles,
+  cores,
 }: {
   chip: typeof CHIPS[number];
   ativo: boolean;
   onPress: () => void;
+  styles: Styles;
+  cores: Cores;
 }) {
   return (
     <Pressable
@@ -50,7 +57,7 @@ function ChipOrdenacao({
       <Ionicons
         name={chip.icone as any}
         size={12}
-        color={ativo ? COLORS.white : COLORS.textSecondary}
+        color={ativo ? cores.white : cores.textSecondary}
       />
       <Text style={[styles.chipOrdenacaoTexto, ativo && styles.chipOrdenacaoTextoAtivo]}>
         {chip.label}
@@ -66,6 +73,8 @@ function PlantaCard({
   modoSelecao,
   selecionada,
   onToggleSelecao,
+  styles,
+  cores,
 }: {
   planta: Plant;
   onToggleFavorita: (id: string, valor: boolean) => void;
@@ -73,6 +82,8 @@ function PlantaCard({
   modoSelecao: boolean;
   selecionada: boolean;
   onToggleSelecao: (id: string) => void;
+  styles: Styles;
+  cores: Cores;
 }) {
   return (
     <Pressable
@@ -81,7 +92,7 @@ function PlantaCard({
     >
       {modoSelecao && (
         <View style={[styles.checkbox, selecionada && styles.checkboxSelecionado]}>
-          {selecionada && <Ionicons name="checkmark" size={14} color={COLORS.white} />}
+          {selecionada && <Ionicons name="checkmark" size={14} color={cores.white} />}
         </View>
       )}
 
@@ -89,7 +100,7 @@ function PlantaCard({
         <Image source={{ uri: planta.imagemUrl }} style={styles.plantaImagem} />
       ) : (
         <View style={styles.plantaImagemFallback}>
-          <Ionicons name="leaf-outline" size={24} color={COLORS.white} />
+          <Ionicons name="leaf-outline" size={24} color={cores.white} />
         </View>
       )}
 
@@ -111,10 +122,10 @@ function PlantaCard({
             <Ionicons
               name={planta.favorita ? 'heart' : 'heart-outline'}
               size={20}
-              color={planta.favorita ? COLORS.error : COLORS.textSecondary}
+              color={planta.favorita ? cores.error : cores.textSecondary}
             />
           </Pressable>
-          <Ionicons name="chevron-forward" size={18} color={COLORS.textSecondary} />
+          <Ionicons name="chevron-forward" size={18} color={cores.textSecondary} />
         </>
       )}
     </Pressable>
@@ -123,6 +134,9 @@ function PlantaCard({
 
 export default function MyGardenScreen() {
   const navigation = useNavigation<NavigationProp>();
+  const { cores } = useTheme();
+  const styles = createStyles(cores);
+
   const {
     plantas,
     sensorData,
@@ -166,7 +180,7 @@ export default function MyGardenScreen() {
   if (loading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
+        <ActivityIndicator size="large" color={cores.primary} />
       </View>
     );
   }
@@ -201,13 +215,13 @@ export default function MyGardenScreen() {
           ) : (
             <>
               <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
-                <Ionicons name="arrow-back" size={24} color={COLORS.white} />
+                <Ionicons name="arrow-back" size={24} color={cores.white} />
               </Pressable>
               <Text style={styles.headerTitle}>Meu Jardim</Text>
               <View style={styles.arduinobadge}>
                 <View style={[
                   styles.arduinoDot,
-                  { backgroundColor: sensorData?.arduinoOnline ? COLORS.verdeClaro : COLORS.error },
+                  { backgroundColor: sensorData?.arduinoOnline ? cores.verdeClaro : cores.error },
                 ]} />
                 <Text style={styles.arduinoText}>
                   {sensorData?.arduinoOnline ? 'Online' : 'Offline'}
@@ -215,7 +229,7 @@ export default function MyGardenScreen() {
               </View>
               {plantas.length > 0 && (
                 <Pressable onPress={entrarModoSelecao} style={{ padding: 4 }}>
-                  <Ionicons name="trash-outline" size={22} color={COLORS.white} />
+                  <Ionicons name="trash-outline" size={22} color={cores.white} />
                 </Pressable>
               )}
             </>
@@ -254,17 +268,17 @@ export default function MyGardenScreen() {
             <Text style={styles.plantasSectionTitle}>Plantas</Text>
             {!modoSelecao && (
               <View style={styles.plantasResumo}>
-                <View style={[styles.resumoDot, { backgroundColor: COLORS.verdeClaro }]} />
+                <View style={[styles.resumoDot, { backgroundColor: cores.verdeClaro }]} />
                 <Text style={styles.resumoTexto}>{totalSaudaveis} saudáveis</Text>
                 {totalAtencao > 0 && (
                   <>
-                    <View style={[styles.resumoDot, { backgroundColor: COLORS.attention }]} />
+                    <View style={[styles.resumoDot, { backgroundColor: cores.attention }]} />
                     <Text style={styles.resumoTexto}>{totalAtencao} atenção</Text>
                   </>
                 )}
                 {totalCritico > 0 && (
                   <>
-                    <View style={[styles.resumoDot, { backgroundColor: COLORS.critical }]} />
+                    <View style={[styles.resumoDot, { backgroundColor: cores.critical }]} />
                     <Text style={styles.resumoTexto}>{totalCritico} crítico</Text>
                   </>
                 )}
@@ -285,6 +299,8 @@ export default function MyGardenScreen() {
                   chip={chip}
                   ativo={ordenacao === chip.valor}
                   onPress={() => mudarOrdenacao(chip.valor)}
+                  styles={styles}
+                  cores={cores}
                 />
               ))}
             </ScrollView>
@@ -312,6 +328,8 @@ export default function MyGardenScreen() {
               modoSelecao={modoSelecao}
               selecionada={selecionadas.includes(planta.id)}
               onToggleSelecao={toggleSelecao}
+              styles={styles}
+              cores={cores}
             />
           ))}
         </View>
@@ -322,7 +340,7 @@ export default function MyGardenScreen() {
             onPress={confirmarExclusao}
             disabled={selecionadas.length === 0}
           >
-            <Ionicons name="trash-outline" size={20} color={COLORS.white} />
+            <Ionicons name="trash-outline" size={20} color={cores.white} />
             <Text style={styles.excluirButtonTexto}>
               {selecionadas.length > 0
                 ? `Excluir ${selecionadas.length} planta${selecionadas.length > 1 ? 's' : ''}`
@@ -334,7 +352,7 @@ export default function MyGardenScreen() {
             style={styles.adicionarButton}
             onPress={() => navigation.navigate('CadastroPlanta')}
           >
-            <Ionicons name="add-circle-outline" size={20} color={COLORS.white} />
+            <Ionicons name="add-circle-outline" size={20} color={cores.white} />
             <Text style={styles.adicionarButtonTexto}>Adicionar planta</Text>
           </Pressable>
         )}

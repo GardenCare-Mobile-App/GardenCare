@@ -19,8 +19,8 @@ import { PRONOMES_VALIDOS } from '../../business/EditProfilebusiness';
 import { AvatarPerfil } from '../components/AvatarPerfil';
 import { PhotoPickerModal } from '../components/PhotoPickerModal';
 import { ValidationRules } from '../components/InputValidationRules';
-import { styles } from '../../styles/screens/EditProfileScreen.styles';
-import { COLORS } from '../../styles/globalStyles';
+import { createStyles } from '../../styles/screens/EditProfileScreen.styles';
+import { useTheme } from '../../context/Themecontext';
 
 type RootStackParamList = {
   Profile: undefined;
@@ -33,6 +33,8 @@ type RoutePropType = RouteProp<RootStackParamList, 'EditarPerfil'>;
 export default function EditarPerfilScreen() {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RoutePropType>();
+  const { cores } = useTheme();
+  const styles = createStyles(cores);
   const { perfil } = route.params;
 
   const {
@@ -79,7 +81,7 @@ export default function EditarPerfilScreen() {
 
           <View style={styles.header}>
             <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
-              <Ionicons name="arrow-back" size={24} color={COLORS.white} />
+              <Ionicons name="arrow-back" size={24} color={cores.white} />
             </Pressable>
             <Text style={styles.headerTitle}>Editar Perfil</Text>
           </View>
@@ -88,7 +90,7 @@ export default function EditarPerfilScreen() {
             <Pressable style={styles.fotoWrapper} onPress={abrirModal}>
               <AvatarPerfil fotoURL={fotoUri} nome={nome} />
               <View style={styles.cameraButton}>
-                <Ionicons name="camera" size={14} color={COLORS.white} />
+                <Ionicons name="camera" size={14} color={cores.white} />
               </View>
             </Pressable>
             <Text style={styles.fotoLabel}>Toque para alterar a foto</Text>
@@ -109,7 +111,7 @@ export default function EditarPerfilScreen() {
                 value={nome}
                 onChangeText={setNome}
                 placeholder="Seu nome"
-                placeholderTextColor={COLORS.textPLaceholder}
+                placeholderTextColor={cores.textPLaceholder}
               />
               <ValidationRules regras={regrasNome} tocado={nomeTocado} />
             </View>
@@ -121,7 +123,7 @@ export default function EditarPerfilScreen() {
                 value={pronomes}
                 onChangeText={setPronomes}
                 placeholder={PRONOMES_VALIDOS.join(' ou ')}
-                placeholderTextColor={COLORS.textPLaceholder}
+                placeholderTextColor={cores.textPLaceholder}
               />
               <ValidationRules regras={regrasPronomes} tocado={pronomesTocado} />
             </View>
@@ -133,7 +135,7 @@ export default function EditarPerfilScreen() {
                 value={bio}
                 onChangeText={setBio}
                 placeholder="Fale um pouco sobre você..."
-                placeholderTextColor={COLORS.textPLaceholder}
+                placeholderTextColor={cores.textPLaceholder}
                 multiline
                 maxLength={limiteBio}
               />
@@ -159,7 +161,7 @@ export default function EditarPerfilScreen() {
             disabled={salvando || !formularioValido}
           >
             {salvando ? (
-              <ActivityIndicator color={COLORS.white} />
+              <ActivityIndicator color={cores.white} />
             ) : (
               <Text style={styles.salvarButtonTexto}>Salvar alterações</Text>
             )}

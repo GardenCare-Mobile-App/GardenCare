@@ -3,7 +3,7 @@ import { RegraValidacao } from '../models/RegraValidacao';
 
 export { RegraValidacao };
 
-export const PRONOMES_VALIDOS = ['ele/dele', 'ela/dela', 'prefiro não dizer'];
+export const PRONOMES_VALIDOS = ['ele/dele', 'ela/dela', 'elu/delu', 'prefiro não dizer'];
 
 const profileRepository = new ProfileRepository();
 
@@ -32,7 +32,7 @@ export class EditProfileBusiness {
         valida: pronomes.trim().length > 0,
       },
       {
-        mensagem: `Apenas: ele/dele, ela/dela ou prefiro não dizer`,
+        mensagem: `Apenas: ele/dele, ela/dela, elu/delu ou prefiro não dizer`,
         valida: PRONOMES_VALIDOS.includes(pronomeNormalizado),
       },
     ];
