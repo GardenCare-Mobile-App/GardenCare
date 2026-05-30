@@ -184,10 +184,10 @@ export default function PlantDetailScreen() {
             <View style={styles.arduinoRow}>
               <View style={[
                 styles.arduinoDot,
-                { backgroundColor: sensorData.arduinoOnline ? cores.verdeClaro : cores.error },
+                { backgroundColor: sensorData.esp32Online ? cores.verdeClaro : cores.error },
               ]} />
               <Text style={styles.arduinoText}>
-                Arduino {sensorData.arduinoOnline ? 'online' : 'offline'}
+                ESP32 {sensorData.esp32Online ? 'online' : 'offline'}
               </Text>
             </View>
 
@@ -211,7 +211,7 @@ export default function PlantDetailScreen() {
 
             <View style={styles.umidadeBarContainer}>
               <View style={styles.umidadeBarLabelRow}>
-                <Text style={styles.umidadeBarLabelTexto}>Solo vs. mínimo da planta</Text>
+                <Text style={styles.umidadeBarLabelTexto}>Ar vs. mínimo da planta</Text>
                 <Text style={styles.umidadeBarPorcentagem}>
                   {sensorData.umidade}% / {planta.limiteUmidade}%
                 </Text>

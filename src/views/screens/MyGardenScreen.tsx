@@ -221,10 +221,10 @@ export default function MyGardenScreen() {
               <View style={styles.arduinobadge}>
                 <View style={[
                   styles.arduinoDot,
-                  { backgroundColor: sensorData?.arduinoOnline ? cores.verdeClaro : cores.error },
+                  { backgroundColor: sensorData?.esp32Online ? cores.verdeClaro : cores.error },
                 ]} />
                 <Text style={styles.arduinoText}>
-                  {sensorData?.arduinoOnline ? 'Online' : 'Offline'}
+                  {sensorData?.esp32Online ? 'Online' : 'Offline'}
                 </Text>
               </View>
               {plantas.length > 0 && (

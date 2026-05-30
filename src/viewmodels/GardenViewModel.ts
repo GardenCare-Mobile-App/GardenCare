@@ -3,11 +3,11 @@ import { useFocusEffect } from '@react-navigation/native';
 import { Plant } from '../models/Plant';
 import { SensorData } from '../models/SensorData';
 import { GardenBusiness } from '../business/MyGardenBusiness';
-import { ArduinoBusiness } from '../business/ArduinoBusiness';
+import { ESP32Business } from '../business/ESP32Business';
 import { SensorLimitesBusiness } from '../business/SensorLimitesBusiness';
 
 const gardenBusiness = new GardenBusiness();
-const arduinoBusiness = new ArduinoBusiness();
+const esp32Business = new ESP32Business();
 const sensorLimitesBusiness = new SensorLimitesBusiness();
 
 export type Ordenacao = 'nome_asc' | 'status_critico' | 'status_saudavel';
@@ -143,7 +143,7 @@ export function useGardenViewModel() {
     try {
       const [dadosPlantas, dadosSensor, limites] = await Promise.all([
         gardenBusiness.getPlants(),
-        arduinoBusiness.getSensorData(),
+        esp32Business.getSensorData(),
         sensorLimitesBusiness.getLimites(),
       ]);
       const alertas = gardenBusiness.verificarAlertas(dadosPlantas, dadosSensor, limites);
