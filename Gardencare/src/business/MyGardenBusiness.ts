@@ -1,12 +1,7 @@
 import { Plant, TipoPlanta } from '../models/Plant';
 import { SensorData } from '../models/SensorData';
 import { GardenRepository } from '../repository/GardenRepository';
-import {
-  LIMITE_UMIDADE_PADRAO,
-  calcularFrequenciaRega,
-  calcularStatus,
-  precisaRegar,
-} from '../utils/PlantBusinessUtils';
+import { LIMITE_UMIDADE_PADRAO, TEMPERATURA_IDEAL_PADRAO, LUMINOSIDADE_IDEAL_PADRAO, calcularFrequenciaRega, calcularStatus, precisaRegar, } from '../utils/PlantBusinessUtils';
 
 const gardenRepository = new GardenRepository();
 
@@ -22,13 +17,18 @@ export class GardenBusiness {
 
   async cadastrarPlanta(
     planta: Omit<Plant, 'id' | 'statusSaude' | 'ultimaRega'>,
-    imagemUri?: string
+    imagemBase64?: string,
+    ultimaRega?: string
   ): Promise<Plant> {
-    return gardenRepository.adicionarPlanta(planta, imagemUri);
+    return gardenRepository.adicionarPlanta(planta, imagemBase64, ultimaRega);
   }
 
   async toggleFavorita(id: string, valor: boolean): Promise<void> {
     return gardenRepository.atualizarFavorita(id, valor);
+  }
+
+  async deletarPlanta(id: string): Promise<void> {
+    return gardenRepository.deletarPlanta(id);
   }
 
   async registrarRega(planta: Plant, sensorData: SensorData | null): Promise<void> {
@@ -83,5 +83,13 @@ export class GardenBusiness {
 
   getLimiteUmidadePadrao(tipo: TipoPlanta): number {
     return LIMITE_UMIDADE_PADRAO[tipo];
+  }
+
+  getSugestoesTipo(tipo: TipoPlanta) {
+    return {
+      umidade: LIMITE_UMIDADE_PADRAO[tipo],
+      temperatura: TEMPERATURA_IDEAL_PADRAO[tipo],
+      luminosidade: LUMINOSIDADE_IDEAL_PADRAO[tipo],
+    };
   }
 }

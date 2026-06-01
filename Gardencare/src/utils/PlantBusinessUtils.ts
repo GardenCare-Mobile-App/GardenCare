@@ -17,6 +17,22 @@ export const LIMITE_UMIDADE_PADRAO: Record<TipoPlanta, number> = {
   aquatica: 80,
 };
 
+export const TEMPERATURA_IDEAL_PADRAO: Record<TipoPlanta, { min: number; max: number }> = {
+  tropical:  { min: 18, max: 30 },
+  interior:  { min: 15, max: 27 },
+  exterior:  { min: 5,  max: 38 },
+  suculenta: { min: 15, max: 40 },
+  aquatica:  { min: 20, max: 30 },
+};
+
+export const LUMINOSIDADE_IDEAL_PADRAO: Record<TipoPlanta, number> = {
+  tropical:  800,
+  interior:  300,
+  exterior:  5000,
+  suculenta: 3000,
+  aquatica:  500,
+};
+
 export function calcularFrequenciaRega(tipo: TipoPlanta, temperatura?: number): number {
   let dias = FREQUENCIA_REGA_BASE[tipo];
   if (temperatura && temperatura > 30) {

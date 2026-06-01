@@ -1,31 +1,31 @@
-import { collection, addDoc, getDocs, getDoc, updateDoc, doc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '../business/firebaseConfig';
+import { collection, addDoc, getDocs, getDoc, updateDoc, doc, deleteDoc, query, where } from 'firebase/firestore';
+import { auth, db } from '../business/firebaseConfig';
 import { Plant } from '../models/Plant';
 
 export class GardenRepository {
 
   async getPlantas(): Promise<Plant[]> {
-    const snapshot = await getDocs(collection(db, 'Plantas'));
-    return snapshot.docs.map((d) => ({
-      id: d.id,
-      ...d.data(),
-    })) as Plant[];
+    const uid = auth.currentUser?.uid;
+    if (!uid) return [];
+    const q = query(collection(db, 'Plantas'), where('uid', '==', uid));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((d) => ({ id: d.id, ...d.data() })) as Plant[];
   }
 
   async adicionarPlanta(
     planta: Omit<Plant, 'id' | 'statusSaude' | 'ultimaRega'>,
-    imagemUri?: string
+    imagemBase64?: string,
+    ultimaRega?: string
   ): Promise<Plant> {
-    let imagemUrl: string | undefined = undefined;
-    if (imagemUri) {
-      imagemUrl = await this.uploadImagemPlanta(imagemUri);
-    }
+    const uid = auth.currentUser?.uid;
+    if (!uid) throw new Error('Usuário não autenticado.');
+    const imagemUrl = imagemBase64 ? `data:image/jpeg;base64,${imagemBase64}` : null;
     const novaPlanta = {
       ...planta,
+      uid,
       imagemUrl,
       statusSaude: 'saudavel',
-      ultimaRega: new Date().toISOString().split('T')[0],
+      ultimaRega: ultimaRega ?? new Date().toISOString().split('T')[0],
     };
     const docRef = await addDoc(collection(db, 'Plantas'), novaPlanta);
     return { id: docRef.id, ...novaPlanta } as Plant;
@@ -48,11 +48,7 @@ export class GardenRepository {
     });
   }
 
-  private async uploadImagemPlanta(imagemUri: string): Promise<string> {
-    const response = await fetch(imagemUri);
-    const blob = await response.blob();
-    const storageRef = ref(storage, `plantas/${Date.now()}.jpg`);
-    await uploadBytes(storageRef, blob);
-    return await getDownloadURL(storageRef);
+  async deletarPlanta(id: string): Promise<void> {
+    await deleteDoc(doc(db, 'Plantas', id));
   }
 }
