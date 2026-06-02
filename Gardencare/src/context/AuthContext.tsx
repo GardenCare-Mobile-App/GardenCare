@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
+import { auth } from '../business/firebaseConfig';
 import { PerfilUsuario } from '../models/User';
 
 const CHAVE_USUARIO = '@gardencare:usuario';
@@ -28,32 +30,20 @@ const estadoInicial: AuthState = {
   estaLogado: false,
   carregando: true,
 };
+
 function authReducer(state: AuthState, action: AuthAction): AuthState {
   switch (action.type) {
     case 'CARREGAR_INICIO':
       return { ...state, carregando: true };
 
     case 'LOGIN_SUCESSO':
-      return {
-        ...state,
-        usuario: action.usuario,
-        estaLogado: true,
-        carregando: false,
-      };
+      return { ...state, usuario: action.usuario, estaLogado: true, carregando: false };
 
     case 'LOGOUT':
-      return {
-        ...state,
-        usuario: null,
-        estaLogado: false,
-        carregando: false,
-      };
+      return { ...state, usuario: null, estaLogado: false, carregando: false };
 
     case 'ATUALIZAR_PERFIL':
-      return {
-        ...state,
-        usuario: action.usuario,
-      };
+      return { ...state, usuario: action.usuario };
 
     default:
       return state;
@@ -66,25 +56,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(authReducer, estadoInicial);
 
   useEffect(() => {
-    carregarSessao();
-  }, []);
-
-  async function carregarSessao() {
-    dispatch({ type: 'CARREGAR_INICIO' });
-    try {
-      const logado = await AsyncStorage.getItem(CHAVE_LOGADO);
-      const usuarioSalvo = await AsyncStorage.getItem(CHAVE_USUARIO);
-
-      if (logado === 'true' && usuarioSalvo) {
-        const usuario: PerfilUsuario = JSON.parse(usuarioSalvo);
-        dispatch({ type: 'LOGIN_SUCESSO', usuario });
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        const usuarioSalvo = await AsyncStorage.getItem(CHAVE_USUARIO);
+        if (usuarioSalvo) {
+          dispatch({ type: 'LOGIN_SUCESSO', usuario: JSON.parse(usuarioSalvo) });
+        }
       } else {
+        await AsyncStorage.multiRemove([CHAVE_LOGADO, CHAVE_USUARIO]);
         dispatch({ type: 'LOGOUT' });
       }
-    } catch (e) {
-      dispatch({ type: 'LOGOUT' });
-    }
-  }
+    });
+
+    return unsubscribe;
+  }, []);
 
   async function login(usuario: PerfilUsuario) {
     await AsyncStorage.setItem(CHAVE_LOGADO, 'true');
@@ -93,9 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   async function logout() {
-    await AsyncStorage.removeItem(CHAVE_LOGADO);
-    await AsyncStorage.removeItem(CHAVE_USUARIO);
-    dispatch({ type: 'LOGOUT' });
+    await firebaseSignOut(auth);
   }
 
   async function atualizarPerfil(usuario: PerfilUsuario) {
@@ -109,6 +92,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     </AuthContext.Provider>
   );
 }
+
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {

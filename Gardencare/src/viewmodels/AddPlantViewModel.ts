@@ -159,7 +159,6 @@ export function useAddPlantViewModel() {
           limiteLuminosidade: limiteLuminosidade ? Number(limiteLuminosidade) : undefined,
           observacoes: observacoes.trim(),
           favorita: false,
-          uid: '',
         },
         imagemBase64 ?? undefined,
         dataHaMaisDias(ultimaRegaDias)
