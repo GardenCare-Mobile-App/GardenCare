@@ -13,7 +13,7 @@ export class GardenRepository {
   }
 
   async adicionarPlanta(
-    planta: Omit<Plant, 'id' | 'statusSaude' | 'ultimaRega'>,
+    planta: Omit<Plant, 'id' | 'uid' | 'statusSaude' | 'ultimaRega'>,
     imagemBase64?: string,
     ultimaRega?: string
   ): Promise<Plant> {

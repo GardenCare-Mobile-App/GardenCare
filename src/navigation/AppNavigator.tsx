@@ -5,8 +5,6 @@ import { useAuth } from '../context/AuthContext';
 import { COLORS } from '../styles/globalStyles';
 import { PerfilUsuario } from '../models/User';
 
-import ProfileScreen from '../views/screens/ProfileScreen';
-import MyGardenScreen from '../views/screens/MyGardenScreen';
 import EditProfileScreen from '../views/screens/EditProfileScreen';
 import SettingsScreen from '../views/screens/SettingsScreen';
 import PlantDetailScreen from '../views/screens/PlantDetailScreen';
@@ -16,9 +14,10 @@ import { InitialScreen } from '../views/screens/auth/InicialScreen';
 import { LoginScreen } from '../views/screens/auth/LoginScreen';
 import { RegisterScreen } from '../views/screens/auth/RegisterScreen';
 
+import MainTabNavigator from './TabNavigator';
+
 export type AppStackParamList = {
-  Profile: undefined;
-  MyGarden: undefined;
+  MainTabs: undefined;
   EditarPerfil: { perfil: PerfilUsuario };
   Settings: undefined;
   PlantDetail: { plantaId: string };
@@ -51,8 +50,7 @@ export default function AppNavigator() {
     >
       {estaLogado ? (
         <>
-          <Stack.Screen name="Profile"       component={ProfileScreen} />
-          <Stack.Screen name="MyGarden"      component={MyGardenScreen} />
+          <Stack.Screen name="MainTabs"      component={MainTabNavigator} />
           <Stack.Screen name="EditarPerfil"  component={EditProfileScreen} />
           <Stack.Screen name="Settings"      component={SettingsScreen} />
           <Stack.Screen name="PlantDetail"   component={PlantDetailScreen} />
