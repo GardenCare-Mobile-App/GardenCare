@@ -6,6 +6,7 @@ import {
   ScrollView,
   Pressable,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -42,8 +43,27 @@ export default function PlantDetailScreen() {
     umidadePorcentagem,
     toggleFavorita,
     registrarRega,
+    deletarPlanta,
     recarregar,
   } = usePlantDetailViewModel(plantaId);
+
+  function confirmarExclusao() {
+    Alert.alert(
+      'Excluir planta',
+      `Tem certeza que quer excluir "${planta?.nome}"? Essa ação não pode ser desfeita.`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Excluir',
+          style: 'destructive',
+          onPress: async () => {
+            await deletarPlanta();
+            navigation.goBack();
+          },
+        },
+      ]
+    );
+  }
 
   if (loading) {
     return (
@@ -164,10 +184,10 @@ export default function PlantDetailScreen() {
             <View style={styles.arduinoRow}>
               <View style={[
                 styles.arduinoDot,
-                { backgroundColor: sensorData.arduinoOnline ? cores.verdeClaro : cores.error },
+                { backgroundColor: sensorData.esp32Online ? cores.verdeClaro : cores.error },
               ]} />
               <Text style={styles.arduinoText}>
-                Arduino {sensorData.arduinoOnline ? 'online' : 'offline'}
+                ESP32 {sensorData.esp32Online ? 'online' : 'offline'}
               </Text>
             </View>
 
@@ -191,7 +211,7 @@ export default function PlantDetailScreen() {
 
             <View style={styles.umidadeBarContainer}>
               <View style={styles.umidadeBarLabelRow}>
-                <Text style={styles.umidadeBarLabelTexto}>Solo vs. mínimo da planta</Text>
+                <Text style={styles.umidadeBarLabelTexto}>Ar vs. mínimo da planta</Text>
                 <Text style={styles.umidadeBarPorcentagem}>
                   {sensorData.umidade}% / {planta.limiteUmidade}%
                 </Text>
@@ -237,6 +257,14 @@ export default function PlantDetailScreen() {
             <Text style={styles.observacoesTexto}>{planta.observacoes}</Text>
           </View>
         ) : null}
+
+        <Pressable
+          style={({ pressed }) => [styles.excluirButton, { opacity: pressed ? 0.75 : 1 }]}
+          onPress={confirmarExclusao}
+        >
+          <Ionicons name="trash-outline" size={18} color={cores.error} />
+          <Text style={styles.excluirButtonTexto}>Excluir planta</Text>
+        </Pressable>
 
         <View style={styles.bottomPadding} />
 

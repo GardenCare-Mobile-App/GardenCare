@@ -12,6 +12,10 @@ export class ProfileBusiness {
 
     return perfil;
   }
+  async reautenticar(senha: string): Promise<void> {
+    return profileRepository.reautenticar(senha);
+  }
+
   async excluirConta(): Promise<void> {
     return profileRepository.excluirConta();
   }

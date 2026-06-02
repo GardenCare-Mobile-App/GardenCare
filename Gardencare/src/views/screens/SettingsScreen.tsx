@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   Alert,
   TextInput,
   ActivityIndicator,
+  Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -25,6 +26,7 @@ export default function SettingsScreen() {
     erroLimites,
     sucessoLimites,
     excluindo,
+    erro,
     tipoTema,
     mudarTema,
     logout,
@@ -35,6 +37,9 @@ export default function SettingsScreen() {
 
   const { cores } = useTheme();
   const styles = createStyles(cores);
+
+  const [modalExcluirVisivel, setModalExcluirVisivel] = useState(false);
+  const [senhaExclusao, setSenhaExclusao] = useState('');
 
   const opcoesTema: { tipo: TipoTema; label: string; icone: string }[] = [
     { tipo: 'claro', label: 'Claro', icone: 'sunny-outline' },
@@ -53,15 +58,26 @@ export default function SettingsScreen() {
     );
   }
 
-  function confirmarExcluirConta() {
+  function abrirModalExclusao() {
     Alert.alert(
       'Excluir conta',
       'Esta ação é irreversível! Todos os seus dados, plantas e perfil serão apagados permanentemente.',
       [
         { text: 'Cancelar', style: 'cancel' },
-        { text: 'Excluir', style: 'destructive', onPress: excluirConta },
+        { text: 'Continuar', style: 'destructive', onPress: () => setModalExcluirVisivel(true) },
       ]
     );
+  }
+
+  function fecharModalExclusao() {
+    setSenhaExclusao('');
+    setModalExcluirVisivel(false);
+  }
+
+  function confirmarExclusaoComSenha() {
+    if (!senhaExclusao.trim()) return;
+    excluirConta(senhaExclusao);
+    fecharModalExclusao();
   }
 
   return (
@@ -187,7 +203,7 @@ export default function SettingsScreen() {
           <Text style={styles.logoutTexto}>Sair da conta</Text>
         </Pressable>
 
-        <Pressable style={styles.excluirCard} onPress={confirmarExcluirConta}>
+        <Pressable style={styles.excluirCard} onPress={abrirModalExclusao}>
           {excluindo ? (
             <ActivityIndicator color={cores.error} size="small" />
           ) : (
@@ -202,6 +218,64 @@ export default function SettingsScreen() {
         </Pressable>
 
       </ScrollView>
+
+      <Modal
+        visible={modalExcluirVisivel}
+        transparent
+        animationType="fade"
+        onRequestClose={fecharModalExclusao}
+      >
+        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', paddingHorizontal: 24 }}>
+          <View style={{ backgroundColor: cores.cardBackground, borderRadius: 16, padding: 24, gap: 16 }}>
+            <Text style={{ fontSize: 18, fontWeight: 'bold', color: cores.textPrimary }}>
+              Confirmar exclusão
+            </Text>
+            <Text style={{ fontSize: 14, color: cores.textSecondary }}>
+              Digite sua senha para confirmar a exclusão permanente da conta.
+            </Text>
+            <TextInput
+              style={{
+                borderWidth: 1,
+                borderColor: cores.border,
+                borderRadius: 10,
+                padding: 12,
+                fontSize: 15,
+                color: cores.textPrimary,
+                backgroundColor: cores.background,
+              }}
+              placeholder="Sua senha"
+              placeholderTextColor={cores.textSecondary}
+              secureTextEntry
+              value={senhaExclusao}
+              onChangeText={setSenhaExclusao}
+              autoFocus
+            />
+            {erro ? (
+              <Text style={{ fontSize: 13, color: cores.error }}>{erro}</Text>
+            ) : null}
+            <View style={{ flexDirection: 'row', gap: 12 }}>
+              <Pressable
+                style={{ flex: 1, padding: 12, borderRadius: 10, borderWidth: 1, borderColor: cores.border, alignItems: 'center' }}
+                onPress={fecharModalExclusao}
+              >
+                <Text style={{ color: cores.textSecondary, fontWeight: '600' }}>Cancelar</Text>
+              </Pressable>
+              <Pressable
+                style={{ flex: 1, padding: 12, borderRadius: 10, backgroundColor: cores.error, alignItems: 'center', opacity: senhaExclusao.trim() ? 1 : 0.4 }}
+                onPress={confirmarExclusaoComSenha}
+                disabled={!senhaExclusao.trim()}
+              >
+                {excluindo ? (
+                  <ActivityIndicator color="#fff" size="small" />
+                ) : (
+                  <Text style={{ color: '#fff', fontWeight: 'bold' }}>Excluir conta</Text>
+                )}
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
      </SafeAreaView>
     );
 }

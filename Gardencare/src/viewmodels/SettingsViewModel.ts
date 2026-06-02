@@ -86,13 +86,17 @@ export function useSettingsViewModel() {
     }
   }
 
-  async function excluirConta() {
+  async function excluirConta(senha: string) {
     dispatch({ type: 'EXCLUIR_INICIO' });
     try {
+      await profileBusiness.reautenticar(senha);
       await profileBusiness.excluirConta();
       await logout();
     } catch (e: any) {
-      dispatch({ type: 'EXCLUIR_ERRO', erro: e.message ?? 'Erro ao excluir conta.' });
+      const msg = (e.code === 'auth/invalid-credential' || e.code === 'auth/wrong-password')
+        ? 'Senha incorreta. Tente novamente.'
+        : e.message ?? 'Erro ao excluir conta.';
+      dispatch({ type: 'EXCLUIR_ERRO', erro: msg });
     }
   }
 

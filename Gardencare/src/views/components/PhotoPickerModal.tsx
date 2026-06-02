@@ -9,7 +9,7 @@ import { COLORS } from '../../styles/globalStyles';
 interface PhotoPickerModalProps {
   visivel: boolean;
   onFechar: () => void;
-  onFotoSelecionada: (uri: string) => void;
+  onFotoSelecionada: (uri: string, base64: string) => void;
 }
 
 export function PhotoPickerModal({
@@ -23,9 +23,10 @@ export function PhotoPickerModal({
       allowsEditing: true,
       aspect: [1, 1],
       quality: 0.7,
+      base64: true,
     });
-    if (!resultado.canceled) {
-      onFotoSelecionada(resultado.assets[0].uri);
+    if (!resultado.canceled && resultado.assets[0].base64) {
+      onFotoSelecionada(resultado.assets[0].uri, resultado.assets[0].base64);
       onFechar();
     }
   }
@@ -36,9 +37,10 @@ export function PhotoPickerModal({
       aspect: [1, 1],
       quality: 0.7,
       mediaTypes: ['images'],
+      base64: true,
     });
-    if (!resultado.canceled) {
-      onFotoSelecionada(resultado.assets[0].uri);
+    if (!resultado.canceled && resultado.assets[0].base64) {
+      onFotoSelecionada(resultado.assets[0].uri, resultado.assets[0].base64);
       onFechar();
     }
   }

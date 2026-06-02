@@ -103,6 +103,11 @@ export function usePlantDetailViewModel(plantaId: string) {
       ? business.calcularUmidadePorcentagem(state.sensorData, state.planta)
       : 0;
 
+  async function deletarPlanta(): Promise<void> {
+    if (!state.planta) return;
+    await business.deletarPlanta(state.planta.id);
+  }
+
   return {
     ...state,
     precisaRegar,
@@ -110,6 +115,7 @@ export function usePlantDetailViewModel(plantaId: string) {
     umidadePorcentagem,
     toggleFavorita,
     registrarRega,
+    deletarPlanta,
     recarregar: carregarDados,
   };
 }
