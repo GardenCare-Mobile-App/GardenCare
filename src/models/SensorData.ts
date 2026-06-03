@@ -3,5 +3,5 @@ export interface SensorData {
   temperatura: number;   
   luminosidade: number;  
   atualizadoEm: Date;
-  arduinoOnline: boolean;
+  esp32Online: boolean;
 }

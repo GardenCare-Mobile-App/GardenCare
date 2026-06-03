@@ -1,14 +1,15 @@
 import { StyleSheet, Platform } from 'react-native';
-import { COLORS, SIZES } from '../globalStyles';
+import { SIZES } from '../globalStyles';
+import { Cores } from '../ThemeStyles';
 
-export const styles = StyleSheet.create({
+export const createStyles = (cores: Cores) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: cores.background,
   },
 
   header: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: cores.primary,
     paddingTop: SIZES.padding,
     paddingBottom: SIZES.padding + 4,
     paddingHorizontal: SIZES.padding,
@@ -24,45 +25,20 @@ export const styles = StyleSheet.create({
     padding: 4,
   },
 
-  avatar: {
-    width: SIZES.avatarSize,
-    height: SIZES.avatarSize,
-    borderRadius: SIZES.avatarSize / 2,
-    borderWidth: 3,
-    borderColor: COLORS.verdeClaro,
-    marginBottom: SIZES.radius,
-  },
-  avatarFallback: {
-    width: SIZES.avatarSize,
-    height: SIZES.avatarSize,
-    borderRadius: SIZES.avatarSize / 2,
-    borderWidth: 3,
-    borderColor: COLORS.verdeClaro,
-    backgroundColor: COLORS.verdeEscuro,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: SIZES.radius,
-  },
-  avatarFallbackText: {
-    fontSize: SIZES.fontTitle + 4,
-    fontWeight: 'bold',
-    color: COLORS.amareloMuitoClaro,
-  },
-
   name: {
     fontSize: SIZES.fontTitle,
     fontWeight: 'bold',
-    color: COLORS.white,
+    color: cores.white,
     marginBottom: 2,
   },
   pronomes: {
     fontSize: SIZES.fontSubtitle,
-    color: COLORS.verdeClaro,
+    color: cores.verdeClaro,
     marginBottom: 8,
   },
   bio: {
     fontSize: SIZES.fontCaption,
-    color: COLORS.verdeClaro,
+    color: cores.verdeClaro,
     textAlign: 'center',
     lineHeight: 20,
     paddingHorizontal: SIZES.padding,
@@ -75,18 +51,18 @@ export const styles = StyleSheet.create({
     marginTop: 8,
   },
   editButton: {
-    backgroundColor: COLORS.verdeClaro,
+    backgroundColor: cores.verdeClaro,
     paddingHorizontal: SIZES.padding,
     paddingVertical: 8,
     borderRadius: SIZES.radiusLarge,
   },
   editButtonText: {
-    color: COLORS.primary,
+    color: cores.primary,
     fontWeight: 'bold',
     fontSize: SIZES.fontCaption,
   },
   gardenButton: {
-    backgroundColor: COLORS.verdeEscuro,
+    backgroundColor: cores.verdeEscuro,
     paddingHorizontal: SIZES.padding,
     paddingVertical: 8,
     borderRadius: SIZES.radiusLarge,
@@ -95,21 +71,21 @@ export const styles = StyleSheet.create({
     gap: 6,
   },
   gardenButtonText: {
-    color: COLORS.white,
+    color: cores.white,
     fontWeight: 'bold',
     fontSize: SIZES.fontCaption,
   },
 
   statsContainer: {
     flexDirection: 'row',
-    backgroundColor: COLORS.cardBackground,
+    backgroundColor: cores.cardBackground,
     marginHorizontal: SIZES.padding,
     marginTop: -SIZES.radius,
     borderRadius: SIZES.radius,
     paddingVertical: SIZES.padding,
     ...Platform.select({
       ios: {
-        shadowColor: COLORS.black,
+        shadowColor: cores.black,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 6,
@@ -125,28 +101,28 @@ export const styles = StyleSheet.create({
   },
   statDivider: {
     width: 1,
-    backgroundColor: COLORS.border,
+    backgroundColor: cores.border,
   },
   statValue: {
     fontSize: SIZES.fontLarge,
     fontWeight: 'bold',
-    color: COLORS.primary,
+    color: cores.primary,
   },
   statLabel: {
     fontSize: SIZES.fontSmall,
-    color: COLORS.textSecondary,
+    color: cores.textSecondary,
     marginTop: 2,
   },
 
   section: {
     marginTop: SIZES.padding,
     marginHorizontal: SIZES.padding,
-    backgroundColor: COLORS.cardBackground,
+    backgroundColor: cores.cardBackground,
     borderRadius: SIZES.radius,
     padding: SIZES.padding,
     ...Platform.select({
       ios: {
-        shadowColor: COLORS.black,
+        shadowColor: cores.black,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.06,
         shadowRadius: 4,
@@ -162,12 +138,12 @@ export const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: SIZES.fontBody,
     fontWeight: 'bold',
-    color: COLORS.primary,
+    color: cores.primary,
     marginBottom: SIZES.radius,
   },
   emptyText: {
     fontSize: SIZES.fontCaption,
-    color: COLORS.verdeClaro,
+    color: cores.verdeClaro,
     textAlign: 'center',
     paddingVertical: 8,
   },
@@ -178,7 +154,7 @@ export const styles = StyleSheet.create({
     gap: 10,
     paddingVertical: 10,
     borderBottomWidth: 0.5,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: cores.border,
   },
   plantCardLast: {
     borderBottomWidth: 0,
@@ -195,11 +171,11 @@ export const styles = StyleSheet.create({
   plantName: {
     fontSize: SIZES.fontCaption,
     fontWeight: 'bold',
-    color: COLORS.primary,
+    color: cores.primary,
   },
   plantSpecies: {
     fontSize: SIZES.fontSmall,
-    color: COLORS.textSecondary,
+    color: cores.textSecondary,
     fontStyle: 'italic',
   },
   statusBadge: {
@@ -210,7 +186,7 @@ export const styles = StyleSheet.create({
   statusText: {
     fontSize: SIZES.fontSmall,
     fontWeight: 'bold',
-    color: COLORS.white,
+    color: cores.white,
   },
   favButton: {
     padding: 4,
@@ -224,11 +200,11 @@ export const styles = StyleSheet.create({
   },
   notificationLabel: {
     fontSize: SIZES.fontCaption,
-    color: COLORS.textPrimary,
+    color: cores.textPrimary,
   },
   notificationDivider: {
     height: 0.5,
-    backgroundColor: COLORS.border,
+    backgroundColor: cores.border,
     marginVertical: 4,
   },
 
@@ -238,19 +214,19 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   errorText: {
-    color: COLORS.error,
+    color: cores.error,
     fontSize: SIZES.fontBody,
     textAlign: 'center',
     marginBottom: SIZES.radius,
   },
   retryButton: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: cores.primary,
     paddingHorizontal: SIZES.padding + 4,
     paddingVertical: 10,
     borderRadius: SIZES.radiusLarge,
   },
   retryButtonText: {
-    color: COLORS.white,
+    color: cores.white,
     fontWeight: 'bold',
   },
 });

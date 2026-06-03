@@ -1,86 +1,62 @@
-import { collection, addDoc, getDocs, updateDoc, doc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { db, storage } from './firebaseConfig';
 import { Plant, TipoPlanta } from '../models/Plant';
 import { SensorData } from '../models/SensorData';
+import { GardenRepository } from '../repository/GardenRepository';
+import { LIMITE_UMIDADE_PADRAO, TEMPERATURA_IDEAL_PADRAO, LUMINOSIDADE_IDEAL_PADRAO, calcularFrequenciaRega, calcularStatus, precisaRegar, } from '../utils/PlantBusinessUtils';
 
-const FREQUENCIA_REGA_BASE: Record<TipoPlanta, number> = {
-  tropical: 2,
-  interior: 3,
-  exterior: 4,
-  suculenta: 14,
-  aquatica: 1,
-};
-
-const LIMITE_UMIDADE_PADRAO: Record<TipoPlanta, number> = {
-  tropical: 60,
-  interior: 40,
-  exterior: 35,
-  suculenta: 20,
-  aquatica: 80,
-};
+const gardenRepository = new GardenRepository();
 
 export class GardenBusiness {
 
   async getPlants(): Promise<Plant[]> {
-    const snapshot = await getDocs(collection(db, 'Plantas'));
-    return snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as Plant[];
+    return gardenRepository.getPlantas();
+  }
+
+  async getPlanta(id: string): Promise<Plant | null> {
+    return gardenRepository.getPlanta(id);
   }
 
   async cadastrarPlanta(
-    planta: Omit<Plant, 'id' | 'statusSaude' | 'ultimaRega'>,
-    imagemUri?: string
+    planta: Omit<Plant, 'id' | 'uid'| 'statusSaude' | 'ultimaRega'>,
+    imagemBase64?: string,
+    ultimaRega?: string
   ): Promise<Plant> {
-    let imagemUrl: string | undefined = undefined;
-
-    // Faz upload da foto para o Firebase Storage se existir
-    if (imagemUri) {
-      imagemUrl = await this.uploadFoto(imagemUri);
-    }
-
-    const novaPlanta = {
-      ...planta,
-      imagemUrl,
-      statusSaude: 'saudavel',
-      ultimaRega: new Date().toISOString().split('T')[0],
-    };
-
-    const docRef = await addDoc(collection(db, 'Plantas'), novaPlanta);
-
-    return { id: docRef.id, ...novaPlanta } as Plant;
+    return gardenRepository.adicionarPlanta(planta, imagemBase64, ultimaRega);
   }
-  private async uploadFoto(imagemUri: string): Promise<string> {
-    const response = await fetch(imagemUri);
-    const blob = await response.blob();
-    const nomeArquivo = `plantas/${Date.now()}.jpg`;
-    const storageRef = ref(storage, nomeArquivo);
-    await uploadBytes(storageRef, blob);
-    return await getDownloadURL(storageRef);
-  }
+
   async toggleFavorita(id: string, valor: boolean): Promise<void> {
-    await updateDoc(doc(db, 'Plantas', id), { favorita: valor });
+    return gardenRepository.atualizarFavorita(id, valor);
   }
+
+  async deletarPlanta(id: string): Promise<void> {
+    return gardenRepository.deletarPlanta(id);
+  }
+
+  async registrarRega(planta: Plant, sensorData: SensorData | null): Promise<void> {
+    const novoStatus = calcularStatus(planta, sensorData);
+    return gardenRepository.registrarRega(planta.id, novoStatus);
+  }
+
   calcularFrequenciaRega(tipo: TipoPlanta, temperatura?: number): number {
-    let dias = FREQUENCIA_REGA_BASE[tipo];
-    if (temperatura && temperatura > 30) {
-      dias = Math.max(1, Math.floor(dias / 2));
-    }
-    return dias;
+    return calcularFrequenciaRega(tipo, temperatura);
   }
+
+  calcularStatus(planta: Plant, sensorData: SensorData | null): Plant['statusSaude'] {
+    return calcularStatus(planta, sensorData);
+  }
+
   precisaRegar(planta: Plant, sensorData: SensorData): boolean {
-    const hoje = new Date();
-    const ultimaRega = new Date(planta.ultimaRega);
-    const diasSemRegar = Math.floor(
-      (hoje.getTime() - ultimaRega.getTime()) / (1000 * 60 * 60 * 24)
-    );
-    const frequencia = this.calcularFrequenciaRega(planta.tipo, sensorData.temperatura);
-    return diasSemRegar >= frequencia || sensorData.umidade < planta.limiteUmidade;
+    return precisaRegar(planta, sensorData);
   }
-  verificarAlertas(plantas: Plant[], sensorData: SensorData): string[] {
+
+  verificarAlertas(plantas: Plant[], sensorData: SensorData, limites?: {
+    temperaturaMax: number;
+    umidadeMin: number;
+    luminosidadeMin: number;
+  }): string[] {
     const alertas: string[] = [];
+    const tempMax = limites?.temperaturaMax ?? 35;
+    const umidadeMin = limites?.umidadeMin ?? 30;
+    const luzMin = limites?.luminosidadeMin ?? 200;
 
     plantas.forEach((planta) => {
       if (sensorData.umidade < planta.limiteUmidade) {
@@ -90,17 +66,30 @@ export class GardenBusiness {
       }
     });
 
-    if (sensorData.temperatura > 35) {
+    if (sensorData.temperatura > tempMax) {
       alertas.push(`Temperatura muito alta: ${sensorData.temperatura}°C`);
     }
 
-    if (sensorData.luminosidade < 200) {
+    if (sensorData.umidade < umidadeMin) {
+      alertas.push(`Umidade do ambiente baixa: ${sensorData.umidade}%`);
+    }
+
+    if (sensorData.luminosidade < luzMin) {
       alertas.push(`Luminosidade baixa: ${sensorData.luminosidade} lux`);
     }
 
     return alertas;
   }
+
   getLimiteUmidadePadrao(tipo: TipoPlanta): number {
     return LIMITE_UMIDADE_PADRAO[tipo];
+  }
+
+  getSugestoesTipo(tipo: TipoPlanta) {
+    return {
+      umidade: LIMITE_UMIDADE_PADRAO[tipo],
+      temperatura: TEMPERATURA_IDEAL_PADRAO[tipo],
+      luminosidade: LUMINOSIDADE_IDEAL_PADRAO[tipo],
+    };
   }
 }

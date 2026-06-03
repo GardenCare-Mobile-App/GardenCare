@@ -1,147 +1,178 @@
 import React, { useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { ScrollView,StyleSheet,TouchableOpacity,View, TextInput, Button, Text, ActivityIndicator } from 'react-native';
-import { ArrowLeftIcon, EnvelopeSimpleIcon, FacebookLogoIcon, GoogleLogoIcon, LockKeyIcon } from 'phosphor-react-native';
-// import { useAuthViewModel } from '../../../viewmodels/AuthViewModeels';
-import { useAuthViewModel } from '../../../viewmodels/AuthViewModels';
-import { styles } from "../../../styles/screens/RegisterScreen.styles"
+import {
+  Modal, KeyboardAvoidingView,View, Text, TextInput, TouchableOpacity, ScrollView, ActivityIndicator,
+} from 'react-native';
+import { ArrowLeftIcon, EnvelopeSimpleIcon, LockKeyIcon, UserIcon, EyeClosedIcon, EyeIcon } from 'phosphor-react-native';
+import { useAuthViewModel } from '../../../viewmodels/AuthViewModel';
+import { styles } from '../../../styles/screens/RegisterScreen.styles';
 import { COLORS } from '../../../styles/globalStyles';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
-import { getFirestore } from 'firebase/firestore';
-import { initializeApp } from 'firebase/app';
-import { auth, db } from '../../../business/firebaseConfig'; // ajuste o caminho para o seu arquivo de config
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
-const SEXOS = ['Masculino', 'Feminino', 'Não-binário', 'Prefiro não dizer'];
-const PRONOMES = ['ele/dele', 'ela/dela', 'elu/delu', 'they/them', 'Prefiro não dizer'];
-
+// opções de pronomes disponíveis para seleção
+const PRONOMES = ['ele/dele', 'ela/dela', 'elu/delu'];
 
 export const RegisterScreen: React.FC = ({ navigation }: any) => {
+  // campos controlados pelo estado local
+  const [nome, setNome] = useState('');
+  const [email, setEmail] = useState('');
+  const [pronomes, setPronomes] = useState('');
+  const [senha, setSenha] = useState('');
+  const [confirmarSenha, setConfirmarSenha] = useState('');
+  const [erroLocal, setErroLocal] = useState<string | null>(null);
+  const [senhaVisivel, setSenhaVisivel] = useState(false);
+  const [confirmarSenhaVisivel, setConfirmaSenhaVisivel] = useState(false);
+  
 
-  const [campos, setCampos] = useState({
-    nome: '', email: '', sexo: '',
-    pronomes: '', senha: '', confirmarSenha:'',
-  });
-  const [foco, setFoco] = useState(null);
-  const [senhaVisivel, setSenhaVisivel] = useState(null)
-  const [confirmarSenhaVisivel, setConfirmarSenhaVisivel] = useState(null)
+  // hook que cria conta no Firebase e salva sessão no AuthContext
+  const { modalVisivel, setModalVisivel, registrar, loading, erro } = useAuthViewModel();
 
-  const set = (campo: string, val: any) => setCampos(c => ({ ...c, [campo]: val }));
-
-  // salvando localmente
-  const salvarLocal = async () => {
-    const dados = {nome: campos.nome, sexo: campos.sexo, pronomes: campos.pronomes}
-    await AsyncStorage.setItem('perfil', JSON.stringify(dados))
-  };
-
-  // enviando para o firebase
-  const cadastrarFirebase = async () => {
-    if (campos.senha!==campos.confirmarSenha) {
-      alert("as senhas não coincidem")
-      return;
-    }
-
-    try {
-
-      const userCredential = await createUserWithEmailAndPassword(auth, campos.email, campos.senha);
-      const user = userCredential.user;
-
-      // salvando o resto no fire
-      await setDoc(doc(db, "usuario", user.uid), {
-        nome: campos.nome,  
-        sexo: campos.sexo,  
-        pronomes: campos.pronomes,  
-        email: campos.email,  
-        criadoEm: serverTimestamp(),  
-      });
-
-      await salvarLocal();
-      alert("usuário cadastrado com sucesso!")
-
-    } catch (error) {
-      console.error(error);
-      // alert("erro ao cadastrar: " + error.message)
-    }
-
+  function handleCriarConta() {
+    // validação local antes de chamar o Firebase
+    if (!nome.trim()) { setErroLocal('Informe seu nome.'); return; }
+    if (!email.trim()) { setErroLocal('Informe seu e-mail.'); return; }
+    if (!pronomes) { setErroLocal('Selecione seus pronomes.'); return; }
+    if (senha.length < 6) { setErroLocal('Senha deve ter ao menos 6 caracteres.'); return; }
+    if (senha !== confirmarSenha) { setErroLocal('As senhas não coincidem.'); return; }
+    setErroLocal(null);
+    registrar(nome, email, pronomes, senha);
   }
 
-  // const inputStyle = (campo) => [
-  //   styles.input,
-  //   foco === campo && styles.inputFoco
-  // ];
+  // mensagem a exibir: erro local (validação) ou erro do Firebase
+  const mensagemErro = erroLocal ?? erro;
 
   return (
     <View style={styles.container}>
-    
-          {/* seta de voltar */}
-          <TouchableOpacity 
-            style={styles.header}
-            onPress={() => {navigation.navigate('Inicio')
-              console.log('você está tentando voltar para tela de inicio')
-            }}
-          >
-            <ArrowLeftIcon size={32} color="#e0e7b9" weight="regular"/>
-          </TouchableOpacity>
-            
-            {/* texto da tela */}
-            <Text style={styles.wellcome}>Faça um novo registro</Text>
-          <ScrollView contentContainerStyle={styles.campos}>
-        
-            {/* compo do email */}
-            <View style={styles.content}>
-              <View style={styles.contentInput}>
-                <EnvelopeSimpleIcon size={32} color={COLORS.iconesCampo}/>
-                <TextInput placeholder='Seu e-mail' style={styles.input} placeholderTextColor='#e0e7b9'></TextInput>
-              </View>
-            </View>
 
-            {/* Sexo — campo de seleção */}
-            <Text style={styles.label}>SEXO</Text>
-            <View style={styles.chips}>
-              {SEXOS.map(op => (
-                <TouchableOpacity key={op}
-                  style={[styles.chip, campos.sexo === op && styles.chipAtivo]}
-                  onPress={() => set('sexo', op)}>
-                  <Text style={[styles.chipTexto, campos.sexo === op && styles.chipTextoAtivo]}>
-                    {op}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+      {/* botão voltar */}
+      <TouchableOpacity style={styles.header} onPress={() => navigation.goBack()}>
+        <ArrowLeftIcon size={32} color="#e0e7b9" weight="regular" />
+      </TouchableOpacity>
 
-            {/* campo da pronomes */}
-            <View style={styles.content}>
-             <View style={styles.contentInput}>
-             <LockKeyIcon size={32} color={COLORS.iconesCampo}/>
-             <TextInput placeholder='Sua senha' style={styles.input} placeholderTextColor='#e0e7b9'></TextInput>
-            </View>
-           </View>
+      <Text style={styles.wellcome}>Faça um novo registro</Text>
 
-            {/* botão de logar */}
-            <TouchableOpacity style={styles.buttonSignIn}>
-              <Text style={styles.buttonSignInText}>Criar conta</Text>
-            </TouchableOpacity>
-        
-            {/* Senha com censura (secureTextEntry) */}
-      <Text style={styles.label}>SENHA</Text>
-      <View style={styles.senhaRow}>
-        <TextInput
-          // style={[inputStyle('senha'), { flex: 1 }]}
-          style={styles.input}
-          placeholder="Digite sua senha"
-          value={campos.senha}
-          secureTextEntry={!senhaVisivel}   // ← CENSURA AQUI!
-          onChangeText={v => set('senha', v)}
-          // onFocus={() => setFoco('senha')} onBlur={() => setFoco(null)}
-        />
-        {/* <TouchableOpacity onPress={() => setSenhaVisivel(v => !v)} style={styles.olho}>
-          <Text>{senhaVisivel ? '🙈' : '👁️'}</Text>
-        </TouchableOpacity> */}
-      </View>
+      <ScrollView contentContainerStyle={styles.campos} showsVerticalScrollIndicator={false}>
 
-          </ScrollView>
+        {/* campo nome */}
+        <View style={styles.contentInput}>
+          <UserIcon size={32} color={COLORS.iconesCampo} />
+          <TextInput
+            style={styles.input}
+            placeholder="Seu nome"
+            placeholderTextColor="#e0e7b9"
+            value={nome}
+            onChangeText={setNome}
+          />
         </View>
-        );
-    }
+
+        {/* campo e-mail */}
+        <View style={styles.contentInput}>
+          <EnvelopeSimpleIcon size={32} color={COLORS.iconesCampo} />
+          <TextInput
+            style={styles.input}
+            placeholder="Seu e-mail"
+            placeholderTextColor="#e0e7b9"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+        </View>
+
+        {/* seleção de pronomes por chips */}
+        <Text style={styles.label}>PRONOMES</Text>
+        <View style={styles.chips}>
+          {PRONOMES.map((op) => (
+            <TouchableOpacity
+              key={op}
+              style={[styles.chip, pronomes === op && styles.chipAtivo]}
+              onPress={() => setPronomes(op)}
+            >
+              <Text style={[styles.chipTexto, pronomes === op && styles.chipTextoAtivo]}>
+                {op}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* campo senha */}
+        <View style={styles.contentInput}>
+          <LockKeyIcon size={32} color={COLORS.iconesCampo} />
+          <TextInput
+            style={styles.input}
+            placeholder="Sua senha"
+            placeholderTextColor="#e0e7b9"
+            value={senha}
+            onChangeText={setSenha}
+            secureTextEntry={!senhaVisivel}
+          />
+          <TouchableOpacity onPress={() => setSenhaVisivel(v => !v)}>
+            <Text>{senhaVisivel ? <EyeIcon size={32} color={COLORS.iconesCampo}/> : <EyeClosedIcon size={32} color={COLORS.iconesCampo}/>}</Text>
+        </TouchableOpacity>
+        </View>
+
+        {/* campo confirmar senha */}
+        <View style={styles.contentInput}>
+          <LockKeyIcon size={32} color={COLORS.iconesCampo} />
+          <TextInput
+            style={styles.input}
+            placeholder="Confirme sua senha"
+            placeholderTextColor="#e0e7b9"
+            value={confirmarSenha}
+            onChangeText={setConfirmarSenha}
+            secureTextEntry={!confirmarSenhaVisivel}
+          />
+          <TouchableOpacity onPress={() => setConfirmaSenhaVisivel(v => !v)}>
+            <Text>{confirmarSenhaVisivel ? <EyeIcon size={32} color={COLORS.iconesCampo}/> : <EyeClosedIcon size={32} color={COLORS.iconesCampo}/>}</Text>
+        </TouchableOpacity>
+        </View>
+
+        {/* exibe erro de validação local ou erro do Firebase */}
+        {mensagemErro
+          ? <Text style={{ color: '#f39797', textAlign: 'center' }}>{mensagemErro}</Text>
+          : null
+        }
+
+        {/* botão criar conta — chama registrar() do AuthViewModel */}
+        <TouchableOpacity
+          style={styles.buttonSignIn}
+          onPress={handleCriarConta}
+          disabled={loading}
+        >
+          {loading
+            ? <ActivityIndicator color={COLORS.black} />
+            : <Text style={styles.buttonSignInText}>Criar conta</Text>
+          }
+        </TouchableOpacity>
+
+          
+
+        {/* link para login */}
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>Já tem conta?</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+            <Text style={styles.footerButtonText}>Entrar</Text>
+          </TouchableOpacity>
+        </View>
+
+      </ScrollView>
+
+      <Modal
+        animationType="slide" // ou "fade" / "none"
+        transparent={true}    // permite ver o fundo da tela atrás
+        visible={modalVisivel}
+        onRequestClose={() => setModalVisivel(false)} // lida com o botão "voltar" no Android
+      >
+        <View style={styles.overlay}>
+          <View style={styles.modalContent}>
+            <Text>Este é o seu Modal! 🎉</Text>
+            
+            <TouchableOpacity onPress={() => setModalVisivel(false)}>
+              <Text>Fechar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+    </View>
+  
+  );
+};

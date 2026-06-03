@@ -1,32 +1,34 @@
-import { doc, getDoc } from 'firebase/firestore';
-import { auth, db } from './firebaseConfig';
 import { PerfilUsuario } from '../models/User';
+import { ProfileRepository } from '../repository/ProfileRepository';
+
+const profileRepository = new ProfileRepository();
 
 export class ProfileBusiness {
   async getPerfil(): Promise<PerfilUsuario> {
-    const uid = auth.currentUser?.uid;
+    const perfil = await profileRepository.getPerfil();
 
-    if (!uid) {
-      throw new Error('Usuário não autenticado.');
+    const erro = this.validarPerfil(perfil);
+    if (erro) throw new Error(erro);
+
+    return perfil;
+  }
+  async reautenticar(senha: string): Promise<void> {
+    return profileRepository.reautenticar(senha);
+  }
+
+  async excluirConta(): Promise<void> {
+    return profileRepository.excluirConta();
+  }
+  validarPerfil(perfil: PerfilUsuario): string | null {
+    if (!perfil.nome || perfil.nome.trim().length === 0) {
+      return 'O perfil precisa ter um nome.';
     }
-
-    const docRef = doc(db, 'Usuarios', uid);
-    const docSnap = await getDoc(docRef);
-
-    if (!docSnap.exists()) {
-      throw new Error('Perfil não encontrado.');
+    if (!perfil.email || !perfil.email.includes('@')) {
+      return 'O perfil precisa ter um email válido.';
     }
-
-    const dados = docSnap.data();
-
-    return {
-      uid,
-      nome: dados.nome,
-      pronomes: dados.pronomes ?? '',
-      fotoURL: dados.fotoURL ?? undefined,
-      email: dados.email,
-      criadoEm: dados.criadoEm,
-      bio: dados.bio ?? undefined,
-    };
+    if (!perfil.uid) {
+      return 'O perfil precisa ter um identificador único.';
+    }
+    return null;
   }
 }

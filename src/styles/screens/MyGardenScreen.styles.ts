@@ -1,14 +1,15 @@
 import { StyleSheet, Platform } from 'react-native';
-import { COLORS, SIZES } from '../globalStyles';
+import { SIZES } from '../globalStyles';
+import { Cores } from '../ThemeStyles';
 
-export const styles = StyleSheet.create({
+export const createStyles = (cores: Cores) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: cores.background,
   },
 
   header: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: cores.primary,
     paddingTop: SIZES.padding,
     paddingBottom: SIZES.padding,
     paddingHorizontal: SIZES.padding,
@@ -23,13 +24,13 @@ export const styles = StyleSheet.create({
     flex: 1,
     fontSize: SIZES.fontTitle,
     fontWeight: 'bold',
-    color: COLORS.white,
+    color: cores.white,
   },
   arduinobadge: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
-    backgroundColor: COLORS.verdeEscuro,
+    backgroundColor: cores.verdeEscuro,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: SIZES.radiusLarge,
@@ -41,7 +42,7 @@ export const styles = StyleSheet.create({
   },
   arduinoText: {
     fontSize: SIZES.fontSmall,
-    color: COLORS.amareloMuitoClaro,
+    color: cores.amareloMuitoClaro,
   },
 
   sensoresContainer: {
@@ -58,7 +59,7 @@ export const styles = StyleSheet.create({
     gap: 4,
     ...Platform.select({
       ios: {
-        shadowColor: COLORS.black,
+        shadowColor: cores.black,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.08,
         shadowRadius: 4,
@@ -107,7 +108,7 @@ export const styles = StyleSheet.create({
   plantasSectionTitle: {
     fontSize: SIZES.fontBody,
     fontWeight: 'bold',
-    color: COLORS.primary,
+    color: cores.primary,
   },
   plantasResumo: {
     flexDirection: 'row',
@@ -121,11 +122,11 @@ export const styles = StyleSheet.create({
   },
   resumoTexto: {
     fontSize: SIZES.fontSmall,
-    color: COLORS.textSecondary,
+    color: cores.textSecondary,
   },
 
   plantaCard: {
-    backgroundColor: COLORS.cardBackground,
+    backgroundColor: cores.cardBackground,
     borderRadius: SIZES.radius,
     marginBottom: SIZES.radius,
     flexDirection: 'row',
@@ -134,7 +135,7 @@ export const styles = StyleSheet.create({
     gap: 10,
     ...Platform.select({
       ios: {
-        shadowColor: COLORS.black,
+        shadowColor: cores.black,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.08,
         shadowRadius: 4,
@@ -154,7 +155,7 @@ export const styles = StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: SIZES.radiusSmall,
-    backgroundColor: COLORS.verdeEscuro,
+    backgroundColor: cores.verdeEscuro,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -164,11 +165,11 @@ export const styles = StyleSheet.create({
   plantaNome: {
     fontSize: SIZES.fontCaption,
     fontWeight: 'bold',
-    color: COLORS.primary,
+    color: cores.primary,
   },
   plantaUltimaRega: {
     fontSize: SIZES.fontSmall,
-    color: COLORS.textSecondary,
+    color: cores.textSecondary,
     marginTop: 2,
   },
   statusBadge: {
@@ -179,7 +180,7 @@ export const styles = StyleSheet.create({
   statusTexto: {
     fontSize: SIZES.fontSmall,
     fontWeight: 'bold',
-    color: COLORS.white,
+    color: cores.white,
   },
   favButton: {
     padding: 4,
@@ -189,7 +190,7 @@ export const styles = StyleSheet.create({
   },
 
   adicionarButton: {
-    backgroundColor: COLORS.verdeEscuro,
+    backgroundColor: cores.verdeEscuro,
     marginHorizontal: SIZES.padding,
     marginBottom: SIZES.padding,
     borderRadius: SIZES.radiusLarge,
@@ -202,7 +203,7 @@ export const styles = StyleSheet.create({
   adicionarButtonTexto: {
     fontSize: SIZES.fontBody,
     fontWeight: 'bold',
-    color: COLORS.white,
+    color: cores.white,
   },
 
   centered: {
@@ -211,19 +212,105 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   errorText: {
-    color: COLORS.error,
+    color: cores.error,
     fontSize: SIZES.fontBody,
     textAlign: 'center',
     marginBottom: SIZES.radius,
   },
   retryButton: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: cores.primary,
     paddingHorizontal: SIZES.padding + 4,
     paddingVertical: 10,
     borderRadius: SIZES.radiusLarge,
   },
   retryButtonText: {
-    color: COLORS.white,
+    color: cores.white,
     fontWeight: 'bold',
+  },
+
+  // Sort chips
+  ordenacaoRow: {
+    marginBottom: SIZES.radius,
+  },
+  chipOrdenacao: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: SIZES.radiusLarge,
+    borderWidth: 1,
+    borderColor: cores.border,
+    backgroundColor: cores.cardBackground,
+  },
+  chipOrdenacaoAtivo: {
+    backgroundColor: cores.primary,
+    borderColor: cores.primary,
+  },
+  chipOrdenacaoTexto: {
+    fontSize: SIZES.fontSmall,
+    color: cores.textSecondary,
+    fontWeight: '600',
+  },
+  chipOrdenacaoTextoAtivo: {
+    color: cores.white,
+  },
+
+  // Selection mode
+  plantaCardSelecionada: {
+    borderWidth: 2,
+    borderColor: cores.error,
+  },
+  checkbox: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 2,
+    borderColor: cores.textSecondary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkboxSelecionado: {
+    backgroundColor: cores.error,
+    borderColor: cores.error,
+  },
+  selecaoBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: SIZES.radius,
+  },
+  selecionarTudoTexto: {
+    fontSize: SIZES.fontSmall,
+    color: cores.verdeEscuro,
+    fontWeight: 'bold',
+  },
+  contadorSelecao: {
+    fontSize: SIZES.fontSmall,
+    color: cores.textSecondary,
+  },
+  cancelarTexto: {
+    fontSize: SIZES.fontBody,
+    color: cores.amareloMuitoClaro,
+    fontWeight: 'bold',
+  },
+  excluirButton: {
+    backgroundColor: cores.error,
+    marginHorizontal: SIZES.padding,
+    marginBottom: SIZES.padding,
+    borderRadius: SIZES.radiusLarge,
+    paddingVertical: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  excluirButtonDisabled: {
+    opacity: 0.4,
+  },
+  excluirButtonTexto: {
+    fontSize: SIZES.fontBody,
+    fontWeight: 'bold',
+    color: cores.white,
   },
 });

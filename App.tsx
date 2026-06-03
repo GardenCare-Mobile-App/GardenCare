@@ -1,23 +1,22 @@
 import React from 'react';
 import { StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { InitialScreen } from './src/views/screens/auth/InitialScreen';
-import { LoginScreen } from './src/views/screens/auth/LoginScreen';
-import { RegisterScreen } from './src/views/screens/auth/RegisterScreen';
- 
-const Stack = createNativeStackNavigator();
- 
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { AuthProvider } from './src/context/AuthContext';
+import { ThemeProvider } from './src/context/Themecontext';
+import AppNavigator from './src/navigation/AppNavigator';
+
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Inicio"
-        screenOptions={{ headerShown: false}}>
-        <Stack.Screen name="Inicio" component={InitialScreen} />
-        <Stack.Screen name="Register" component={RegisterScreen} />
-        <Stack.Screen name="Login" component={LoginScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <SafeAreaProvider>
+      <AuthProvider>
+        <ThemeProvider>
+          <NavigationContainer>
+            <StatusBar barStyle="light-content" />
+            <AppNavigator />
+          </NavigationContainer>
+        </ThemeProvider>
+      </AuthProvider>
+    </SafeAreaProvider>
   );
 }

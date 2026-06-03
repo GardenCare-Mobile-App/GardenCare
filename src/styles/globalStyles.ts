@@ -1,7 +1,7 @@
 export const COLORS = {
   primary: "#014040", // Verde escuro para botões
-  verdeEscuro: "#2F732D",
-  verdeClaro: "#A5CF47",
+  verdeEscuro: "#1B8C6C",
+  verdeClaro: "#91BF63",
   amarelo: "#EFF294",
   amareloMuitoClaro: "#F2EFC4",
   error: "#FF5252",

@@ -11,40 +11,27 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useProfileViewModel } from '../../viewmodels/ProfileViewModel ';
+import { useProfileViewModel } from '../../viewmodels/ProfileViewModel';
 import { Plant } from '../../models/Plant';
-import { styles } from '../../styles/screens/ProfileScreen.styles';
-import { COLORS } from '../../styles/globalStyles';
+import { createStyles } from '../../styles/screens/ProfileScreen.styles';
+import { useTheme } from '../../context/Themecontext';
 import { SafeAreaView } from 'react-native-safe-area-context';
-// import { getStatusLabel } from '../../utils/PlantUtils';
+import { getStatusColor, getStatusLabel } from '../../utils/PlantUtils';
+import { AvatarPerfil } from '../components/AvatarPerfil';
 
 type RootStackParamList = {
   Profile: undefined;
   MyGarden: undefined;
+  EditarPerfil: { perfil: any };
+  Settings: undefined;
 };
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Profile'>;
 
-function getStatusColor(status: Plant['statusSaude']): string {
-  switch (status) {
-    case 'saudavel': return COLORS.verdeClaro;
-    case 'atencao': return COLORS.attention;
-    case 'critico': return COLORS.critical;
-    default: return COLORS.verdeClaro;
-  }
-}
-
-function getStatusLabel(status: Plant['statusSaude']): string {
-  switch (status) {
-    case 'saudavel': return 'Saudável';
-    case 'atencao': return 'Atenção';
-    case 'critico': return 'Crítico';
-    default: return '';
-  }
-}
-
 export default function ProfileScreen() {
   const navigation = useNavigation<NavigationProp>();
+  const { cores } = useTheme();
+  const styles = createStyles(cores);
   const {
     perfil,
     totalPlantas,
@@ -62,7 +49,7 @@ export default function ProfileScreen() {
   if (loading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
+        <ActivityIndicator size="large" color={cores.primary} />
       </View>
     );
   }
@@ -84,37 +71,34 @@ export default function ProfileScreen() {
 
         <View style={styles.header}>
           <View style={styles.headerActions}>
-            <Pressable style={styles.settingsButton}>
-              <Ionicons name="settings-outline" size={22} color={COLORS.white} />
+            <Pressable style={styles.settingsButton} onPress={() => navigation.navigate('Settings')}>
+              <Ionicons name="settings-outline" size={22} color={cores.white} />
             </Pressable>
           </View>
 
-          {perfil.fotoURL ? (
-            <Image source={{ uri: perfil.fotoURL }} style={styles.avatar} />
-          ) : (
-            <View style={styles.avatarFallback}>
-              <Text style={styles.avatarFallbackText}>
-                {perfil.nome.charAt(0).toUpperCase()}
-              </Text>
-            </View>
-          )}
+          <AvatarPerfil fotoURL={perfil.fotoURL} nome={perfil.nome} />
 
           <Text style={styles.name}>{perfil.nome}</Text>
-          <Text style={styles.pronomes}>{perfil.pronomes}</Text>
+          {perfil.pronomes && perfil.pronomes !== 'prefiro não dizer' && (
+            <Text style={styles.pronomes}>{perfil.pronomes}</Text>
+          )}
 
           {perfil.bio ? (
             <Text style={styles.bio}>{perfil.bio}</Text>
           ) : null}
 
           <View style={styles.headerButtons}>
-            <Pressable style={styles.editButton}>
+            <Pressable
+              style={styles.editButton}
+              onPress={() => navigation.navigate('EditarPerfil', { perfil })}
+            >
               <Text style={styles.editButtonText}>Editar Perfil</Text>
             </Pressable>
             <Pressable
               style={styles.gardenButton}
               onPress={() => navigation.navigate('MyGarden')}
             >
-              <Ionicons name="leaf-outline" size={16} color={COLORS.white} />
+              <Ionicons name="leaf-outline" size={16} color={cores.white} />
               <Text style={styles.gardenButtonText}>Meu Jardim</Text>
             </Pressable>
           </View>
@@ -153,7 +137,13 @@ export default function ProfileScreen() {
                   index === plantasFavoritas.length - 1 && styles.plantCardLast,
                 ]}
               >
-                <Image source={{ uri: planta.imagemUrl }} style={styles.plantImage} />
+                {planta.imagemUrl ? (
+                  <Image source={{ uri: planta.imagemUrl }} style={styles.plantImage} />
+                ) : (
+                  <View style={[styles.plantImage, { backgroundColor: '#C8E6C9', alignItems: 'center', justifyContent: 'center' }]}>
+                    <Ionicons name="leaf-outline" size={20} color="#2E7D32" />
+                  </View>
+                )}
                 <View style={styles.plantInfo}>
                   <Text style={styles.plantName}>{planta.nome}</Text>
                   <Text style={styles.plantSpecies}>{planta.especie}</Text>
@@ -170,7 +160,7 @@ export default function ProfileScreen() {
                   style={styles.favButton}
                   onPress={() => toggleFavorita(planta.id, false)}
                 >
-                  <Ionicons name="heart" size={20} color={COLORS.error} />
+                  <Ionicons name="heart" size={20} color={cores.error} />
                 </Pressable>
               </View>
             ))
@@ -185,8 +175,8 @@ export default function ProfileScreen() {
             <Switch
               value={notificacoes.lembreteDeRega}
               onValueChange={(valor) => alterarNotificacao('lembreteDeRega', valor)}
-              trackColor={{ false: COLORS.border, true: COLORS.verdeEscuro }}
-              thumbColor={COLORS.white}
+              trackColor={{ false: cores.border, true: cores.verdeEscuro }}
+              thumbColor={cores.white}
             />
           </View>
 
@@ -197,8 +187,8 @@ export default function ProfileScreen() {
             <Switch
               value={notificacoes.alertasSensor}
               onValueChange={(valor) => alterarNotificacao('alertasSensor', valor)}
-              trackColor={{ false: COLORS.border, true: COLORS.verdeEscuro }}
-              thumbColor={COLORS.white}
+              trackColor={{ false: cores.border, true: cores.verdeEscuro }}
+              thumbColor={cores.white}
             />
           </View>
 
@@ -209,8 +199,8 @@ export default function ProfileScreen() {
             <Switch
               value={notificacoes.novosPosts}
               onValueChange={(valor) => alterarNotificacao('novosPosts', valor)}
-              trackColor={{ false: COLORS.border, true: COLORS.verdeEscuro }}
-              thumbColor={COLORS.white}
+              trackColor={{ false: cores.border, true: cores.verdeEscuro }}
+              thumbColor={cores.white}
             />
           </View>
         </View>

@@ -1,76 +1,92 @@
-import { ArrowLeftIcon, EnvelopeSimpleIcon, FacebookLogoIcon, GoogleLogoIcon, LockKeyIcon } from 'phosphor-react-native';
-import { StyleSheet, TouchableOpacity, View, Text, SafeAreaViewBase, TextInput } from "react-native";
-import { styles } from "../../../styles/screens/LoginScreen.styles"
-import { InitialScreen } from './InitialScreen';
+import React, { useState } from 'react';
+import {
+  View, Text, TextInput, TouchableOpacity, ActivityIndicator,
+} from 'react-native';
+import { ArrowLeftIcon, EnvelopeSimpleIcon, LockKeyIcon, EyeIcon, EyeClosedIcon } from 'phosphor-react-native';
+import { useAuthViewModel } from '../../../viewmodels/AuthViewModel';
+import { styles } from '../../../styles/screens/LoginScreen.styles';
 import { COLORS } from '../../../styles/globalStyles';
 
 export const LoginScreen = ({ navigation }: any) => {
-    return ( 
+  // campos controlados pelo estado local
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [senhaVisivel, setSenhaVisivel] = useState(false);
+  // hook que faz o login no Firebase e salva sessão no AuthContext
+  const { entrar, loading, erro } = useAuthViewModel();
+
+  return (
     <View style={styles.container}>
 
-      {/* seta de voltar */}
-      <TouchableOpacity 
-        style={styles.header}
-        onPress={() => {navigation.navigate('Inicio')
-          console.log('você está tentando voltar para tela de inicio')
-        }}
-      >
-        <ArrowLeftIcon size={32} color="#e0e7b9" weight="regular"/>
+      {/* botão voltar */}
+      <TouchableOpacity style={styles.header} onPress={() => navigation.goBack()}>
+        <ArrowLeftIcon size={32} color="#e0e7b9" weight="regular" />
       </TouchableOpacity>
 
-      {/* texto da tela */}
       <Text style={styles.wellcome}>Faça login na sua conta</Text>
 
-      {/* compo do email */}
+      {/* campo e-mail */}
       <View style={styles.content}>
         <View style={styles.contentInput}>
-          <EnvelopeSimpleIcon size={32} color={COLORS.iconesCampo}/>
-          <TextInput placeholder='Seu e-mail' style={styles.input} placeholderTextColor='#e0e7b9'></TextInput>
+          <EnvelopeSimpleIcon size={32} color={COLORS.iconesCampo} />
+          <TextInput
+            style={styles.input}
+            placeholder="Seu e-mail"
+            placeholderTextColor="#e0e7b9"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
         </View>
       </View>
 
-      {/* campo da senha */}
+      {/* campo senha */}
       <View style={styles.content}>
         <View style={styles.contentInput}>
-          <LockKeyIcon size={32} color={COLORS.iconesCampo}/>
-          <TextInput placeholder='Sua senha' style={styles.input} placeholderTextColor='#e0e7b9'></TextInput>
+          <LockKeyIcon size={32} color={COLORS.iconesCampo} />
+          <TextInput
+            style={styles.input}
+            placeholder="Sua senha"
+            placeholderTextColor="#e0e7b9"
+            value={senha}
+            onChangeText={setSenha}
+            secureTextEntry={!senhaVisivel}
+          />
+        <TouchableOpacity onPress={() => setSenhaVisivel(v => !v)}>
+            <Text>{senhaVisivel ? <EyeIcon size={32} color={COLORS.iconesCampo}/> : <EyeClosedIcon size={32} color={COLORS.iconesCampo}/>}</Text>
+        </TouchableOpacity>
         </View>
       </View>
 
-      {/* botão de logar */}
-      <TouchableOpacity style={styles.buttonSignIn}>
-        <Text style={styles.buttonSignInText}>Entrar</Text>
+      {/* exibe erro do Firebase traduzido */}
+      {erro ? <Text style={{ color: '#ffcccc', marginTop: 12, textAlign: 'center' }}>{erro}</Text> : null}
+
+      {/* botão de login — chama entrar() do AuthViewModel */}
+      <TouchableOpacity
+        style={styles.buttonSignIn}
+        onPress={() => entrar(email, senha)}
+        disabled={loading}
+      >
+        {loading
+          ? <ActivityIndicator color={COLORS.black} />
+          : <Text style={styles.buttonSignInText}>Entrar</Text>
+        }
       </TouchableOpacity>
 
-      {/* linha antes de conectar com outras redes */}
       <View style={styles.containerSeparator}>
-        <View style={styles.separator}></View>
-        {/* <Text style={styles.separatorText}>ou continuar com</Text> */}
-        <View style={styles.separator}></View>
+        <View style={styles.separator} />
+        <View style={styles.separator} />
       </View>
 
-      {/* conectar com facebook e google */}
-      {/* <View style={styles.footer}>
-        <TouchableOpacity style={styles.footerButton}>
-          <GoogleLogoIcon size={32} color='#143110' weight='fill'/>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.footerButton}>
-          <FacebookLogoIcon size={32} color='#143110' weight='fill'/>
-        </TouchableOpacity>
-      </View> */}
-
+      {/* link para cadastro */}
       <View style={styles.footer}>
         <Text style={styles.footerText}>Não possui conta?</Text>
-      <TouchableOpacity
-          onPress={() => {navigation.navigate('Register')
-          console.log('indo fazer uma conta')
-      }}
-      >
-        <Text style={styles.footerButtonText}>Cadastre-se</Text>
-      </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+          <Text style={styles.footerButtonText}>Cadastre-se</Text>
+        </TouchableOpacity>
       </View>
 
     </View>
-    );
-}
+  );
+};
