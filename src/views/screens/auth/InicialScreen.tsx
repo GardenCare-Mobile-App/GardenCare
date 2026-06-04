@@ -1,37 +1,31 @@
-import React from 'react'; // Sempre bom importar o React
-import { StyleSheet, TouchableOpacity, View, Text, Image } from "react-native";
-import { styles } from "../../../styles/screens/InicialScreen.styles"
+import React, { useCallback } from 'react';
+import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import { useInicialViewModel } from '../../../viewmodels/auth/AuthInicialViewModels';
+import { styles } from '../../../styles/screens/auth/InicialScreen.styles';
 
-export const InitialScreen = ({ navigation }: any) => {
+export const InitialScreen = () => {
+  const { irParaLogin, irParaRegistrar } = useInicialViewModel();
+  useFocusEffect(useCallback(() => {}, []));
   return (
     <View style={styles.container}>
       <View style={styles.containerLogo}>
-      <Image style={styles.logo}
+        <Image
+        style={styles.logo}
         source={require('../../../../assets/logoGardenCare.png')}
-      />
+        />
       </View>
-        <Text style={styles.texto}>Bem-vindo ao GardenCare</Text>
+      <Text style={styles.texto}>Bem-vindo ao GardenCare</Text>
       <View style={styles.content}>
-        <TouchableOpacity 
-          style={styles.botao}
-          onPress={() => {navigation.navigate('Login')
-            console.log('indo para tela de login')
-          }} // Chama o nome que está no App.tsx
-        >
+      
+        <TouchableOpacity style={styles.botao} onPress={irParaLogin}>
           <Text style={styles.textoBotao}>ENTRAR</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity 
-          style={styles.botao}
-          onPress={() => {navigation.navigate('Register')
-            console.log('indo para tela de registro')
-          }} // Chama o nome que está no App.tsx
-        >
-         
-        <Text style={styles.textoBotao}>CRIAR CONTA</Text>
-
-
+        <TouchableOpacity style={styles.botao} onPress={irParaRegistrar}>
+          <Text style={styles.textoBotao}>CRIAR CONTA</Text>
         </TouchableOpacity>
+      
       </View>
     </View>
   );
