@@ -11,7 +11,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useProfileViewModel } from '../../viewmodels/ProfileViewModel';
+import { useProfileViewModel } from '../../viewmodels/ProfileViewModel ';
 import { Plant } from '../../models/Plant';
 import { createStyles } from '../../styles/screens/ProfileScreen.styles';
 import { useTheme } from '../../context/Themecontext';
