@@ -5,13 +5,10 @@ import { PreferenciasNotificacao } from '../business/NotificacaoBusiness';
 export class NotificacaoRepository {
 
   async getPreferencias(uid: string): Promise<PreferenciasNotificacao> {
-    const docRef = doc(db, 'Usuarios', uid);
-    const docSnap = await getDoc(docRef);
-
+    const docSnap = await getDoc(doc(db, 'Usuarios', uid));
     if (docSnap.exists() && docSnap.data().notificacoes) {
       return docSnap.data().notificacoes as PreferenciasNotificacao;
     }
-
     return { lembreteDeRega: true, alertasSensor: true, novosPosts: false };
   }
 

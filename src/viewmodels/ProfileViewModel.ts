@@ -8,6 +8,7 @@ import { GardenBusiness } from '../business/MyGardenBusiness';
 import { FeedRepository } from '../repository/FeedRepository';
 import { NotificacaoBusiness, PreferenciasNotificacao } from '../business/NotificacaoBusiness';
 import { useAuth } from '../context/AuthContext';
+import { FollowBusiness } from '../business/FollowBusiness';
 
 const profileBusiness = new ProfileBusiness();
 const gardenBusiness = new GardenBusiness();
@@ -19,6 +20,7 @@ interface ProfileState {
   plantas: Plant[];
   posts: Post[];
   totalSeguidores: number;
+  totalSeguindo: number;
   notificacoes: PreferenciasNotificacao;
   loading: boolean;
   error: string | null;
@@ -32,6 +34,8 @@ type ProfileAction =
       plantas: Plant[];
       posts: Post[];
       notificacoes: PreferenciasNotificacao;
+      totalSeguidores: number;
+      totalSeguindo: number;
     }
   | { type: 'CARREGAR_ERRO'; error: string }
   | { type: 'TOGGLE_FAVORITA'; id: string; valor: boolean }
@@ -42,6 +46,7 @@ const estadoInicial: ProfileState = {
   plantas: [],
   posts: [],
   totalSeguidores: 0,
+  totalSeguindo: 0,
   notificacoes: {
     lembreteDeRega: true,
     alertasSensor: true,
@@ -64,6 +69,8 @@ function profileReducer(state: ProfileState, action: ProfileAction): ProfileStat
         plantas: action.plantas,
         posts: action.posts,
         notificacoes: action.notificacoes,
+        totalSeguidores: action.totalSeguidores,
+        totalSeguindo: action.totalSeguindo,
       };
 
     case 'CARREGAR_ERRO':
@@ -108,11 +115,13 @@ export function useProfileViewModel() {
         return;
       }
 
-      const [dadosPerfil, dadosPlantas, dadosPosts, dadosNotificacoes] = await Promise.all([
+      const [dadosPerfil, dadosPlantas, dadosPosts, dadosNotificacoes, totalSeguidores, totalSeguindo] = await Promise.all([
         profileBusiness.getPerfil(),
         gardenBusiness.getPlants(),
         feedRepository.getPostsByUser(uid),
         notificacaoBusiness.getPreferencias(uid),
+        FollowBusiness.contarSeguidores(uid),
+        FollowBusiness.contarSeguindo(uid),
       ]);
 
       dispatch({
@@ -121,6 +130,8 @@ export function useProfileViewModel() {
         plantas: dadosPlantas,
         posts: dadosPosts,
         notificacoes: dadosNotificacoes,
+        totalSeguidores,
+        totalSeguindo,
       });
     } catch (e: any) {
       dispatch({
@@ -140,7 +151,8 @@ export function useProfileViewModel() {
     if (state.perfil) {
       const perfilAtualizado = { ...state.perfil, fotoURL: novaUrl };
       await atualizarPerfil(perfilAtualizado);
-      dispatch({ type: 'CARREGAR_SUCESSO', perfil: perfilAtualizado, plantas: state.plantas, posts: state.posts, notificacoes: state.notificacoes });
+      await feedRepository.atualizarFotoAutor(state.perfil.uid, novaUrl);
+      dispatch({ type: 'CARREGAR_SUCESSO', perfil: perfilAtualizado, plantas: state.plantas, posts: state.posts, notificacoes: state.notificacoes, totalSeguidores: state.totalSeguidores, totalSeguindo: state.totalSeguindo });
     }
   }
 

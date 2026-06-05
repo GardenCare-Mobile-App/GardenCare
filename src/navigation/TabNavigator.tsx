@@ -1,13 +1,13 @@
-import React from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from '@expo/vector-icons';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useTheme } from '../context/Themecontext';
+import React from "react";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useTheme } from "../context/Themecontext";
 
-import FeedScreen from '../views/screens/FeedScreen';
-import MyGardenScreen from '../views/screens/MyGardenScreen';
-import RotinaScreen from '../views/screens/RoutineScreen';
-import ProfileScreen from '../views/screens/ProfileScreen';
+import FeedScreen from "../views/screens/FeedScreen";
+import MyGardenScreen from "../views/screens/MyGardenScreen";
+import RotinaScreen from "../views/screens/RoutineScreen";
+import ProfileScreen from "../views/screens/ProfileScreen";
 
 export type TabParamList = {
   Feed: undefined;
@@ -27,7 +27,7 @@ export default function MainTabNavigator() {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarActiveTintColor: cores.primary,
-        tabBarInactiveTintColor: estaEscuro ? '#6B6B6B' : '#A0A0A0',
+        tabBarInactiveTintColor: estaEscuro ? "#6B6B6B" : "#A0A0A0",
         tabBarStyle: {
           backgroundColor: cores.cardBackground,
           borderTopColor: cores.border,
@@ -40,26 +40,41 @@ export default function MainTabNavigator() {
           fontSize: 11,
         },
         tabBarIcon: ({ color, size }) => {
-          let iconName: React.ComponentProps<typeof Ionicons>['name'];
+          let iconName: React.ComponentProps<typeof Ionicons>["name"];
 
-          if (route.name === 'Feed') {
-            iconName = 'leaf-outline';
-          } else if (route.name === 'MyGarden') {
-            iconName = 'grid-outline';
-          } else if (route.name === 'Rotina') {
-            iconName = 'calendar-outline';
+          if (route.name === "Feed") {
+            iconName = "leaf-outline";
+          } else if (route.name === "MyGarden") {
+            iconName = "grid-outline";
+          } else if (route.name === "Rotina") {
+            iconName = "calendar-outline";
           } else {
-            iconName = 'person-outline';
+            iconName = "person-outline";
           }
-
           return <Ionicons name={iconName} size={size} color={color} />;
         },
       })}
     >
-      <Tab.Screen name="Feed" component={FeedScreen} options={{ tabBarLabel: 'Feed' }} />
-      <Tab.Screen name="MyGarden" component={MyGardenScreen} options={{ tabBarLabel: 'Meu Jardim' }} />
-      <Tab.Screen name="Rotina" component={RotinaScreen} options={{ tabBarLabel: 'Rotina' }} />
-      <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarLabel: 'Perfil' }} />
+      <Tab.Screen
+        name="Feed"
+        component={FeedScreen}
+        options={{ tabBarLabel: "Feed" }}
+      />
+      <Tab.Screen
+        name="MyGarden"
+        component={MyGardenScreen}
+        options={{ tabBarLabel: "Meu Jardim" }}
+      />
+      <Tab.Screen
+        name="Rotina"
+        component={RotinaScreen}
+        options={{ tabBarLabel: "Rotina" }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{ tabBarLabel: "Perfil" }}
+      />
     </Tab.Navigator>
   );
 }

@@ -25,7 +25,13 @@ export function PostCard({ post, uid, onCurtida }: Props) {
     <View style={styles.card}>
       <TouchableOpacity
         style={styles.cardHeader}
-        onPress={() => navigation.navigate('UserProfile', { uid: post.autorId })}
+        onPress={() => {
+          if (post.autorId === uid) {
+            navigation.navigate('MainTabs', { screen: 'Profile' });
+          } else {
+            navigation.navigate('UserProfile', { uid: post.autorId });
+          }
+        }}
       >
         {post.autorFotoURL ? (
           <Image source={{ uri: post.autorFotoURL }} style={styles.avatar} />

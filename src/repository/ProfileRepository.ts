@@ -69,11 +69,21 @@ export class ProfileRepository {
     if (!user) throw new Error('Usuário não autenticado.');
     const uid = user.uid;
 
-    // Auth primeiro — se falhar, Firestore não é tocado
-    await deleteUser(user);
+    const [plantasSnap, postsSnap, seguidoresSnap, seguindoSnap] = await Promise.all([
+      getDocs(query(collection(db, 'Plantas'), where('uid', '==', uid))),
+      getDocs(query(collection(db, 'Posts'), where('autorId', '==', uid))),
+      getDocs(query(collection(db, 'Seguidores'), where('seguidoId', '==', uid))),
+      getDocs(query(collection(db, 'Seguidores'), where('seguidorId', '==', uid))),
+    ]);
 
-    const plantasSnap = await getDocs(query(collection(db, 'Plantas'), where('uid', '==', uid)));
-    await Promise.all(plantasSnap.docs.map((d) => deleteDoc(doc(db, 'Plantas', d.id))));
-    await deleteDoc(doc(db, 'Usuarios', uid));
+    await Promise.all([
+      ...plantasSnap.docs.map((d) => deleteDoc(d.ref)),
+      ...postsSnap.docs.map((d) => deleteDoc(d.ref)),
+      ...seguidoresSnap.docs.map((d) => deleteDoc(d.ref)),
+      ...seguindoSnap.docs.map((d) => deleteDoc(d.ref)),
+      deleteDoc(doc(db, 'Usuarios', uid)),
+    ]);
+
+    await deleteUser(user);
   }
 }

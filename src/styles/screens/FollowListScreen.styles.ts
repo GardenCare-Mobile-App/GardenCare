@@ -23,16 +23,58 @@ export const createStyles = (cores: Cores) => StyleSheet.create({
     fontWeight: 'bold',
     color: cores.white,
   },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 12,
-    paddingHorizontal: SIZES.padding * 2,
+  lista: {
+    padding: SIZES.padding,
+    paddingBottom: 32,
   },
-  emptyTitle: {
+  item: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    gap: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: cores.border,
+  },
+  itemNome: {
+    flex: 1,
     fontSize: SIZES.fontBody,
-    fontWeight: 'bold',
+    fontWeight: '600',
+    color: cores.textPrimary,
+  },
+  itemPronomes: {
+    fontSize: SIZES.fontSmall,
+    color: cores.textSecondary,
+  },
+  loader: {
+    marginTop: 40,
+  },
+  vazio: {
+    textAlign: 'center',
+    marginTop: 40,
+    fontSize: SIZES.fontBody,
+    color: cores.textSecondary,
+  },
+  erro: {
+    textAlign: 'center',
+    marginTop: 40,
+    fontSize: SIZES.fontBody,
+    color: cores.error,
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    margin: SIZES.padding,
+    paddingHorizontal: 14,
+    height: 44,
+    borderRadius: SIZES.radius,
+    backgroundColor: cores.cardBackground,
+    borderWidth: 1,
+    borderColor: cores.border,
+    gap: 8,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: SIZES.fontBody,
     color: cores.textPrimary,
   },
 });

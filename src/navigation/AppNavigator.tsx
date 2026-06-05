@@ -1,9 +1,11 @@
 import React from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigatorScreenParams } from '@react-navigation/native';
 import { useAuth } from '../context/AuthContext';
 import { COLORS } from '../styles/globalStyles';
 import { PerfilUsuario } from '../models/User';
+import { TabParamList } from './TabNavigator';
 
 import EditProfileScreen from '../views/screens/EditProfileScreen';
 import SettingsScreen from '../views/screens/SettingsScreen';
@@ -11,7 +13,7 @@ import PlantDetailScreen from '../views/screens/PlantDetailScreen';
 import AddPlantScreen from '../views/screens/AddPlantScreen';
 import UserPostsScreen from '../views/screens/UserPostsScreen';
 import FollowListScreen from '../views/screens/FollowListScreen';
-import ProfileScreen from '../views/screens/ProfileScreen';
+import UserProfileScreen from '../views/screens/UserProfileScreen';
 
 import { InitialScreen } from '../views/screens/auth/InicialScreen';
 import { LoginScreen } from '../views/screens/auth/LoginScreen';
@@ -20,13 +22,13 @@ import { RegisterScreen } from '../views/screens/auth/RegisterScreen';
 import MainTabNavigator from './TabNavigator';
 
 export type AppStackParamList = {
-  MainTabs: undefined;
+  MainTabs: NavigatorScreenParams<TabParamList> | undefined;
   EditarPerfil: { perfil: PerfilUsuario };
   Settings: undefined;
   PlantDetail: { plantaId: string };
   CadastroPlanta: undefined;
   UserPosts: undefined;
-  FollowList: { tipo: 'seguidores' | 'seguindo' };
+  FollowList: { tipo: 'seguidores' | 'seguindo'; uid?: string };
   AddRoutine: undefined;
   UserProfile: { uid: string };
 };
@@ -64,8 +66,7 @@ export default function AppNavigator() {
           <Stack.Screen name="CadastroPlanta" component={AddPlantScreen} />
           <Stack.Screen name="UserPosts"      component={UserPostsScreen} />
           <Stack.Screen name="FollowList"     component={FollowListScreen} />
-          <Stack.Screen name="UserProfile"    component={ProfileScreen} />
-          
+          <Stack.Screen name="UserProfile"    component={UserProfileScreen} />
         </>
       ) : (
         <>
