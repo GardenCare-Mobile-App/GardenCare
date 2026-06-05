@@ -4,10 +4,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import { useFeedViewModel } from '../../viewmodels/FeedViewModel';
 import { Post } from '../../models/Post';
-import { styles } from '../../styles/screens/FeedScreen.styles';
-import { COLORS } from '../../styles/globalStyles';
+import { PostCard } from '../components/PostCard';
+import { createStyles } from '../../styles/screens/FeedScreen.styles';
+import { useTheme } from '../../context/Themecontext';
 
 export default function FeedScreen() {
+  const { cores } = useTheme();
+  const styles = createStyles(cores);
 
   const { posts, carregando, erro, enviando, uid, carregarPosts, publicar, toggleCurtida } =
     useFeedViewModel();
@@ -41,43 +44,7 @@ export default function FeedScreen() {
   }
 
   function renderPost({ item }: { item: Post }) {
-    const jaCurtiu = item.curtidas.includes(uid);
-
-    return (
-      <View style={styles.card}>
-
-        <View style={styles.cardHeader}>
-          {item.autorFotoURL ? (
-            <Image source={{ uri: item.autorFotoURL }} style={styles.avatar} />
-          ) : (
-            <View style={styles.avatarPlaceholder}>
-              <Text style={styles.avatarLetra}>
-                {item.autorNome[0].toUpperCase()}
-              </Text>
-            </View>
-          )}
-          <Text style={styles.autorNome}>{item.autorNome}</Text>
-        </View>
-
-        <Text style={styles.conteudo}>{item.conteudo}</Text>
-
-        {item.imagemURL ? (
-          <Image
-            source={{ uri: item.imagemURL }}
-            style={styles.imagemPost}
-            resizeMode="cover"
-          />
-        ) : null}
-
-        <TouchableOpacity style={styles.curtidaBtn} onPress={() => toggleCurtida(item)}>
-          <Text style={[styles.curtidaTexto, jaCurtiu && styles.curtidaAtiva]}>
-            {jaCurtiu ? '❤️' : '🤍'} {item.curtidas.length}{' '}
-            {item.curtidas.length === 1 ? 'curtida' : 'curtidas'}
-          </Text>
-        </TouchableOpacity>
-
-      </View>
-    );
+    return <PostCard post={item} uid={uid} onCurtida={toggleCurtida} />;
   }
 
   return (
@@ -96,7 +63,7 @@ export default function FeedScreen() {
           <TextInput
             style={styles.input}
             placeholder="Compartilhe algo sobre suas plantas..."
-            placeholderTextColor={COLORS.textPLaceholder}
+            placeholderTextColor={cores.textPLaceholder}
             value={conteudo}
             onChangeText={setConteudo}
             multiline
@@ -123,7 +90,7 @@ export default function FeedScreen() {
               disabled={enviando}
             >
               {enviando ? (
-                <ActivityIndicator color={COLORS.white} size="small"/>
+                <ActivityIndicator color={cores.white} size="small"/>
               ) : (
                 <Text style={styles.btnPublicarTexto}>Publicar</Text>
               )}
@@ -135,7 +102,7 @@ export default function FeedScreen() {
         {erro ? <Text style={styles.erro}>{erro}</Text> : null}
 
         {carregando ? (
-          <ActivityIndicator color={COLORS.primary} style={{ marginTop: 32 }} />
+          <ActivityIndicator color={cores.primary} style={{ marginTop: 32 }} />
         ) : (
           <FlatList
             data={posts}

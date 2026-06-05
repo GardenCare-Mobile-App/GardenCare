@@ -1,21 +1,21 @@
 import { useState } from 'react';
 import { FeedRepository } from '../repository/FeedRepository';
 import { Post } from '../models/Post';
+import { useAuth } from '../context/AuthContext';
 
 const feedRepository = new FeedRepository();
 
-//mock de usuário pra conseguir testar as funcionalidades do feed aq sem precisar logar c/ autenticação
-const uid = 'uid-teste-maria';
-const autorNome = 'Maria';
-const autorFotoURL = 'https://pbs.twimg.com/media/GTTtWQZaYAQuYxN.jpg';
-
 export function useFeedViewModel() {
+  const { usuario } = useAuth();
+
+  const uid = usuario?.uid ?? '';
+  const autorNome = usuario?.nome ?? '';
+  const autorFotoURL = usuario?.fotoURL;
 
   const [posts, setPosts] = useState<Post[]>([]);
-  const [carregando, setCarregando] = useState(false);    // true enquanto busca posts
+  const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
-  const [enviando, setEnviando] = useState(false);        // true enquanto publica post
-
+  const [enviando, setEnviando] = useState(false);
 
   async function carregarPosts() {
     setCarregando(true);

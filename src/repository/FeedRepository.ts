@@ -9,12 +9,15 @@ export class FeedRepository {
   async getPosts(): Promise<Post[]> {
     const q = query(collection(db, 'Posts'), orderBy('criadoEm', 'desc'));
     const snapshot = await getDocs(q);
+    return snapshot.docs.map((d) => ({ id: d.id, ...d.data() })) as Post[];
+  }
 
-    // p/ cada documento do firestore, monta um objeto Post com o id + os dados
-    return snapshot.docs.map((d) => ({
-      id: d.id,
-      ...d.data(),
-    })) as Post[];
+  async getPostsByUser(uid: string): Promise<Post[]> {
+    const q = query(collection(db, 'Posts'), orderBy('criadoEm', 'desc'));
+    const snapshot = await getDocs(q);
+    return snapshot.docs
+      .map((d) => ({ id: d.id, ...d.data() }) as Post)
+      .filter((p) => p.autorId === uid);
   }
 
 

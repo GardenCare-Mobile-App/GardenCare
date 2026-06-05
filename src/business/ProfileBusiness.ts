@@ -19,6 +19,10 @@ export class ProfileBusiness {
   async excluirConta(): Promise<void> {
     return profileRepository.excluirConta();
   }
+
+  async atualizarFoto(base64: string): Promise<string> {
+    return profileRepository.uploadFoto(base64);
+  }
   validarPerfil(perfil: PerfilUsuario): string | null {
     if (!perfil.nome || perfil.nome.trim().length === 0) {
       return 'O perfil precisa ter um nome.';

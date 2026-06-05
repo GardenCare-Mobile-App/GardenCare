@@ -9,6 +9,9 @@ import EditProfileScreen from '../views/screens/EditProfileScreen';
 import SettingsScreen from '../views/screens/SettingsScreen';
 import PlantDetailScreen from '../views/screens/PlantDetailScreen';
 import AddPlantScreen from '../views/screens/AddPlantScreen';
+import UserPostsScreen from '../views/screens/UserPostsScreen';
+import FollowListScreen from '../views/screens/FollowListScreen';
+import ProfileScreen from '../views/screens/ProfileScreen';
 
 import { InitialScreen } from '../views/screens/auth/InicialScreen';
 import { LoginScreen } from '../views/screens/auth/LoginScreen';
@@ -22,6 +25,10 @@ export type AppStackParamList = {
   Settings: undefined;
   PlantDetail: { plantaId: string };
   CadastroPlanta: undefined;
+  UserPosts: undefined;
+  FollowList: { tipo: 'seguidores' | 'seguindo' };
+  AddRoutine: undefined;
+  UserProfile: { uid: string };
 };
 
 export type AuthStackParamList = {
@@ -50,11 +57,15 @@ export default function AppNavigator() {
     >
       {estaLogado ? (
         <>
-          <Stack.Screen name="MainTabs"      component={MainTabNavigator} />
-          <Stack.Screen name="EditarPerfil"  component={EditProfileScreen} />
-          <Stack.Screen name="Settings"      component={SettingsScreen} />
-          <Stack.Screen name="PlantDetail"   component={PlantDetailScreen} />
+          <Stack.Screen name="MainTabs"       component={MainTabNavigator} />
+          <Stack.Screen name="EditarPerfil"   component={EditProfileScreen} />
+          <Stack.Screen name="Settings"       component={SettingsScreen} />
+          <Stack.Screen name="PlantDetail"    component={PlantDetailScreen} />
           <Stack.Screen name="CadastroPlanta" component={AddPlantScreen} />
+          <Stack.Screen name="UserPosts"      component={UserPostsScreen} />
+          <Stack.Screen name="FollowList"     component={FollowListScreen} />
+          <Stack.Screen name="UserProfile"    component={ProfileScreen} />
+          
         </>
       ) : (
         <>

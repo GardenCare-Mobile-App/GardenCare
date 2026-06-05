@@ -1,5 +1,5 @@
 import { Platform, StyleSheet } from 'react-native';
-import { COLORS, SIZES } from '../globalStyles';
+import { COLORS, SIZES } from '../../globalStyles';
 
 export const styles = StyleSheet.create({
   container: {  
@@ -28,7 +28,8 @@ export const styles = StyleSheet.create({
   },
   content: {
     alignItems: 'center',
-    gap: 15
+    gap: 15,
+    marginBottom: 55
   },
   botao: {
     borderStyle: 'dotted',
