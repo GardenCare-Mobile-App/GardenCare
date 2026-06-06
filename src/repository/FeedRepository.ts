@@ -1,15 +1,25 @@
-import { collection, addDoc, getDocs, updateDoc, doc, arrayUnion, arrayRemove, orderBy, query, serverTimestamp} from 'firebase/firestore';
+import { collection, addDoc, getDocs, getDoc, updateDoc, doc, arrayUnion, arrayRemove, orderBy, query, where, serverTimestamp} from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../business/firebaseConfig';
 import { Post } from '../models/Post';
 
 export class FeedRepository {
 
-  //busca todos os posts e ordena do mais recente pro mais antigo
   async getPosts(): Promise<Post[]> {
     const q = query(collection(db, 'Posts'), orderBy('criadoEm', 'desc'));
     const snapshot = await getDocs(q);
-    return snapshot.docs.map((d) => ({ id: d.id, ...d.data() })) as Post[];
+    const posts = snapshot.docs.map((d) => ({ id: d.id, ...d.data() })) as Post[];
+
+    const autorIds = [...new Set(posts.map((p) => p.autorId))];
+    const autorExiste = new Map<string, boolean>();
+    await Promise.all(
+      autorIds.map(async (uid) => {
+        const snap = await getDoc(doc(db, 'Usuarios', uid));
+        autorExiste.set(uid, snap.exists());
+      })
+    );
+
+    return posts.filter((p) => autorExiste.get(p.autorId) === true);
   }
 
   async getPostsByUser(uid: string): Promise<Post[]> {
@@ -55,6 +65,18 @@ export class FeedRepository {
     await updateDoc(doc(db, 'Posts', postId), {
       curtidas: arrayRemove(uid),
     });
+  }
+
+  async atualizarNomeAutor(uid: string, novoNome: string): Promise<void> {
+    const q = query(collection(db, 'Posts'), where('autorId', '==', uid));
+    const snap = await getDocs(q);
+    await Promise.all(snap.docs.map((d) => updateDoc(d.ref, { autorNome: novoNome })));
+  }
+
+  async atualizarFotoAutor(uid: string, novaFotoURL: string): Promise<void> {
+    const q = query(collection(db, 'Posts'), where('autorId', '==', uid));
+    const snap = await getDocs(q);
+    await Promise.all(snap.docs.map((d) => updateDoc(d.ref, { autorFotoURL: novaFotoURL })));
   }
 
   private async uploadImagemPost(imagemUri: string): Promise<string> {
