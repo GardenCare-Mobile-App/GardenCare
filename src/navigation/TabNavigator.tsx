@@ -26,7 +26,7 @@ export default function MainTabNavigator() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarActiveTintColor: cores.primary,
+        tabBarActiveTintColor: cores.acao,
         tabBarInactiveTintColor: estaEscuro ? "#6B6B6B" : "#A0A0A0",
         tabBarStyle: {
           backgroundColor: cores.cardBackground,

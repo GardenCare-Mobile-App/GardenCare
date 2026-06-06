@@ -26,7 +26,7 @@ export const createStyles = (cores: Cores) => StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: cores.verdeClaro,
+    backgroundColor: cores.acao,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10,

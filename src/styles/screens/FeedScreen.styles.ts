@@ -9,7 +9,7 @@ export const createStyles = (cores: Cores) => StyleSheet.create({
   },
 
   header: {
-    backgroundColor: cores.primary,
+    backgroundColor: cores.acao,
     paddingHorizontal: SIZES.padding,
     paddingVertical: SIZES.padding,
     flexDirection: 'row',
@@ -69,7 +69,7 @@ export const createStyles = (cores: Cores) => StyleSheet.create({
     color: cores.verdeEscuro,
   },
   btnPublicar: {
-    backgroundColor: cores.primary,
+    backgroundColor: cores.acao,
     paddingVertical: 8,
     paddingHorizontal: 20,
     borderRadius: SIZES.radiusSmall,

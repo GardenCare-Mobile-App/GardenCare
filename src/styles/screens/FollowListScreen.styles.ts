@@ -13,7 +13,7 @@ export const createStyles = (cores: Cores) => StyleSheet.create({
     paddingHorizontal: SIZES.padding,
     paddingVertical: SIZES.padding,
     gap: 12,
-    backgroundColor: cores.primary,
+    backgroundColor: cores.acao,
   },
   backButton: {
     padding: 4,

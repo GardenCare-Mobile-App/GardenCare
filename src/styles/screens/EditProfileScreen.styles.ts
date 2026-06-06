@@ -9,7 +9,7 @@ export const createStyles = (cores: Cores) => StyleSheet.create({
   },
 
   header: {
-    backgroundColor: cores.primary,
+    backgroundColor: cores.acao,
     paddingTop: SIZES.padding,
     paddingBottom: SIZES.padding,
     paddingHorizontal: SIZES.padding,
@@ -43,7 +43,7 @@ export const createStyles = (cores: Cores) => StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: cores.primary,
+    backgroundColor: cores.acao,
     borderWidth: 2,
     borderColor: cores.white,
     alignItems: 'center',
@@ -107,7 +107,7 @@ export const createStyles = (cores: Cores) => StyleSheet.create({
   },
 
   salvarButton: {
-    backgroundColor: cores.primary,
+    backgroundColor: cores.acao,
     marginHorizontal: SIZES.padding,
     marginTop: SIZES.padding,
     marginBottom: SIZES.padding,

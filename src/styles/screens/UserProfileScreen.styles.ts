@@ -24,7 +24,7 @@ export const createStyles = (cores: Cores) => StyleSheet.create({
     paddingHorizontal: SIZES.padding,
     paddingVertical: SIZES.padding,
     gap: 12,
-    backgroundColor: cores.primary,
+    backgroundColor: cores.acao,
   },
   backButton: {
     padding: 4,
@@ -67,12 +67,12 @@ export const createStyles = (cores: Cores) => StyleSheet.create({
     paddingVertical: 10,
     borderRadius: SIZES.radius,
     alignItems: 'center',
-    backgroundColor: cores.primary,
+    backgroundColor: cores.acao,
   },
   followButtonOutline: {
     backgroundColor: 'transparent',
     borderWidth: 1,
-    borderColor: cores.primary,
+    borderColor: cores.acao,
   },
   followButtonText: {
     fontWeight: 'bold',
@@ -80,7 +80,7 @@ export const createStyles = (cores: Cores) => StyleSheet.create({
     color: cores.white,
   },
   followButtonTextOutline: {
-    color: cores.primary,
+    color: cores.acao,
   },
   section: {
     marginHorizontal: SIZES.padding,

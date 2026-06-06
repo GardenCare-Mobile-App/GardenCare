@@ -5,7 +5,7 @@ import { COLORS } from '../../styles/globalStyles';
 
 export default function RotinaScreen() {
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.content}>
         <Text style={styles.title}>Rotina</Text>
       </View>

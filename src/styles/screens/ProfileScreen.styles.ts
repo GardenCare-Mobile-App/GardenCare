@@ -30,7 +30,7 @@ export const createStyles = (cores: Cores) =>
       position: "absolute",
       bottom: 0,
       right: 0,
-      backgroundColor: cores.verdeEscuro,
+      backgroundColor: cores.acao,
       borderRadius: 12,
       width: 24,
       height: 24,
@@ -64,15 +64,13 @@ export const createStyles = (cores: Cores) =>
       marginBottom: SIZES.padding,
       paddingVertical: 8,
       borderRadius: SIZES.radiusSmall,
-      borderWidth: 1,
-      borderColor: cores.border,
       alignItems: "center",
-      backgroundColor: cores.cardBackground,
+      backgroundColor: cores.acao,
     },
     editButtonText: {
       fontSize: SIZES.fontCaption,
       fontWeight: "600",
-      color: cores.textPrimary,
+      color: cores.background,
     },
 
     section: {
@@ -173,7 +171,7 @@ export const createStyles = (cores: Cores) =>
       marginBottom: SIZES.radius,
     },
     retryButton: {
-      backgroundColor: cores.primary,
+      backgroundColor: cores.acao,
       paddingHorizontal: SIZES.padding + 4,
       paddingVertical: 10,
       borderRadius: SIZES.radiusLarge,
