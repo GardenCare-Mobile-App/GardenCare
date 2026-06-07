@@ -1,15 +1,14 @@
 import { StyleSheet, Platform } from 'react-native';
-import { SIZES } from '../globalStyles';
-import { Cores } from '../ThemeStyles';
+import { COLORS, SIZES } from '../globalStyles';
 
-export const createStyles = (cores: Cores) => StyleSheet.create({
+export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: cores.background,
+    backgroundColor: COLORS.background,
   },
 
   header: {
-    backgroundColor: cores.primary,
+    backgroundColor: COLORS.primary,
     paddingTop: SIZES.padding,
     paddingBottom: SIZES.padding,
     paddingHorizontal: SIZES.padding,
@@ -24,7 +23,7 @@ export const createStyles = (cores: Cores) => StyleSheet.create({
     flex: 1,
     fontSize: SIZES.fontTitle,
     fontWeight: 'bold',
-    color: cores.white,
+    color: COLORS.white,
   },
 
   fotoContainer: {
@@ -43,16 +42,16 @@ export const createStyles = (cores: Cores) => StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: cores.primary,
+    backgroundColor: COLORS.primary,
     borderWidth: 2,
-    borderColor: cores.white,
+    borderColor: COLORS.white,
     alignItems: 'center',
     justifyContent: 'center',
   },
   fotoLabel: {
     marginTop: 8,
     fontSize: SIZES.fontSmall,
-    color: cores.textSecondary,
+    color: COLORS.textSecondary,
   },
 
   form: {
@@ -64,19 +63,19 @@ export const createStyles = (cores: Cores) => StyleSheet.create({
   },
   label: {
     fontSize: SIZES.fontCaption,
-    color: cores.textSecondary,
+    color: COLORS.textSecondary,
   },
   input: {
-    backgroundColor: cores.cardBackground,
+    backgroundColor: COLORS.cardBackground,
     borderRadius: SIZES.radius,
     padding: SIZES.radius,
     fontSize: SIZES.fontBody,
-    color: cores.textPrimary,
+    color: COLORS.textPrimary,
     borderWidth: 0.5,
-    borderColor: cores.border,
+    borderColor: COLORS.border,
     ...Platform.select({
       ios: {
-        shadowColor: cores.black,
+        shadowColor: COLORS.black,
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.05,
         shadowRadius: 2,
@@ -92,22 +91,22 @@ export const createStyles = (cores: Cores) => StyleSheet.create({
   },
   contadorBio: {
     fontSize: SIZES.fontSmall,
-    color: cores.textSecondary,
+    color: COLORS.textSecondary,
     textAlign: 'right',
     marginTop: 2,
   },
   contadorBioLimite: {
-    color: cores.error,
+    color: COLORS.error,
   },
 
   erroTexto: {
     fontSize: SIZES.fontCaption,
-    color: cores.error,
+    color: COLORS.error,
     textAlign: 'center',
   },
 
   salvarButton: {
-    backgroundColor: cores.primary,
+    backgroundColor: COLORS.primary,
     marginHorizontal: SIZES.padding,
     marginTop: SIZES.padding,
     marginBottom: SIZES.padding,
@@ -119,6 +118,6 @@ export const createStyles = (cores: Cores) => StyleSheet.create({
   salvarButtonTexto: {
     fontSize: SIZES.fontBody,
     fontWeight: 'bold',
-    color: cores.white,
+    color: COLORS.white,
   },
 });
