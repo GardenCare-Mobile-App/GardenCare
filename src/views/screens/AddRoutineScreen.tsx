@@ -193,6 +193,7 @@ export default function AddRoutineScreen() {
               onChange={(_, selected) => selected && setTempDate(selected)}
               minimumDate={new Date()}
               textColor={cores.textPrimary}
+              locale="pt-BR"
             />
           </View>
         </View>
@@ -218,6 +219,7 @@ export default function AddRoutineScreen() {
               onChange={(_, selected) => selected && setTempDate(selected)}
               is24Hour
               textColor={cores.textPrimary}
+              locale="pt-BR"
             />
           </View>
         </View>
