@@ -2,7 +2,7 @@ import { StyleSheet, Platform } from 'react-native';
 import { SIZES } from '../globalStyles';
 import { Cores } from '../ThemeStyles';
 
-export const createStyles = (cores: Cores, escuro: boolean) =>
+export const createStyles = (cores: Cores) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -102,7 +102,6 @@ export const createStyles = (cores: Cores, escuro: boolean) =>
     curtidasRow: {
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'space-between',
       padding: SIZES.padding,
       borderTopWidth: 0.5,
       borderTopColor: cores.border,
@@ -116,26 +115,7 @@ export const createStyles = (cores: Cores, escuro: boolean) =>
       fontSize: SIZES.fontSubtitle,
       color: cores.textSecondary,
     },
-    botaoCurtir: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 6,
-      paddingVertical: 8,
-      paddingHorizontal: 16,
-      borderRadius: SIZES.radiusLarge,
-      borderWidth: 1.5,
-      borderColor: cores.primary,
-    },
-    botaoCurtirAtivo: {
-      backgroundColor: escuro ? '#1A0A0A' : '#FFE8E8',
-      borderColor: cores.error,
-    },
-    botaoCurtirTexto: {
-      fontSize: SIZES.fontCaption,
-      fontWeight: '600',
-      color: cores.primary,
-    },
-    botaoCurtirTextoAtivo: {
+    curtidasTextoAtivo: {
       color: cores.error,
     },
   });

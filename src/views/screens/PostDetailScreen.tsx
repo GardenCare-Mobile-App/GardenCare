@@ -25,8 +25,8 @@ function formatarData(criadoEm: any): string {
 
 export default function PostDetailScreen({ route, navigation }: any) {
   const { postId } = route.params as { postId: string };
-  const { cores, estaEscuro } = useTheme();
-  const styles = useMemo(() => createStyles(cores, estaEscuro), [cores, estaEscuro]);
+  const { cores } = useTheme();
+  const styles = useMemo(() => createStyles(cores), [cores]);
 
   const { post, loading, error, jaCurtiu, ehAutor, carregarPost, toggleCurtida, deletarPost } =
     usePostDetailViewModel(postId);
@@ -118,32 +118,17 @@ export default function PostDetailScreen({ route, navigation }: any) {
 
           {/* curtidas */}
           <View style={styles.curtidasRow}>
-            <View style={styles.curtidasInfo}>
-              <HeartIcon
-                size={20}
-                color={totalCurtidas > 0 ? cores.error : cores.textSecondary}
-                weight={totalCurtidas > 0 ? 'fill' : 'regular'}
-              />
-              <Text style={styles.curtidasTexto}>
-                {totalCurtidas === 1 ? '1 curtida' : `${totalCurtidas} curtidas`}
-              </Text>
-            </View>
-
             <Pressable
-              style={({ pressed }) => [
-                styles.botaoCurtir,
-                jaCurtiu && styles.botaoCurtirAtivo,
-                { opacity: pressed ? 0.7 : 1 },
-              ]}
+              style={({ pressed }) => [styles.curtidasInfo, { opacity: pressed ? 0.6 : 1 }]}
               onPress={toggleCurtida}
             >
               <HeartIcon
-                size={16}
-                color={jaCurtiu ? cores.error : cores.primary}
+                size={22}
+                color={jaCurtiu ? cores.error : cores.textSecondary}
                 weight={jaCurtiu ? 'fill' : 'regular'}
               />
-              <Text style={[styles.botaoCurtirTexto, jaCurtiu && styles.botaoCurtirTextoAtivo]}>
-                {jaCurtiu ? 'Curtido' : 'Curtir'}
+              <Text style={[styles.curtidasTexto, jaCurtiu && styles.curtidasTextoAtivo]}>
+                {totalCurtidas}
               </Text>
             </Pressable>
           </View>
