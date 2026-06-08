@@ -2,7 +2,8 @@ import React, { useMemo } from 'react';
 import { View, Text, ScrollView, Pressable, Image, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
-import { ArrowLeftIcon, HeartIcon, DotsThreeVerticalIcon } from 'phosphor-react-native';
+import { ArrowLeftIcon, HeartIcon } from 'phosphor-react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../context/Themecontext';
 import { usePostDetailViewModel } from '../../viewmodels/PostDetailViewModel';
 import { createStyles } from '../../styles/screens/PostDetailScreen.styles';
@@ -89,7 +90,7 @@ export default function PostDetailScreen({ route, navigation }: any) {
             style={({ pressed }) => [styles.menuButton, { opacity: pressed ? 0.6 : 1 }]}
             onPress={confirmarExclusao}
           >
-            <DotsThreeVerticalIcon size={28} color={cores.white} weight="bold" />
+            <Ionicons name="trash-outline" size={24} color={cores.white} />
           </Pressable>
         )}
       </View>
