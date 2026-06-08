@@ -10,6 +10,7 @@ import SettingsScreen from '../views/screens/SettingsScreen';
 import PlantDetailScreen from '../views/screens/PlantDetailScreen';
 import AddPlantScreen from '../views/screens/AddPlantScreen';
 import PostDetailScreen from '../views/screens/PostDetailScreen';
+import AddRoutineScreen from '../views/screens/AddRoutineScreen';
 
 import { InitialScreen } from '../views/screens/auth/InitialScreen';
 import { LoginScreen } from '../views/screens/auth/LoginScreen';
@@ -24,6 +25,7 @@ export type AppStackParamList = {
   PlantDetail: { plantaId: string };
   CadastroPlanta: undefined;
   PostDetail: { postId: string };
+  AddRoutine: undefined;
 };
 
 export type AuthStackParamList = {
@@ -58,6 +60,7 @@ export default function AppNavigator() {
           <Stack.Screen name="PlantDetail"   component={PlantDetailScreen} />
           <Stack.Screen name="CadastroPlanta" component={AddPlantScreen} />
           <Stack.Screen name="PostDetail"    component={PostDetailScreen} />
+          <Stack.Screen name="AddRoutine"   component={AddRoutineScreen} />
         </>
       ) : (
         <>

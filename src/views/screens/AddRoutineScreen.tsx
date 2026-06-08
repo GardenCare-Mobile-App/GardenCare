@@ -1,7 +1,8 @@
-import React from 'react';
-import { View, Text, TextInput, ScrollView, Pressable, ActivityIndicator } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, ScrollView, Pressable, ActivityIndicator, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
 import { useAddRoutineViewModel } from '../../viewmodels/AddRoutineViewModel';
 import { RoutineType, RoutineRepeat } from '../../models/Routine';
@@ -9,7 +10,7 @@ import { ROUTINE_TYPE_LABELS, ROUTINE_REPEAT_LABELS } from '../../business/Routi
 import { createStyles } from '../../styles/screens/AddRoutineScreen.styles';
 import { useTheme } from '../../context/Themecontext';
 
-const TYPES: RoutineType[]   = ['rega', 'adubo', 'poda', 'livre'];
+const TYPES: RoutineType[]     = ['rega', 'adubo', 'poda', 'livre'];
 const REPEATS: RoutineRepeat[] = ['nunca', 'diario', 'semanal', 'mensal'];
 
 const TYPE_ICONS: Record<RoutineType, string> = {
@@ -30,6 +31,36 @@ export default function AddRoutineScreen() {
     setTitle, setType, setDate, setTime, setRepeat,
     save,
   } = useAddRoutineViewModel();
+
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
+
+  const pickerDate = date
+    ? new Date(`${date}T${time || '00:00'}`)
+    : new Date();
+
+  function onDateChange(event: DateTimePickerEvent, selected?: Date) {
+    setShowDatePicker(false);
+    if (event.type === 'dismissed' || !selected) return;
+    const yyyy = selected.getFullYear();
+    const mm   = String(selected.getMonth() + 1).padStart(2, '0');
+    const dd   = String(selected.getDate()).padStart(2, '0');
+    setDate(`${yyyy}-${mm}-${dd}`);
+  }
+
+  function onTimeChange(event: DateTimePickerEvent, selected?: Date) {
+    setShowTimePicker(false);
+    if (event.type === 'dismissed' || !selected) return;
+    const hh  = String(selected.getHours()).padStart(2, '0');
+    const min = String(selected.getMinutes()).padStart(2, '0');
+    setTime(`${hh}:${min}`);
+  }
+
+  function formatDate(raw: string) {
+    if (!raw) return 'Selecionar data';
+    const [yyyy, mm, dd] = raw.split('-');
+    return `${dd}/${mm}/${yyyy}`;
+  }
 
   async function handleSave() {
     const ok = await save();
@@ -69,36 +100,51 @@ export default function AddRoutineScreen() {
         </View>
 
         <Text style={styles.label}>Título</Text>
-        <TextInput
-          style={styles.input}
-          value={title}
-          onChangeText={setTitle}
-          placeholder="Ex: Regar o cacto"
-          placeholderTextColor={cores.textSecondary}
-          maxLength={60}
-        />
+        <View style={styles.input}>
+          <Ionicons name="pencil-outline" size={16} color={cores.textSecondary} />
+          <Text
+            style={[styles.inputText, !title && { color: cores.textSecondary }]}
+            numberOfLines={1}
+          >
+            {title || 'Ex: Regar o cacto'}
+          </Text>
+        </View>
 
         <Text style={styles.label}>Data</Text>
-        <TextInput
-          style={styles.input}
-          value={date}
-          onChangeText={setDate}
-          placeholder="AAAA-MM-DD"
-          placeholderTextColor={cores.textSecondary}
-          keyboardType="numeric"
-          maxLength={10}
-        />
+        <Pressable style={styles.input} onPress={() => setShowDatePicker(true)}>
+          <Ionicons name="calendar-outline" size={16} color={cores.textSecondary} />
+          <Text style={[styles.inputText, !date && { color: cores.textSecondary }]}>
+            {formatDate(date)}
+          </Text>
+        </Pressable>
 
         <Text style={styles.label}>Hora</Text>
-        <TextInput
-          style={styles.input}
-          value={time}
-          onChangeText={setTime}
-          placeholder="HH:MM"
-          placeholderTextColor={cores.textSecondary}
-          keyboardType="numeric"
-          maxLength={5}
-        />
+        <Pressable style={styles.input} onPress={() => setShowTimePicker(true)}>
+          <Ionicons name="time-outline" size={16} color={cores.textSecondary} />
+          <Text style={[styles.inputText, !time && { color: cores.textSecondary }]}>
+            {time || 'Selecionar hora'}
+          </Text>
+        </Pressable>
+
+        {showDatePicker && (
+          <DateTimePicker
+            value={pickerDate}
+            mode="date"
+            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+            onChange={onDateChange}
+            minimumDate={new Date()}
+          />
+        )}
+
+        {showTimePicker && (
+          <DateTimePicker
+            value={pickerDate}
+            mode="time"
+            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+            onChange={onTimeChange}
+            is24Hour
+          />
+        )}
 
         <Text style={styles.label}>Repetir</Text>
         <View style={styles.chipRow}>

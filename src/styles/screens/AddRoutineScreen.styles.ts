@@ -71,12 +71,18 @@ export const createStyles = (cores: Cores) => StyleSheet.create({
   },
 
   input: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
     backgroundColor: cores.cardBackground,
     borderRadius: SIZES.radius,
     borderWidth: 1,
     borderColor: cores.border,
     paddingHorizontal: 14,
     paddingVertical: 12,
+  },
+  inputText: {
+    flex: 1,
     fontSize: SIZES.fontBody,
     color: cores.textPrimary,
   },
