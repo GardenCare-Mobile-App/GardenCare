@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
-import { View, Text, ScrollView, Pressable, Image, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, Pressable, Image, ActivityIndicator, Alert } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
-import { ArrowLeftIcon, HeartIcon } from 'phosphor-react-native';
+import { ArrowLeftIcon, HeartIcon, DotsThreeVerticalIcon } from 'phosphor-react-native';
 import { useTheme } from '../../context/Themecontext';
 import { usePostDetailViewModel } from '../../viewmodels/PostDetailViewModel';
 import { createStyles } from '../../styles/screens/PostDetailScreen.styles';
@@ -27,8 +28,26 @@ export default function PostDetailScreen({ route, navigation }: any) {
   const { cores, estaEscuro } = useTheme();
   const styles = useMemo(() => createStyles(cores, estaEscuro), [cores, estaEscuro]);
 
-  const { post, loading, error, jaCurtiu, carregarPost, toggleCurtida } =
+  const { post, loading, error, jaCurtiu, ehAutor, carregarPost, toggleCurtida, deletarPost } =
     usePostDetailViewModel(postId);
+
+  function confirmarExclusao() {
+    Alert.alert(
+      'Excluir post',
+      'Tem certeza de que deseja excluir este post?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Excluir',
+          style: 'destructive',
+          onPress: async () => {
+            await deletarPost();
+            navigation.goBack();
+          },
+        },
+      ]
+    );
+  }
 
   useFocusEffect(
     React.useCallback(() => {
@@ -55,7 +74,7 @@ export default function PostDetailScreen({ route, navigation }: any) {
   const totalCurtidas = post.curtidas?.length ?? 0;
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       {/* header */}
       <View style={styles.header}>
         <Pressable
@@ -65,6 +84,14 @@ export default function PostDetailScreen({ route, navigation }: any) {
           <ArrowLeftIcon size={28} color={cores.white} weight="regular" />
         </Pressable>
         <Text style={styles.headerTitle}>Detalhes do Post</Text>
+        {ehAutor && (
+          <Pressable
+            style={({ pressed }) => [styles.menuButton, { opacity: pressed ? 0.6 : 1 }]}
+            onPress={confirmarExclusao}
+          >
+            <DotsThreeVerticalIcon size={28} color={cores.white} weight="bold" />
+          </Pressable>
+        )}
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -123,6 +150,6 @@ export default function PostDetailScreen({ route, navigation }: any) {
 
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }

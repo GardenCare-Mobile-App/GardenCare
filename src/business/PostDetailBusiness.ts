@@ -15,4 +15,8 @@ export class PostDetailBusiness {
       await repo.curtir(postId, uid);
     }
   }
+
+  async deletarPost(postId: string): Promise<void> {
+    await repo.deletarPost(postId);
+  }
 }

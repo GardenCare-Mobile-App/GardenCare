@@ -69,13 +69,25 @@ export function usePostDetailViewModel(postId: string) {
             dispatch({ type: 'ATUALIZAR_CURTIDAS', curtidas: curtidasOriginais });
         }
     }, [state.post, usuario]);
+    const deletarPost = useCallback(async () => {
+        if (!state.post) return;
+        await business.deletarPost(state.post.id);
+    }, [state.post]);
+
     const jaCurtiu = state.post && usuario
         ? state.post.curtidas.includes(usuario.uid)
         : false;
+
+    const ehAutor = state.post && usuario
+        ? state.post.autorId === usuario.uid
+        : false;
+
     return {
         ...state,
         jaCurtiu,
+        ehAutor,
         carregarPost,
         toggleCurtida,
+        deletarPost,
     };
 }

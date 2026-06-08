@@ -1,21 +1,17 @@
 import { useState } from 'react';
 import { FeedRepository } from '../repository/FeedRepository';
 import { Post } from '../models/Post';
+import { useAuth } from '../context/AuthContext';
 
 const feedRepository = new FeedRepository();
 
-//mock de usuário pra conseguir testar as funcionalidades do feed aq sem precisar logar c/ autenticação
-const uid = 'uid-teste-maria';
-const autorNome = 'Maria';
-const autorFotoURL = 'https://pbs.twimg.com/media/GTTtWQZaYAQuYxN.jpg';
-
 export function useFeedViewModel() {
+  const { usuario } = useAuth();
 
   const [posts, setPosts] = useState<Post[]>([]);
-  const [carregando, setCarregando] = useState(false);    // true enquanto busca posts
+  const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
-  const [enviando, setEnviando] = useState(false);        // true enquanto publica post
-
+  const [enviando, setEnviando] = useState(false);
 
   async function carregarPosts() {
     setCarregando(true);
@@ -31,10 +27,10 @@ export function useFeedViewModel() {
   }
 
   async function publicar(conteudo: string, imagemUri?: string) {
-    if (!conteudo.trim()) return;
+    if (!conteudo.trim() || !usuario) return;
     setEnviando(true);
     try {
-      await feedRepository.criarPost(uid, autorNome, autorFotoURL, conteudo, imagemUri);
+      await feedRepository.criarPost(usuario.uid, usuario.nome, usuario.fotoURL, conteudo, imagemUri);
       await carregarPosts();
     } catch (e) {
       setErro('Erro ao publicar. Tente novamente.');
@@ -44,12 +40,13 @@ export function useFeedViewModel() {
   }
 
   async function toggleCurtida(post: Post) {
-    const jaCurtiu = post.curtidas.includes(uid);
+    if (!usuario) return;
+    const jaCurtiu = post.curtidas.includes(usuario.uid);
     try {
       if (jaCurtiu) {
-        await feedRepository.descurtirPost(post.id, uid);
+        await feedRepository.descurtirPost(post.id, usuario.uid);
       } else {
-        await feedRepository.curtirPost(post.id, uid);
+        await feedRepository.curtirPost(post.id, usuario.uid);
       }
       await carregarPosts();
     } catch (e) {
@@ -57,5 +54,5 @@ export function useFeedViewModel() {
     }
   }
 
-  return { posts, carregando, erro, enviando, uid, carregarPosts, publicar, toggleCurtida };
+  return { posts, carregando, erro, enviando, uid: usuario?.uid, carregarPosts, publicar, toggleCurtida };
 }

@@ -1,4 +1,4 @@
-import { doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { db } from '../business/firebaseConfig';
 import { Post } from '../models/Post';
 
@@ -19,5 +19,9 @@ export class PostDetailRepository {
     await updateDoc(doc(db, 'Posts', postId), {
       curtidas: arrayRemove(uid),
     });
+  }
+
+  async deletarPost(postId: string): Promise<void> {
+    await deleteDoc(doc(db, 'Posts', postId));
   }
 }

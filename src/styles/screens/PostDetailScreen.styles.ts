@@ -34,11 +34,14 @@ export const createStyles = (cores: Cores, escuro: boolean) =>
     backButton: {
       padding: 4,
     },
+    menuButton: {
+      padding: 4,
+    },
     headerTitle: {
       flex: 1,
       fontSize: SIZES.fontTitle,
       fontWeight: 'bold',
-      color: escuro ? cores.black : cores.white,
+      color: cores.white,
     },
 
     postCard: {
