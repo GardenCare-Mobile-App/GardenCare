@@ -120,4 +120,38 @@ export const createStyles = (cores: Cores) => StyleSheet.create({
     fontWeight: '700',
     fontSize: SIZES.fontBody,
   },
+
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0,0,0,0.4)',
+  },
+  modalContainer: {
+    backgroundColor: cores.cardBackground,
+    borderTopLeftRadius: SIZES.radiusLarge,
+    borderTopRightRadius: SIZES.radiusLarge,
+    paddingBottom: 24,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: cores.border,
+  },
+  modalTitle: {
+    fontSize: SIZES.fontBody,
+    fontWeight: '600',
+    color: cores.textPrimary,
+  },
+  modalCancel: {
+    fontSize: SIZES.fontBody,
+    color: cores.textSecondary,
+  },
+  modalConfirm: {
+    fontSize: SIZES.fontBody,
+    fontWeight: '700',
+    color: cores.primary,
+  },
 });

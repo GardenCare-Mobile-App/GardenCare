@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, Pressable, ActivityIndicator, Platform } from 'react-native';
+import { View, Text, TextInput, ScrollView, Pressable, ActivityIndicator, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
 import { useAddRoutineViewModel } from '../../viewmodels/AddRoutineViewModel';
 import { RoutineType, RoutineRepeat } from '../../models/Routine';
@@ -32,28 +32,35 @@ export default function AddRoutineScreen() {
     save,
   } = useAddRoutineViewModel();
 
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [showTimePicker, setShowTimePicker] = useState(false);
+  const [showDateModal, setShowDateModal] = useState(false);
+  const [showTimeModal, setShowTimeModal] = useState(false);
+  const [tempDate, setTempDate] = useState(new Date());
 
-  const pickerDate = date
-    ? new Date(`${date}T${time || '00:00'}`)
-    : new Date();
-
-  function onDateChange(event: DateTimePickerEvent, selected?: Date) {
-    setShowDatePicker(false);
-    if (event.type === 'dismissed' || !selected) return;
-    const yyyy = selected.getFullYear();
-    const mm   = String(selected.getMonth() + 1).padStart(2, '0');
-    const dd   = String(selected.getDate()).padStart(2, '0');
-    setDate(`${yyyy}-${mm}-${dd}`);
+  function openDatePicker() {
+    const base = date ? new Date(`${date}T${time || '00:00'}`) : new Date();
+    setTempDate(base);
+    setShowDateModal(true);
   }
 
-  function onTimeChange(event: DateTimePickerEvent, selected?: Date) {
-    setShowTimePicker(false);
-    if (event.type === 'dismissed' || !selected) return;
-    const hh  = String(selected.getHours()).padStart(2, '0');
-    const min = String(selected.getMinutes()).padStart(2, '0');
+  function openTimePicker() {
+    const base = date ? new Date(`${date}T${time || '00:00'}`) : new Date();
+    setTempDate(base);
+    setShowTimeModal(true);
+  }
+
+  function confirmDate() {
+    const yyyy = tempDate.getFullYear();
+    const mm   = String(tempDate.getMonth() + 1).padStart(2, '0');
+    const dd   = String(tempDate.getDate()).padStart(2, '0');
+    setDate(`${yyyy}-${mm}-${dd}`);
+    setShowDateModal(false);
+  }
+
+  function confirmTime() {
+    const hh  = String(tempDate.getHours()).padStart(2, '0');
+    const min = String(tempDate.getMinutes()).padStart(2, '0');
     setTime(`${hh}:${min}`);
+    setShowTimeModal(false);
   }
 
   function formatDate(raw: string) {
@@ -102,16 +109,18 @@ export default function AddRoutineScreen() {
         <Text style={styles.label}>Título</Text>
         <View style={styles.input}>
           <Ionicons name="pencil-outline" size={16} color={cores.textSecondary} />
-          <Text
-            style={[styles.inputText, !title && { color: cores.textSecondary }]}
-            numberOfLines={1}
-          >
-            {title || 'Ex: Regar o cacto'}
-          </Text>
+          <TextInput
+            style={styles.inputText}
+            value={title}
+            onChangeText={setTitle}
+            placeholder="Ex: Regar o cacto"
+            placeholderTextColor={cores.textSecondary}
+            maxLength={60}
+          />
         </View>
 
         <Text style={styles.label}>Data</Text>
-        <Pressable style={styles.input} onPress={() => setShowDatePicker(true)}>
+        <Pressable style={styles.input} onPress={openDatePicker}>
           <Ionicons name="calendar-outline" size={16} color={cores.textSecondary} />
           <Text style={[styles.inputText, !date && { color: cores.textSecondary }]}>
             {formatDate(date)}
@@ -119,32 +128,12 @@ export default function AddRoutineScreen() {
         </Pressable>
 
         <Text style={styles.label}>Hora</Text>
-        <Pressable style={styles.input} onPress={() => setShowTimePicker(true)}>
+        <Pressable style={styles.input} onPress={openTimePicker}>
           <Ionicons name="time-outline" size={16} color={cores.textSecondary} />
           <Text style={[styles.inputText, !time && { color: cores.textSecondary }]}>
             {time || 'Selecionar hora'}
           </Text>
         </Pressable>
-
-        {showDatePicker && (
-          <DateTimePicker
-            value={pickerDate}
-            mode="date"
-            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-            onChange={onDateChange}
-            minimumDate={new Date()}
-          />
-        )}
-
-        {showTimePicker && (
-          <DateTimePicker
-            value={pickerDate}
-            mode="time"
-            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-            onChange={onTimeChange}
-            is24Hour
-          />
-        )}
 
         <Text style={styles.label}>Repetir</Text>
         <View style={styles.chipRow}>
@@ -183,6 +172,55 @@ export default function AddRoutineScreen() {
         </Pressable>
 
       </ScrollView>
+
+      {/* Modal de Data */}
+      <Modal visible={showDateModal} transparent animationType="slide">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <Pressable onPress={() => setShowDateModal(false)}>
+                <Text style={styles.modalCancel}>Cancelar</Text>
+              </Pressable>
+              <Text style={styles.modalTitle}>Selecionar Data</Text>
+              <Pressable onPress={confirmDate}>
+                <Text style={styles.modalConfirm}>Confirmar</Text>
+              </Pressable>
+            </View>
+            <DateTimePicker
+              value={tempDate}
+              mode="date"
+              display="spinner"
+              onChange={(_, selected) => selected && setTempDate(selected)}
+              minimumDate={new Date()}
+            />
+          </View>
+        </View>
+      </Modal>
+
+      {/* Modal de Hora */}
+      <Modal visible={showTimeModal} transparent animationType="slide">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <Pressable onPress={() => setShowTimeModal(false)}>
+                <Text style={styles.modalCancel}>Cancelar</Text>
+              </Pressable>
+              <Text style={styles.modalTitle}>Selecionar Hora</Text>
+              <Pressable onPress={confirmTime}>
+                <Text style={styles.modalConfirm}>Confirmar</Text>
+              </Pressable>
+            </View>
+            <DateTimePicker
+              value={tempDate}
+              mode="time"
+              display="spinner"
+              onChange={(_, selected) => selected && setTempDate(selected)}
+              is24Hour
+            />
+          </View>
+        </View>
+      </Modal>
+
     </SafeAreaView>
   );
 }
