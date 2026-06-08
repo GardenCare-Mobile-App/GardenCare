@@ -7,7 +7,7 @@ import { Post } from '../../models/Post';
 import { styles } from '../../styles/screens/FeedScreen.styles';
 import { COLORS } from '../../styles/globalStyles';
 
-export default function FeedScreen() {
+export default function FeedScreen({ navigation }: any) {
 
   const { posts, carregando, erro, enviando, uid, carregarPosts, publicar, toggleCurtida } =
     useFeedViewModel();
@@ -44,7 +44,7 @@ export default function FeedScreen() {
     const jaCurtiu = item.curtidas.includes(uid);
 
     return (
-      <View style={styles.card}>
+      <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('PostDetail', { postId: item.id })} activeOpacity={0.85}>
 
         <View style={styles.cardHeader}>
           {item.autorFotoURL ? (
@@ -76,7 +76,7 @@ export default function FeedScreen() {
           </Text>
         </TouchableOpacity>
 
-      </View>
+      </TouchableOpacity>
     );
   }
 
