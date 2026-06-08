@@ -192,6 +192,7 @@ export default function AddRoutineScreen() {
               display="spinner"
               onChange={(_, selected) => selected && setTempDate(selected)}
               minimumDate={new Date()}
+              textColor={cores.textPrimary}
             />
           </View>
         </View>
@@ -216,6 +217,7 @@ export default function AddRoutineScreen() {
               display="spinner"
               onChange={(_, selected) => selected && setTempDate(selected)}
               is24Hour
+              textColor={cores.textPrimary}
             />
           </View>
         </View>
