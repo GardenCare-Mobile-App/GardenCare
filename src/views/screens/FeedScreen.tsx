@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, Text, FlatList, TextInput, TouchableOpacity, Image, ActivityIndicator, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
+import { useScrollToTop } from '@react-navigation/native';
 import { useFeedViewModel } from '../../viewmodels/FeedViewModel';
 import { Post } from '../../models/Post';
 import { PostCard } from '../components/PostCard';
@@ -12,15 +13,14 @@ export default function FeedScreen() {
   const { cores } = useTheme();
   const styles = createStyles(cores);
 
-  const { posts, carregando, erro, enviando, uid, carregarPosts, publicar, toggleCurtida } =
+  const { posts, carregando, erro, enviando, uid, comentarios, carregandoComentarios, carregarPosts, publicar, toggleCurtida, carregarComentarios, comentar } =
     useFeedViewModel();
 
   const [conteudo, setConteudo] = useState('');
   const [imagemUri, setImagemUri] = useState<string | undefined>();
 
-  useEffect(() => {
-    carregarPosts();
-  }, []);
+  const flatListRef = useRef<FlatList>(null);
+  useScrollToTop(flatListRef as any);
 
   async function escolherImagem() {
     const resultado = await ImagePicker.launchImageLibraryAsync({
@@ -44,14 +44,24 @@ export default function FeedScreen() {
   }
 
   function renderPost({ item }: { item: Post }) {
-    return <PostCard post={item} uid={uid} onCurtida={toggleCurtida} />;
+    return (
+      <PostCard
+        post={item}
+        uid={uid}
+        comentarios={comentarios[item.id]}
+        carregandoComentarios={carregandoComentarios[item.id]}
+        onCurtida={toggleCurtida}
+        onAbrirComentarios={carregarComentarios}
+        onEnviarComentario={comentar}
+      />
+    );
   }
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
 
         <View style={styles.header}>
@@ -105,12 +115,14 @@ export default function FeedScreen() {
           <ActivityIndicator color={cores.primary} style={{ marginTop: 32 }} />
         ) : (
           <FlatList
+            ref={flatListRef}
             data={posts}
             keyExtractor={(item) => item.id}
             renderItem={renderPost}
             contentContainerStyle={styles.lista}
             onRefresh={carregarPosts}
             refreshing={carregando}
+            automaticallyAdjustKeyboardInsets={true}
             ListEmptyComponent={
               <Text style={styles.vazio}>
                 Nenhuma publicação ainda. Seja a primeira!

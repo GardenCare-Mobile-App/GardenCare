@@ -53,19 +53,113 @@ export const createStyles = (cores: Cores) => StyleSheet.create({
     borderRadius: SIZES.radiusSmall,
     marginBottom: 10,
   },
-  curtidaBtn: {
+
+  acoesBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    alignSelf: 'flex-start',
-    gap: 6,
+    gap: 16,
     paddingVertical: 4,
   },
-  curtidaTexto: {
+  acaoBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  acaoTexto: {
     fontSize: SIZES.fontSubtitle,
     color: cores.textSecondary,
   },
   curtidaAtiva: {
     color: cores.error,
     fontWeight: 'bold',
+  },
+  comentarioAtivo: {
+    color: cores.verdeEscuro,
+    fontWeight: 'bold',
+  },
+
+  comentariosContainer: {
+    marginTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: cores.border,
+    paddingTop: 12,
+    gap: 10,
+  },
+  comentarioItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+  },
+  comentarioAvatar: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+  },
+  comentarioAvatarPlaceholder: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: cores.acao,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  comentarioAvatarLetra: {
+    color: cores.white,
+    fontWeight: 'bold',
+    fontSize: 12,
+  },
+  comentarioBalao: {
+    flex: 1,
+    backgroundColor: cores.background,
+    borderRadius: SIZES.radiusSmall,
+    padding: 8,
+    borderWidth: 1,
+    borderColor: cores.border,
+  },
+  comentarioAutor: {
+    fontWeight: 'bold',
+    fontSize: 12,
+    color: cores.textPrimary,
+    marginBottom: 2,
+  },
+  comentarioTexto: {
+    fontSize: SIZES.fontBody,
+    color: cores.textPrimary,
+    lineHeight: 20,
+  },
+  semComentarios: {
+    fontSize: SIZES.fontSubtitle,
+    color: cores.textSecondary,
+    textAlign: 'center',
+    paddingVertical: 8,
+  },
+
+  inputComentarioContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    gap: 8,
+    marginTop: 4,
+  },
+  inputComentario: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: cores.border,
+    borderRadius: SIZES.radiusSmall,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    fontSize: SIZES.fontBody,
+    color: cores.textPrimary,
+    maxHeight: 100,
+  },
+  btnEnviarComentario: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: cores.acao,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  btnEnviarDesabilitado: {
+    opacity: 0.45,
   },
 });

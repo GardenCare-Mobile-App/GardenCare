@@ -1,11 +1,8 @@
-export interface Post {
+export interface Comentario {
   id: string;
   autorId: string;
   autorNome: string;
   autorFotoURL?: string;
   conteudo: string;
-  imagemURL?: string;
-  curtidas: string[];
-  totalComentarios: number;
   criadoEm: any;
 }
