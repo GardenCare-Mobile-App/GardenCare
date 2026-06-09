@@ -48,9 +48,8 @@ const estadoInicial: ProfileState = {
   totalSeguidores: 0,
   totalSeguindo: 0,
   notificacoes: {
-    lembreteDeRega: true,
     alertasSensor: true,
-    novosPosts: false,
+    rotinas: true,
   },
   loading: true,
   error: null,

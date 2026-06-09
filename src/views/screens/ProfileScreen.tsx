@@ -112,6 +112,10 @@ export default function ProfileScreen() {
           <Text style={styles.editButtonText}>Editar Perfil</Text>
         </Pressable>
 
+        <Pressable style={styles.myGardenButton} onPress={() => navigation.navigate('MyGarden')}>
+          <Text style={styles.myGardenButtonText}>Meu Jardim</Text>
+        </Pressable>
+
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Plantas favoritas</Text>
           {plantasFavoritas.length === 0 ? (
@@ -131,18 +135,13 @@ export default function ProfileScreen() {
         <View style={[styles.section, styles.sectionLast]}>
           <Text style={styles.sectionTitle}>Notificações</Text>
           <View style={styles.notificationItem}>
-            <Text style={styles.notificationLabel}>Lembrete de rega</Text>
-            <Switch value={notificacoes.lembreteDeRega} onValueChange={(v) => alterarNotificacao('lembreteDeRega', v)} trackColor={{ false: cores.border, true: cores.verdeEscuro }} thumbColor={cores.white} />
-          </View>
-          <View style={styles.notificationDivider} />
-          <View style={styles.notificationItem}>
             <Text style={styles.notificationLabel}>Alertas de sensor</Text>
             <Switch value={notificacoes.alertasSensor} onValueChange={(v) => alterarNotificacao('alertasSensor', v)} trackColor={{ false: cores.border, true: cores.verdeEscuro }} thumbColor={cores.white} />
           </View>
           <View style={styles.notificationDivider} />
           <View style={styles.notificationItem}>
-            <Text style={styles.notificationLabel}>Novos posts do feed</Text>
-            <Switch value={notificacoes.novosPosts} onValueChange={(v) => alterarNotificacao('novosPosts', v)} trackColor={{ false: cores.border, true: cores.verdeEscuro }} thumbColor={cores.white} />
+            <Text style={styles.notificationLabel}>Lembretes de rotina</Text>
+            <Switch value={notificacoes.rotinas} onValueChange={(v) => alterarNotificacao('rotinas', v)} trackColor={{ false: cores.border, true: cores.verdeEscuro }} thumbColor={cores.white} />
           </View>
         </View>
 

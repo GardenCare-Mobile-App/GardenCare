@@ -9,7 +9,7 @@ export class NotificacaoRepository {
     if (docSnap.exists() && docSnap.data().notificacoes) {
       return docSnap.data().notificacoes as PreferenciasNotificacao;
     }
-    return { lembreteDeRega: true, alertasSensor: true, novosPosts: false };
+    return { alertasSensor: true, rotinas: true };
   }
 
   async salvarPreferencias(uid: string, preferencias: PreferenciasNotificacao): Promise<void> {
