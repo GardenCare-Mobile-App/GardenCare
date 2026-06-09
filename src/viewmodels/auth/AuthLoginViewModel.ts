@@ -22,7 +22,7 @@ type Action =
     | { type: "SUCESSO" }
     | { type: "ERRO"; payload: string }
     | { type: "RESETAR" };
-    
+
 const estadoInicial: State = {
     email: "",
     senha: "",
@@ -55,11 +55,11 @@ function reducer(state: State, action: Action): State {
 }
 export function useLoginViewModel() {
     const navigation = useNavigation<AuthNav>();
-    
+
     const { login } = useAuth();
-   
+
     const [state, dispatch] = useReducer(reducer, estadoInicial);
-  
+
     async function entrar() {
         dispatch({ type: "INICIO" });
         try {
@@ -69,6 +69,28 @@ export function useLoginViewModel() {
         } catch (e: any) {
 
             dispatch({ type: "ERRO", payload: mapFirebaseError(e.code) });
+        }
+    }
+
+    async function entrarComGoogle() {
+        dispatch({ type: "INICIO" });
+        try {
+            // CHAMA O AuthBusiness
+            const usuario = await AuthBusiness.entrarComGoogle();
+            // salva e redireciona
+            await login(usuario); 
+            
+            dispatch({ type: "SUCESSO" });
+        } catch (e: any) {
+            // cancelando e exibindo o erro
+            if (e.message === 'login cancelado') {
+                // envia sucesso ou limpa o loading
+                dispatch({ type: "SUCESSO" }); 
+                return;
+            }
+
+            // mapeando erro
+            dispatch({ type: "ERRO", payload: mapFirebaseError(e.code || e.message) });
         }
     }
 
@@ -85,5 +107,7 @@ export function useLoginViewModel() {
         voltar: () => navigation.goBack(),
         irParaRegistrar: () => navigation.navigate("Register"),
         entrar,
+        entrarComGoogle,
+        state,
     };
 }
