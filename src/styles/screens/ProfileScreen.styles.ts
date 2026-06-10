@@ -61,13 +61,27 @@ export const createStyles = (cores: Cores) =>
 
     editButton: {
       marginHorizontal: SIZES.padding,
-      marginBottom: SIZES.padding,
+      marginBottom: 8,
       paddingVertical: 8,
       borderRadius: SIZES.radiusSmall,
       alignItems: "center",
       backgroundColor: cores.acao,
     },
     editButtonText: {
+      fontSize: SIZES.fontCaption,
+      fontWeight: "600",
+      color: cores.background,
+    },
+
+    myGardenButton: {
+      marginHorizontal: SIZES.padding,
+      marginBottom: SIZES.padding,
+      paddingVertical: 8,
+      borderRadius: SIZES.radiusSmall,
+      alignItems: "center",
+      backgroundColor: cores.acao,
+    },
+    myGardenButtonText: {
       fontSize: SIZES.fontCaption,
       fontWeight: "600",
       color: cores.background,

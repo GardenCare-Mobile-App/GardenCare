@@ -5,14 +5,14 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../context/Themecontext";
 
 import FeedScreen from "../views/screens/FeedScreen";
-import MyGardenScreen from "../views/screens/MyGardenScreen";
-import RotinaScreen from "../views/screens/RoutineScreen";
+import IdentificationScreen from "../views/screens/IdentificationPlantScreen";
+import SearchScreen from "../views/screens/SearchScreen";
 import ProfileScreen from "../views/screens/ProfileScreen";
 
 export type TabParamList = {
   Feed: undefined;
-  MyGarden: undefined;
-  Rotina: undefined;
+  Identificacao: undefined;
+  Pesquisa: undefined;
   Profile: undefined;
 };
 
@@ -44,10 +44,10 @@ export default function MainTabNavigator() {
 
           if (route.name === "Feed") {
             iconName = "leaf-outline";
-          } else if (route.name === "MyGarden") {
-            iconName = "grid-outline";
-          } else if (route.name === "Rotina") {
-            iconName = "calendar-outline";
+          } else if (route.name === "Identificacao") {
+            iconName = "scan-outline";
+          } else if (route.name === "Pesquisa") {
+            iconName = "search-outline";
           } else {
             iconName = "person-outline";
           }
@@ -61,14 +61,14 @@ export default function MainTabNavigator() {
         options={{ tabBarLabel: "Feed" }}
       />
       <Tab.Screen
-        name="MyGarden"
-        component={MyGardenScreen}
-        options={{ tabBarLabel: "Meu Jardim" }}
+        name="Identificacao"
+        component={IdentificationScreen}
+        options={{ tabBarLabel: "Identificar" }}
       />
       <Tab.Screen
-        name="Rotina"
-        component={RotinaScreen}
-        options={{ tabBarLabel: "Rotina" }}
+        name="Pesquisa"
+        component={SearchScreen}
+        options={{ tabBarLabel: "Buscar" }}
       />
       <Tab.Screen
         name="Profile"
