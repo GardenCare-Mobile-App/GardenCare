@@ -136,6 +136,10 @@ export default function ProfileScreen() {
           </View>
         </View>
 
+        <Pressable style={styles.myGardenButton} onPress={() => navigation.navigate('MyGarden')}>
+          <Text style={styles.myGardenButtonText}>Meu Jardim</Text>
+        </Pressable>
+
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Plantas favoritas</Text>
 
