@@ -1,5 +1,6 @@
 import { mockPosts } from '../mocks/MockPosts';
 import { mockPerfil } from '../mocks/MockUsuario';
+import { mockComentarios } from '../mocks/MockComentarios';
 
 const getPosts = jest.fn();
 const curtirPost = jest.fn();
@@ -110,6 +111,88 @@ describe('Feed', () => {
       await expect(curtirPost(mockPosts[0].id, mockPerfil.uid)).rejects.toThrow(
         'Erro ao curtir post.',
       );
+    });
+  });
+
+  describe('getComentarios', () => {
+    const getComentarios = jest.fn();
+
+    beforeEach(() => {
+      getComentarios.mockClear();
+    });
+
+    it('retorna lista de comentários de um post', async () => {
+      getComentarios.mockResolvedValue(mockComentarios);
+
+      const comentarios = await getComentarios(mockPosts[0].id);
+
+      expect(getComentarios).toHaveBeenCalledWith(mockPosts[0].id);
+      expect(comentarios).toHaveLength(2);
+      expect(comentarios[0]).toHaveProperty('conteudo', mockComentarios[0].conteudo);
+      expect(comentarios[1]).toHaveProperty('autorNome', mockComentarios[1].autorNome);
+    });
+
+    it('retorna lista vazia quando o post não tem comentários', async () => {
+      getComentarios.mockResolvedValue([]);
+
+      const comentarios = await getComentarios(mockPosts[1].id);
+
+      expect(comentarios).toHaveLength(0);
+      expect(Array.isArray(comentarios)).toBe(true);
+    });
+
+    it('lança erro quando falha ao buscar comentários', async () => {
+      getComentarios.mockRejectedValue(new Error('Erro ao carregar comentários.'));
+
+      await expect(getComentarios(mockPosts[0].id)).rejects.toThrow(
+        'Erro ao carregar comentários.',
+      );
+    });
+  });
+
+  describe('comentarPost', () => {
+    const comentarPost = jest.fn();
+
+    beforeEach(() => {
+      comentarPost.mockClear();
+    });
+
+    it('adiciona comentário com sucesso', async () => {
+      comentarPost.mockResolvedValue(mockComentarios[0]);
+
+      const resultado = await comentarPost(
+        mockPosts[0].id,
+        mockPerfil.uid,
+        mockPerfil.nome,
+        undefined,
+        'Que planta linda!',
+      );
+
+      expect(comentarPost).toHaveBeenCalledWith(
+        mockPosts[0].id,
+        mockPerfil.uid,
+        mockPerfil.nome,
+        undefined,
+        'Que planta linda!',
+      );
+      expect(resultado).toHaveProperty('conteudo', mockComentarios[0].conteudo);
+      expect(resultado).toHaveProperty('autorId', mockPerfil.uid);
+    });
+
+    it('lança erro quando o conteúdo do comentário está vazio', async () => {
+      comentarPost.mockRejectedValue(new Error('O comentário não pode estar vazio.'));
+
+      await expect(
+        comentarPost(mockPosts[0].id, mockPerfil.uid, mockPerfil.nome, undefined, ''),
+      ).rejects.toThrow('O comentário não pode estar vazio.');
+    });
+
+    it('lança erro quando falha ao comentar', async () => {
+      comentarPost.mockRejectedValue(new Error('Erro ao comentar.'));
+
+      await expect(
+        comentarPost(mockPosts[0].id, mockPerfil.uid, mockPerfil.nome, undefined, 'Bom!'),
+      ).rejects.toThrow('Erro ao comentar.');
     });
   });
 });
