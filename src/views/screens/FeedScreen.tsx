@@ -2,14 +2,21 @@ import React, { useState, useRef } from 'react';
 import { View, Text, FlatList, TextInput, TouchableOpacity, Image, ActivityIndicator, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useScrollToTop } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 import { useFeedViewModel } from '../../viewmodels/FeedViewModel';
 import { Post } from '../../models/Post';
 import { PostCard } from '../components/PostCard';
 import { createStyles } from '../../styles/screens/FeedScreen.styles';
 import { useTheme } from '../../context/Themecontext';
+import { AppStackParamList } from '../../navigation/AppNavigator';
+
+type Nav = NativeStackNavigationProp<AppStackParamList>;
 
 export default function FeedScreen() {
+  const navigation = useNavigation<Nav>();
   const { cores } = useTheme();
   const styles = createStyles(cores);
 
@@ -65,7 +72,11 @@ export default function FeedScreen() {
       >
 
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Feed da Comunidade 🌱</Text>
+          <Text style={styles.headerTitle}>Feed da Comunidade </Text>
+          <TouchableOpacity style={styles.headerBtn} onPress={() => navigation.navigate('Rotinas')}>
+            <Ionicons name="calendar-outline" size={22} color={cores.white} />
+            <Text style={styles.headerBtnTexto}>Rotinas</Text>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.novoPost}>

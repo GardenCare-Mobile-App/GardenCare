@@ -22,6 +22,20 @@ export const createStyles = (cores: Cores) => StyleSheet.create({
     fontWeight: 'bold',
     color: cores.white,
   },
+  headerBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+  },
+  headerBtnTexto: {
+    color: cores.white,
+    fontSize: SIZES.fontSubtitle,
+    fontWeight: '600',
+  },
 
   novoPost: {
     backgroundColor: cores.cardBackground,
