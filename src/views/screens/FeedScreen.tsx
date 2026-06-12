@@ -1,23 +1,33 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, Text, FlatList, TextInput, TouchableOpacity, Image, ActivityIndicator, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useScrollToTop } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 import { useFeedViewModel } from '../../viewmodels/FeedViewModel';
 import { Post } from '../../models/Post';
-import { styles } from '../../styles/screens/FeedScreen.styles';
-import { COLORS } from '../../styles/globalStyles';
+import { PostCard } from '../components/PostCard';
+import { createStyles } from '../../styles/screens/FeedScreen.styles';
+import { useTheme } from '../../context/Themecontext';
+import { AppStackParamList } from '../../navigation/AppNavigator';
 
-export default function FeedScreen({ navigation }: any) {
+type Nav = NativeStackNavigationProp<AppStackParamList>;
 
-  const { posts, carregando, erro, enviando, uid, carregarPosts, publicar, toggleCurtida } =
+export default function FeedScreen() {
+  const navigation = useNavigation<Nav>();
+  const { cores } = useTheme();
+  const styles = createStyles(cores);
+
+  const { posts, carregando, erro, enviando, uid, comentarios, carregandoComentarios, carregarPosts, publicar, toggleCurtida, carregarComentarios, comentar } =
     useFeedViewModel();
 
   const [conteudo, setConteudo] = useState('');
   const [imagemUri, setImagemUri] = useState<string | undefined>();
 
-  useEffect(() => {
-    carregarPosts();
-  }, []);
+  const flatListRef = useRef<FlatList>(null);
+  useScrollToTop(flatListRef as any);
 
   async function escolherImagem() {
     const resultado = await ImagePicker.launchImageLibraryAsync({
@@ -41,54 +51,32 @@ export default function FeedScreen({ navigation }: any) {
   }
 
   function renderPost({ item }: { item: Post }) {
-    const jaCurtiu = item.curtidas.includes(uid);
-
     return (
-      <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('PostDetail', { postId: item.id })} activeOpacity={0.85}>
-
-        <View style={styles.cardHeader}>
-          {item.autorFotoURL ? (
-            <Image source={{ uri: item.autorFotoURL }} style={styles.avatar} />
-          ) : (
-            <View style={styles.avatarPlaceholder}>
-              <Text style={styles.avatarLetra}>
-                {item.autorNome[0].toUpperCase()}
-              </Text>
-            </View>
-          )}
-          <Text style={styles.autorNome}>{item.autorNome}</Text>
-        </View>
-
-        <Text style={styles.conteudo}>{item.conteudo}</Text>
-
-        {item.imagemURL ? (
-          <Image
-            source={{ uri: item.imagemURL }}
-            style={styles.imagemPost}
-            resizeMode="cover"
-          />
-        ) : null}
-
-        <TouchableOpacity style={styles.curtidaBtn} onPress={() => toggleCurtida(item)}>
-          <Text style={[styles.curtidaTexto, jaCurtiu && styles.curtidaAtiva]}>
-            {jaCurtiu ? '❤️' : '🤍'} {item.curtidas.length}{' '}
-            {item.curtidas.length === 1 ? 'curtida' : 'curtidas'}
-          </Text>
-        </TouchableOpacity>
-
-      </TouchableOpacity>
+      <PostCard
+        post={item}
+        uid={uid}
+        comentarios={comentarios[item.id]}
+        carregandoComentarios={carregandoComentarios[item.id]}
+        onCurtida={toggleCurtida}
+        onAbrirComentarios={carregarComentarios}
+        onEnviarComentario={comentar}
+      />
     );
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
 
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Feed da Comunidade 🌱</Text>
+          <Text style={styles.headerTitle}>Feed da Comunidade </Text>
+          <TouchableOpacity style={styles.headerBtn} onPress={() => navigation.navigate('Rotinas')}>
+            <Ionicons name="calendar-outline" size={22} color={cores.white} />
+            <Text style={styles.headerBtnTexto}>Rotinas</Text>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.novoPost}>
@@ -96,7 +84,7 @@ export default function FeedScreen({ navigation }: any) {
           <TextInput
             style={styles.input}
             placeholder="Compartilhe algo sobre suas plantas..."
-            placeholderTextColor={COLORS.textPLaceholder}
+            placeholderTextColor={cores.textPLaceholder}
             value={conteudo}
             onChangeText={setConteudo}
             multiline
@@ -123,7 +111,7 @@ export default function FeedScreen({ navigation }: any) {
               disabled={enviando}
             >
               {enviando ? (
-                <ActivityIndicator color={COLORS.white} size="small"/>
+                <ActivityIndicator color={cores.white} size="small"/>
               ) : (
                 <Text style={styles.btnPublicarTexto}>Publicar</Text>
               )}
@@ -135,15 +123,17 @@ export default function FeedScreen({ navigation }: any) {
         {erro ? <Text style={styles.erro}>{erro}</Text> : null}
 
         {carregando ? (
-          <ActivityIndicator color={COLORS.primary} style={{ marginTop: 32 }} />
+          <ActivityIndicator color={cores.primary} style={{ marginTop: 32 }} />
         ) : (
           <FlatList
+            ref={flatListRef}
             data={posts}
             keyExtractor={(item) => item.id}
             renderItem={renderPost}
             contentContainerStyle={styles.lista}
             onRefresh={carregarPosts}
             refreshing={carregando}
+            automaticallyAdjustKeyboardInsets={true}
             ListEmptyComponent={
               <Text style={styles.vazio}>
                 Nenhuma publicação ainda. Seja a primeira!

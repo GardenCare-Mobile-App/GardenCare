@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
-  Image,
   ScrollView,
   Pressable,
   ActivityIndicator,
@@ -12,35 +11,41 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useProfileViewModel } from '../../viewmodels/ProfileViewModel';
-import { Plant } from '../../models/Plant';
 import { createStyles } from '../../styles/screens/ProfileScreen.styles';
 import { useTheme } from '../../context/Themecontext';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { getStatusColor, getStatusLabel } from '../../utils/PlantUtils';
 import { AvatarPerfil } from '../components/AvatarPerfil';
+import { PhotoPickerModal } from '../components/PhotoPickerModal';
+import { FavoritePlantCard } from '../components/FavoritePlantCard';
+import { ProfileStatsBar } from '../components/ProfileStatsBar';
 
 type RootStackParamList = {
-  Profile: undefined;
   MyGarden: undefined;
   EditarPerfil: { perfil: any };
   Settings: undefined;
+  UserPosts: undefined;
+  FollowList: { tipo: 'seguidores' | 'seguindo' };
 };
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Profile'>;
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function ProfileScreen() {
   const navigation = useNavigation<NavigationProp>();
   const { cores } = useTheme();
   const styles = createStyles(cores);
+  const [modalFotoVisivel, setModalFotoVisivel] = useState(false);
+
   const {
     perfil,
     totalPlantas,
     totalPosts,
     totalSeguidores,
+    totalSeguindo,
     plantasFavoritas,
     notificacoes,
     toggleFavorita,
     alterarNotificacao,
+    atualizarFoto,
     loading,
     error,
     recarregar,
@@ -66,146 +71,90 @@ export default function ProfileScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView showsVerticalScrollIndicator={false}>
 
-        <View style={styles.header}>
-          <View style={styles.headerActions}>
-            <Pressable style={styles.settingsButton} onPress={() => navigation.navigate('Settings')}>
-              <Ionicons name="settings-outline" size={22} color={cores.white} />
-            </Pressable>
-          </View>
+        <View style={styles.topBar}>
+          <Pressable onPress={() => navigation.navigate('Settings')}>
+            <Ionicons name="settings-outline" size={22} color={cores.textPrimary} />
+          </Pressable>
+        </View>
 
-          <AvatarPerfil fotoURL={perfil.fotoURL} nome={perfil.nome} />
+        <View style={styles.profileRow}>
+          <Pressable style={styles.avatarWrapper} onPress={() => setModalFotoVisivel(true)}>
+            <AvatarPerfil fotoURL={perfil.fotoURL} nome={perfil.nome} tamanho={80} style={{ marginBottom: 0 }} />
+            <View style={styles.cameraIcon}>
+              <Ionicons name="camera" size={14} color={cores.white} />
+            </View>
+          </Pressable>
 
-          <Text style={styles.name}>{perfil.nome}</Text>
-          {perfil.pronomes && perfil.pronomes !== 'prefiro não dizer' && (
-            <Text style={styles.pronomes}>{perfil.pronomes}</Text>
-          )}
-
-          {perfil.bio ? (
-            <Text style={styles.bio}>{perfil.bio}</Text>
-          ) : null}
-
-          <View style={styles.headerButtons}>
-            <Pressable
-              style={styles.editButton}
-              onPress={() => navigation.navigate('EditarPerfil', { perfil })}
-            >
-              <Text style={styles.editButtonText}>Editar Perfil</Text>
-            </Pressable>
-            <Pressable
-              style={styles.gardenButton}
-              onPress={() => navigation.navigate('MyGarden')}
-            >
-              <Ionicons name="leaf-outline" size={16} color={cores.white} />
-              <Text style={styles.gardenButtonText}>Meu Jardim</Text>
-            </Pressable>
+          <View style={styles.infoSection}>
+            <Text style={styles.name}>{perfil.nome}</Text>
+            {perfil.pronomes && perfil.pronomes !== 'prefiro não dizer' && (
+              <Text style={styles.pronomes}>{perfil.pronomes}</Text>
+            )}
+            {perfil.bio ? (
+              <Text style={styles.bio} numberOfLines={3}>{perfil.bio}</Text>
+            ) : null}
           </View>
         </View>
 
-        <View style={styles.statsContainer}>
-          <View style={styles.statItem}>
-            <Text style={styles.statValue}>{totalPlantas}</Text>
-            <Text style={styles.statLabel}>Plantas</Text>
-          </View>
-          <View style={styles.statDivider} />
-          <View style={styles.statItem}>
-            <Text style={styles.statValue}>{totalPosts}</Text>
-            <Text style={styles.statLabel}>Posts</Text>
-          </View>
-          <View style={styles.statDivider} />
-          <View style={styles.statItem}>
-            <Text style={styles.statValue}>{totalSeguidores}</Text>
-            <Text style={styles.statLabel}>Seguidores</Text>
-          </View>
-        </View>
+        <ProfileStatsBar
+          totalPosts={totalPosts}
+          totalSeguidores={totalSeguidores}
+          totalSeguindo={totalSeguindo}
+          onPosts={() => navigation.navigate('UserPosts')}
+          onSeguidores={() => navigation.navigate('FollowList', { tipo: 'seguidores' })}
+          onSeguindo={() => navigation.navigate('FollowList', { tipo: 'seguindo' })}
+        />
+
+        <Pressable style={styles.editButton} onPress={() => navigation.navigate('EditarPerfil', { perfil })}>
+          <Text style={styles.editButtonText}>Editar Perfil</Text>
+        </Pressable>
+
+        <Pressable style={styles.myGardenButton} onPress={() => navigation.navigate('MyGarden')}>
+          <Text style={styles.myGardenButtonText}>Meu Jardim</Text>
+        </Pressable>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Plantas favoritas</Text>
-
           {plantasFavoritas.length === 0 ? (
-            <Text style={styles.emptyText}>
-              Nenhuma planta favorita ainda.
-            </Text>
+            <Text style={styles.emptyText}>Nenhuma planta favorita ainda.</Text>
           ) : (
             plantasFavoritas.map((planta, index) => (
-              <View
+              <FavoritePlantCard
                 key={planta.id}
-                style={[
-                  styles.plantCard,
-                  index === plantasFavoritas.length - 1 && styles.plantCardLast,
-                ]}
-              >
-                {planta.imagemUrl ? (
-                  <Image source={{ uri: planta.imagemUrl }} style={styles.plantImage} />
-                ) : (
-                  <View style={[styles.plantImage, { backgroundColor: '#C8E6C9', alignItems: 'center', justifyContent: 'center' }]}>
-                    <Ionicons name="leaf-outline" size={20} color="#2E7D32" />
-                  </View>
-                )}
-                <View style={styles.plantInfo}>
-                  <Text style={styles.plantName}>{planta.nome}</Text>
-                  <Text style={styles.plantSpecies}>{planta.especie}</Text>
-                </View>
-                <View style={[
-                  styles.statusBadge,
-                  { backgroundColor: getStatusColor(planta.statusSaude) },
-                ]}>
-                  <Text style={styles.statusText}>
-                    {getStatusLabel(planta.statusSaude)}
-                  </Text>
-                </View>
-                <Pressable
-                  style={styles.favButton}
-                  onPress={() => toggleFavorita(planta.id, false)}
-                >
-                  <Ionicons name="heart" size={20} color={cores.error} />
-                </Pressable>
-              </View>
+                planta={planta}
+                isLast={index === plantasFavoritas.length - 1}
+                onToggleFavorita={toggleFavorita}
+              />
             ))
           )}
         </View>
 
         <View style={[styles.section, styles.sectionLast]}>
           <Text style={styles.sectionTitle}>Notificações</Text>
-
-          <View style={styles.notificationItem}>
-            <Text style={styles.notificationLabel}>Lembrete de rega</Text>
-            <Switch
-              value={notificacoes.lembreteDeRega}
-              onValueChange={(valor) => alterarNotificacao('lembreteDeRega', valor)}
-              trackColor={{ false: cores.border, true: cores.verdeEscuro }}
-              thumbColor={cores.white}
-            />
-          </View>
-
-          <View style={styles.notificationDivider} />
-
           <View style={styles.notificationItem}>
             <Text style={styles.notificationLabel}>Alertas de sensor</Text>
-            <Switch
-              value={notificacoes.alertasSensor}
-              onValueChange={(valor) => alterarNotificacao('alertasSensor', valor)}
-              trackColor={{ false: cores.border, true: cores.verdeEscuro }}
-              thumbColor={cores.white}
-            />
+            <Switch value={notificacoes.alertasSensor} onValueChange={(v) => alterarNotificacao('alertasSensor', v)} trackColor={{ false: cores.border, true: cores.verdeEscuro }} thumbColor={cores.white} />
           </View>
-
           <View style={styles.notificationDivider} />
-
           <View style={styles.notificationItem}>
-            <Text style={styles.notificationLabel}>Novos posts do feed</Text>
-            <Switch
-              value={notificacoes.novosPosts}
-              onValueChange={(valor) => alterarNotificacao('novosPosts', valor)}
-              trackColor={{ false: cores.border, true: cores.verdeEscuro }}
-              thumbColor={cores.white}
-            />
+            <Text style={styles.notificationLabel}>Lembretes de rotina</Text>
+            <Switch value={notificacoes.rotinas} onValueChange={(v) => alterarNotificacao('rotinas', v)} trackColor={{ false: cores.border, true: cores.verdeEscuro }} thumbColor={cores.white} />
           </View>
         </View>
 
       </ScrollView>
+
+      <PhotoPickerModal
+        visivel={modalFotoVisivel}
+        onFechar={() => setModalFotoVisivel(false)}
+        onFotoSelecionada={(_, base64) => {
+          setModalFotoVisivel(false);
+          atualizarFoto(base64);
+        }}
+      />
     </SafeAreaView>
   );
 }

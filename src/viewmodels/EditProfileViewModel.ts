@@ -2,8 +2,10 @@ import { useReducer } from 'react';
 import { EditProfileBusiness, RegraValidacao } from '../business/EditProfilebusiness';
 import { PerfilUsuario } from '../models/User';
 import { verificarPermissoesParaFoto } from '../utils/PermissionUtils';
+import { FeedRepository } from '../repository/FeedRepository';
 
 const editProfileBusiness = new EditProfileBusiness();
+const feedRepository = new FeedRepository();
 
 const LIMITE_BIO = 25;
 
@@ -12,6 +14,7 @@ interface EditProfileState {
   pronomes: string;
   bio: string;
   fotoUri: string | undefined;
+  fotoBase64: string | undefined;
   modalVisivel: boolean;
   salvando: boolean;
   erro: string | null;
@@ -25,7 +28,7 @@ type EditProfileAction =
   | { type: 'SET_NOME'; valor: string }
   | { type: 'SET_PRONOMES'; valor: string }
   | { type: 'SET_BIO'; valor: string }
-  | { type: 'SET_FOTO'; uri: string }
+  | { type: 'SET_FOTO'; uri: string; base64: string }
   | { type: 'ABRIR_MODAL' }
   | { type: 'FECHAR_MODAL' }
   | { type: 'SALVAR_INICIO' }
@@ -44,7 +47,7 @@ function editProfileReducer(
     case 'SET_BIO':
       return { ...state, bio: action.valor.replace(/['"]/g, '').slice(0, LIMITE_BIO), bioTocado: true };
     case 'SET_FOTO':
-      return { ...state, fotoUri: action.uri };
+      return { ...state, fotoUri: action.uri, fotoBase64: action.base64 };
     case 'ABRIR_MODAL':
       return { ...state, modalVisivel: true };
     case 'FECHAR_MODAL':
@@ -66,6 +69,7 @@ export function useEditProfileViewModel(perfil: PerfilUsuario) {
     pronomes: perfil.pronomes,
     bio: perfil.bio ?? '',
     fotoUri: perfil.fotoURL,
+    fotoBase64: undefined,
     modalVisivel: false,
     salvando: false,
     erro: null,
@@ -85,8 +89,8 @@ export function useEditProfileViewModel(perfil: PerfilUsuario) {
     state.bio
   );
 
-  function onFotoSelecionada(uri: string) {
-    dispatch({ type: 'SET_FOTO', uri });
+  function onFotoSelecionada(uri: string, base64: string) {
+    dispatch({ type: 'SET_FOTO', uri, base64 });
   }
 
   async function salvar() {
@@ -96,14 +100,18 @@ export function useEditProfileViewModel(perfil: PerfilUsuario) {
     }
     dispatch({ type: 'SALVAR_INICIO' });
     try {
-      if (state.fotoUri && state.fotoUri !== perfil.fotoURL) {
-        await editProfileBusiness.uploadFoto(state.fotoUri);
+      if (state.fotoBase64) {
+        const novaFotoURL = await editProfileBusiness.uploadFoto(state.fotoBase64);
+        await feedRepository.atualizarFotoAutor(perfil.uid, novaFotoURL);
       }
       await editProfileBusiness.salvarPerfil({
         nome: state.nome,
         pronomes: state.pronomes,
         bio: state.bio,
       });
+      if (state.nome.trim() !== perfil.nome.trim()) {
+        await feedRepository.atualizarNomeAutor(perfil.uid, state.nome.trim());
+      }
       dispatch({ type: 'SALVAR_SUCESSO' });
     } catch (e: any) {
       dispatch({ type: 'SALVAR_ERRO', erro: e.message ?? 'Erro ao salvar.' });

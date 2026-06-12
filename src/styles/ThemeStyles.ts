@@ -1,5 +1,6 @@
 export const TEMA_CLARO = {
   primary: '#014040',
+  acao: '#1B8C6C',
   verdeEscuro: '#1B8C6C',
   verdeClaro: '#91BF63',
   amarelo: '#EFF294',
@@ -21,6 +22,7 @@ export const TEMA_CLARO = {
 
 export const TEMA_ESCURO = {
   primary: '#91BF63',
+  acao: '#91BF63',
   verdeEscuro: '#1B8C6C',
   verdeClaro: '#EFF294',
   amarelo: '#EFF294',

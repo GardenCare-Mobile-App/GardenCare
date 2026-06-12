@@ -9,7 +9,7 @@ export const createStyles = (cores: Cores) => StyleSheet.create({
   },
 
   header: {
-    backgroundColor: cores.primary,
+    backgroundColor: cores.acao,
     paddingTop: SIZES.padding,
     paddingBottom: SIZES.padding,
     paddingHorizontal: SIZES.padding,
@@ -190,7 +190,7 @@ export const createStyles = (cores: Cores) => StyleSheet.create({
   },
 
   adicionarButton: {
-    backgroundColor: cores.verdeEscuro,
+    backgroundColor: cores.acao,
     marginHorizontal: SIZES.padding,
     marginBottom: SIZES.padding,
     borderRadius: SIZES.radiusLarge,
@@ -218,7 +218,7 @@ export const createStyles = (cores: Cores) => StyleSheet.create({
     marginBottom: SIZES.radius,
   },
   retryButton: {
-    backgroundColor: cores.primary,
+    backgroundColor: cores.acao,
     paddingHorizontal: SIZES.padding + 4,
     paddingVertical: 10,
     borderRadius: SIZES.radiusLarge,
@@ -244,8 +244,8 @@ export const createStyles = (cores: Cores) => StyleSheet.create({
     backgroundColor: cores.cardBackground,
   },
   chipOrdenacaoAtivo: {
-    backgroundColor: cores.primary,
-    borderColor: cores.primary,
+    backgroundColor: cores.acao,
+    borderColor: cores.acao,
   },
   chipOrdenacaoTexto: {
     fontSize: SIZES.fontSmall,

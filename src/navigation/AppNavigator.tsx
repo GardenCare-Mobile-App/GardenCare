@@ -1,31 +1,41 @@
-import React from 'react';
-import { View, ActivityIndicator } from 'react-native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useAuth } from '../context/AuthContext';
-import { COLORS } from '../styles/globalStyles';
-import { PerfilUsuario } from '../models/User';
+import React from "react";
+import { View, ActivityIndicator } from "react-native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { NavigatorScreenParams } from "@react-navigation/native";
+import { useAuth } from "../context/AuthContext";
+import { COLORS } from "../styles/globalStyles";
+import { PerfilUsuario } from "../models/User";
+import { TabParamList } from "./TabNavigator";
 
-import EditProfileScreen from '../views/screens/EditProfileScreen';
-import SettingsScreen from '../views/screens/SettingsScreen';
-import PlantDetailScreen from '../views/screens/PlantDetailScreen';
-import AddPlantScreen from '../views/screens/AddPlantScreen';
-import PostDetailScreen from '../views/screens/PostDetailScreen';
-import AddRoutineScreen from '../views/screens/AddRoutineScreen';
+import MyGardenScreen from "../views/screens/MyGardenScreen";
+import EditProfileScreen from "../views/screens/EditProfileScreen";
+import SettingsScreen from "../views/screens/SettingsScreen";
+import PlantDetailScreen from "../views/screens/PlantDetailScreen";
+import AddPlantScreen from "../views/screens/AddPlantScreen";
+import UserPostsScreen from "../views/screens/UserPostsScreen";
+import FollowListScreen from "../views/screens/FollowListScreen";
+import UserProfileScreen from "../views/screens/UserProfileScreen";
+import RoutineScreen from "../views/screens/RoutineScreen";
+import AddRoutineScreen from "../views/screens/AddRoutineScreen";
 
-import { InitialScreen } from '../views/screens/auth/InitialScreen';
-import { LoginScreen } from '../views/screens/auth/LoginScreen';
-import { RegisterScreen } from '../views/screens/auth/RegisterScreen';
+import { InitialScreen } from "../views/screens/auth/InitialScreen";
+import { LoginScreen } from "../views/screens/auth/LoginScreen";
+import { RegisterScreen } from "../views/screens/auth/RegisterScreen";
 
-import MainTabNavigator from './TabNavigator';
+import MainTabNavigator from "./TabNavigator";
 
 export type AppStackParamList = {
-  MainTabs: undefined;
+  MainTabs: NavigatorScreenParams<TabParamList> | undefined;
+  MyGarden: undefined;
   EditarPerfil: { perfil: PerfilUsuario };
   Settings: undefined;
   PlantDetail: { plantaId: string };
   CadastroPlanta: undefined;
-  PostDetail: { postId: string };
+  UserPosts: undefined;
+  FollowList: { tipo: "seguidores" | "seguindo"; uid?: string };
   AddRoutine: undefined;
+  UserProfile: { uid: string };
+  Rotinas: undefined;
 };
 
 export type AuthStackParamList = {
@@ -41,7 +51,14 @@ export default function AppNavigator() {
 
   if (carregando) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: COLORS.primary }}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: COLORS.primary,
+        }}
+      >
         <ActivityIndicator size="large" color={COLORS.white} />
       </View>
     );
@@ -49,23 +66,27 @@ export default function AppNavigator() {
 
   return (
     <Stack.Navigator
-      key={estaLogado ? 'logado' : 'deslogado'}
+      key={estaLogado ? "logado" : "deslogado"}
       screenOptions={{ headerShown: false }}
     >
       {estaLogado ? (
         <>
-          <Stack.Screen name="MainTabs"      component={MainTabNavigator} />
-          <Stack.Screen name="EditarPerfil"  component={EditProfileScreen} />
-          <Stack.Screen name="Settings"      component={SettingsScreen} />
-          <Stack.Screen name="PlantDetail"   component={PlantDetailScreen} />
+          <Stack.Screen name="MainTabs" component={MainTabNavigator} />
+          <Stack.Screen name="MyGarden" component={MyGardenScreen} />
+          <Stack.Screen name="EditarPerfil" component={EditProfileScreen} />
+          <Stack.Screen name="Settings" component={SettingsScreen} />
+          <Stack.Screen name="PlantDetail" component={PlantDetailScreen} />
           <Stack.Screen name="CadastroPlanta" component={AddPlantScreen} />
-          <Stack.Screen name="PostDetail"    component={PostDetailScreen} />
-          <Stack.Screen name="AddRoutine"   component={AddRoutineScreen} />
+          <Stack.Screen name="UserPosts" component={UserPostsScreen} />
+          <Stack.Screen name="FollowList" component={FollowListScreen} />
+          <Stack.Screen name="UserProfile" component={UserProfileScreen} />
+          <Stack.Screen name="Rotinas" component={RoutineScreen} />
+          <Stack.Screen name="AddRoutine" component={AddRoutineScreen} />
         </>
       ) : (
         <>
-          <Stack.Screen name="Inicio"   component={InitialScreen} />
-          <Stack.Screen name="Login"    component={LoginScreen} />
+          <Stack.Screen name="Inicio" component={InitialScreen} />
+          <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Register" component={RegisterScreen} />
         </>
       )}

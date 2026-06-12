@@ -3,8 +3,8 @@ import { Modal, View, Text, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { MENSAGENS_FOTO_PICKER } from '../../utils/MessagesUtils';
-import { styles } from '../../styles/components/PhotoPickerModal.styles';
-import { COLORS } from '../../styles/globalStyles';
+import { createStyles } from '../../styles/components/PhotoPickerModal.styles';
+import { useTheme } from '../../context/Themecontext';
 
 interface PhotoPickerModalProps {
   visivel: boolean;
@@ -17,6 +17,8 @@ export function PhotoPickerModal({
   onFechar,
   onFotoSelecionada,
 }: PhotoPickerModalProps) {
+  const { cores } = useTheme();
+  const styles = createStyles(cores);
 
   async function abrirCamera() {
     const resultado = await ImagePicker.launchCameraAsync({
@@ -63,12 +65,12 @@ export function PhotoPickerModal({
           <Text style={styles.subtitulo}>{MENSAGENS_FOTO_PICKER.subtitulo}</Text>
 
           <Pressable style={styles.opcao} onPress={abrirCamera}>
-            <Ionicons name="camera-outline" size={24} color={COLORS.primary} />
+            <Ionicons name="camera-outline" size={24} color={cores.acao} />
             <Text style={styles.opcaoTexto}>{MENSAGENS_FOTO_PICKER.camera}</Text>
           </Pressable>
 
           <Pressable style={styles.opcao} onPress={abrirGaleria}>
-            <Ionicons name="images-outline" size={24} color={COLORS.primary} />
+            <Ionicons name="images-outline" size={24} color={cores.acao} />
             <Text style={styles.opcaoTexto}>{MENSAGENS_FOTO_PICKER.galeria}</Text>
           </Pressable>
 

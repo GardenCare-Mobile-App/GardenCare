@@ -1,15 +1,15 @@
 import { StyleSheet } from 'react-native';
-import { COLORS, SIZES } from '../globalStyles';
+import { Cores } from '../ThemeStyles';
+import { SIZES } from '../globalStyles';
 
-export const styles = StyleSheet.create({
-
+export const createStyles = (cores: Cores) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: cores.background,
   },
 
   header: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: cores.acao,
     paddingHorizontal: SIZES.padding,
     paddingVertical: SIZES.padding,
     flexDirection: 'row',
@@ -20,22 +20,35 @@ export const styles = StyleSheet.create({
     flex: 1,
     fontSize: SIZES.fontTitle,
     fontWeight: 'bold',
-    color: COLORS.white,
+    color: cores.white,
+  },
+  headerBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+  },
+  headerBtnTexto: {
+    color: cores.white,
+    fontSize: SIZES.fontSubtitle,
+    fontWeight: '600',
   },
 
   novoPost: {
-    backgroundColor: COLORS.cardBackground,
+    backgroundColor: cores.cardBackground,
     margin: SIZES.padding,
     marginBottom: SIZES.radius,
     borderRadius: SIZES.radius,
     padding: 14,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: cores.border,
   },
-
   input: {
     fontSize: SIZES.fontBody,
-    color: COLORS.textPrimary,
+    color: cores.textPrimary,
     minHeight: 60,
     textAlignVertical: 'top',
   },
@@ -50,7 +63,7 @@ export const styles = StyleSheet.create({
   },
   removerImagem: {
     fontSize: SIZES.fontSmall,
-    color: COLORS.error,
+    color: cores.error,
   },
   botoesPost: {
     flexDirection: 'row',
@@ -63,21 +76,21 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 14,
     borderRadius: SIZES.radiusSmall,
     borderWidth: 1,
-    borderColor: COLORS.verdeClaro,
+    borderColor: cores.verdeClaro,
   },
   btnFotoTexto: {
     fontSize: SIZES.fontSubtitle,
-    color: COLORS.verdeEscuro,
+    color: cores.verdeEscuro,
   },
   btnPublicar: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: cores.acao,
     paddingVertical: 8,
     paddingHorizontal: 20,
     borderRadius: SIZES.radiusSmall,
   },
   btnPublicarTexto: {
     fontSize: SIZES.fontSubtitle,
-    color: COLORS.white,
+    color: cores.white,
     fontWeight: 'bold',
   },
   btnDesabilitado: {
@@ -90,77 +103,15 @@ export const styles = StyleSheet.create({
   },
   vazio: {
     textAlign: 'center',
-    color: COLORS.textSecondary,
+    color: cores.textSecondary,
     marginTop: 40,
     fontSize: SIZES.fontBody,
   },
   erro: {
-    color: COLORS.error,
+    color: cores.error,
     textAlign: 'center',
     marginBottom: 8,
     fontSize: SIZES.fontSmall,
     marginHorizontal: SIZES.padding,
-  },
-
-  card: {
-    backgroundColor: COLORS.cardBackground,
-    borderRadius: SIZES.radius,
-    padding: 14,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  avatar: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    marginRight: 10,
-  },
-  avatarPlaceholder: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    backgroundColor: COLORS.verdeClaro,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 10,
-  },
-  avatarLetra: {
-    color: COLORS.white,
-    fontWeight: 'bold',
-    fontSize: SIZES.fontBody,
-  },
-  autorNome: {
-    fontWeight: 'bold',
-    color: COLORS.textPrimary,
-    fontSize: SIZES.fontSubtitle,
-  },
-  conteudo: {
-    fontSize: SIZES.fontBody,
-    color: COLORS.textPrimary,
-    marginBottom: 10,
-    lineHeight: 22,
-  },
-  imagemPost: {
-    width: '100%',
-    height: 200,
-    borderRadius: SIZES.radiusSmall,
-    marginBottom: 10,
-  },
-  curtidaBtn: {
-    alignSelf: 'flex-start',
-    paddingVertical: 4,
-  },
-  curtidaTexto: {
-    fontSize: SIZES.fontSubtitle,
-    color: COLORS.textSecondary,
-  },
-  curtidaAtiva: {
-    color: COLORS.error,
   },
 });

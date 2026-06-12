@@ -11,12 +11,16 @@ export class GardenBusiness {
     return gardenRepository.getPlantas();
   }
 
+  async getPlantasFavoritasPorUid(uid: string): Promise<Plant[]> {
+    return gardenRepository.getPlantasFavoritasPorUid(uid);
+  }
+
   async getPlanta(id: string): Promise<Plant | null> {
     return gardenRepository.getPlanta(id);
   }
 
   async cadastrarPlanta(
-    planta: Omit<Plant, 'id' | 'uid' | 'statusSaude' | 'ultimaRega'>,
+    planta: Omit<Plant, 'id' | 'uid'| 'statusSaude' | 'ultimaRega'>,
     imagemBase64?: string,
     ultimaRega?: string
   ): Promise<Plant> {

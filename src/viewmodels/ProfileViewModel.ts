@@ -2,20 +2,25 @@ import { useReducer, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { PerfilUsuario } from '../models/User';
 import { Plant } from '../models/Plant';
+import { Post } from '../models/Post';
 import { ProfileBusiness } from '../business/ProfileBusiness';
 import { GardenBusiness } from '../business/MyGardenBusiness';
+import { FeedRepository } from '../repository/FeedRepository';
 import { NotificacaoBusiness, PreferenciasNotificacao } from '../business/NotificacaoBusiness';
 import { useAuth } from '../context/AuthContext';
+import { FollowBusiness } from '../business/FollowBusiness';
 
 const profileBusiness = new ProfileBusiness();
 const gardenBusiness = new GardenBusiness();
+const feedRepository = new FeedRepository();
 const notificacaoBusiness = new NotificacaoBusiness();
 
 interface ProfileState {
   perfil: PerfilUsuario | null;
   plantas: Plant[];
-  totalPosts: number;
+  posts: Post[];
   totalSeguidores: number;
+  totalSeguindo: number;
   notificacoes: PreferenciasNotificacao;
   loading: boolean;
   error: string | null;
@@ -27,7 +32,10 @@ type ProfileAction =
       type: 'CARREGAR_SUCESSO';
       perfil: PerfilUsuario;
       plantas: Plant[];
+      posts: Post[];
       notificacoes: PreferenciasNotificacao;
+      totalSeguidores: number;
+      totalSeguindo: number;
     }
   | { type: 'CARREGAR_ERRO'; error: string }
   | { type: 'TOGGLE_FAVORITA'; id: string; valor: boolean }
@@ -36,12 +44,12 @@ type ProfileAction =
 const estadoInicial: ProfileState = {
   perfil: null,
   plantas: [],
-  totalPosts: 0,
+  posts: [],
   totalSeguidores: 0,
+  totalSeguindo: 0,
   notificacoes: {
-    lembreteDeRega: true,
     alertasSensor: true,
-    novosPosts: false,
+    rotinas: true,
   },
   loading: true,
   error: null,
@@ -58,7 +66,10 @@ function profileReducer(state: ProfileState, action: ProfileAction): ProfileStat
         loading: false,
         perfil: action.perfil,
         plantas: action.plantas,
+        posts: action.posts,
         notificacoes: action.notificacoes,
+        totalSeguidores: action.totalSeguidores,
+        totalSeguindo: action.totalSeguindo,
       };
 
     case 'CARREGAR_ERRO':
@@ -85,7 +96,7 @@ function profileReducer(state: ProfileState, action: ProfileAction): ProfileStat
 
 export function useProfileViewModel() {
   const [state, dispatch] = useReducer(profileReducer, estadoInicial);
-  const { usuario, login, logout } = useAuth();
+  const { usuario, login, logout, atualizarPerfil } = useAuth();
 
   useFocusEffect(
     useCallback(() => {
@@ -103,17 +114,23 @@ export function useProfileViewModel() {
         return;
       }
 
-      const [dadosPerfil, dadosPlantas, dadosNotificacoes] = await Promise.all([
+      const [dadosPerfil, dadosPlantas, dadosPosts, dadosNotificacoes, totalSeguidores, totalSeguindo] = await Promise.all([
         profileBusiness.getPerfil(),
         gardenBusiness.getPlants(),
+        feedRepository.getPostsByUser(uid),
         notificacaoBusiness.getPreferencias(uid),
+        FollowBusiness.contarSeguidores(uid),
+        FollowBusiness.contarSeguindo(uid),
       ]);
 
       dispatch({
         type: 'CARREGAR_SUCESSO',
         perfil: dadosPerfil,
         plantas: dadosPlantas,
+        posts: dadosPosts,
         notificacoes: dadosNotificacoes,
+        totalSeguidores,
+        totalSeguindo,
       });
     } catch (e: any) {
       dispatch({
@@ -126,6 +143,16 @@ export function useProfileViewModel() {
   async function toggleFavorita(id: string, valor: boolean) {
     await gardenBusiness.toggleFavorita(id, valor);
     dispatch({ type: 'TOGGLE_FAVORITA', id, valor });
+  }
+
+  async function atualizarFoto(base64: string) {
+    const novaUrl = await profileBusiness.atualizarFoto(base64);
+    if (state.perfil) {
+      const perfilAtualizado = { ...state.perfil, fotoURL: novaUrl };
+      await atualizarPerfil(perfilAtualizado);
+      await feedRepository.atualizarFotoAutor(state.perfil.uid, novaUrl);
+      dispatch({ type: 'CARREGAR_SUCESSO', perfil: perfilAtualizado, plantas: state.plantas, posts: state.posts, notificacoes: state.notificacoes, totalSeguidores: state.totalSeguidores, totalSeguindo: state.totalSeguindo });
+    }
   }
 
   async function alterarNotificacao(
@@ -144,13 +171,16 @@ export function useProfileViewModel() {
 
   const plantasFavoritas = state.plantas.filter((p) => p.favorita);
   const totalPlantas = state.plantas.length;
+  const totalPosts = state.posts.length;
 
   return {
     ...state,
     totalPlantas,
+    totalPosts,
     plantasFavoritas,
     toggleFavorita,
     alterarNotificacao,
+    atualizarFoto,
     recarregar: carregarPerfil,
   };
 }
