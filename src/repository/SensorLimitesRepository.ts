@@ -5,14 +5,12 @@ export interface LimitesSensor {
   temperaturaMin: number;
   temperaturaMax: number;
   umidadeMin: number;
-  luminosidadeMin: number;
 }
 
 export const LIMITES_PADRAO: LimitesSensor = {
   temperaturaMin: 10,
   temperaturaMax: 35,
   umidadeMin: 30,
-  luminosidadeMin: 200,
 };
 
 export class SensorLimitesRepository {

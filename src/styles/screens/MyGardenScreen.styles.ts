@@ -228,7 +228,6 @@ export const createStyles = (cores: Cores) => StyleSheet.create({
     fontWeight: 'bold',
   },
 
-  // Sort chips
   ordenacaoRow: {
     marginBottom: SIZES.radius,
   },
@@ -256,7 +255,6 @@ export const createStyles = (cores: Cores) => StyleSheet.create({
     color: cores.white,
   },
 
-  // Selection mode
   plantaCardSelecionada: {
     borderWidth: 2,
     borderColor: cores.error,
@@ -312,5 +310,62 @@ export const createStyles = (cores: Cores) => StyleSheet.create({
     fontSize: SIZES.fontBody,
     fontWeight: 'bold',
     color: cores.white,
+  },
+
+  controleContainer: {
+    marginHorizontal: SIZES.padding,
+    marginTop: SIZES.radius,
+    backgroundColor: cores.cardBackground,
+    borderRadius: SIZES.radius,
+    padding: SIZES.padding,
+    gap: 10,
+    ...Platform.select({
+      ios: {
+        shadowColor: cores.black,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.08,
+        shadowRadius: 4,
+      },
+      android: { elevation: 2 },
+    }),
+  },
+  controleHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 2,
+  },
+  controleTitulo: {
+    fontSize: SIZES.fontCaption,
+    fontWeight: 'bold',
+    color: cores.primary,
+  },
+  controleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 8,
+  },
+  controleLabel: {
+    fontSize: SIZES.fontCaption,
+    color: cores.textSecondary,
+    flex: 1,
+  },
+  controleButton: {
+    backgroundColor: cores.acao,
+    borderRadius: SIZES.radiusLarge,
+    paddingVertical: 7,
+    paddingHorizontal: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+  },
+  controleButtonTexto: {
+    fontSize: SIZES.fontSmall,
+    fontWeight: 'bold',
+    color: cores.white,
+  },
+  controleButtonDisabled: {
+    opacity: 0.45,
   },
 });

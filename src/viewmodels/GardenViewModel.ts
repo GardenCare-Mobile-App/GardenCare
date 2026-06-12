@@ -1,4 +1,4 @@
-import { useReducer, useCallback } from "react";
+import { useReducer, useCallback, useRef } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { Plant } from "../models/Plant";
 import { SensorData } from "../models/SensorData";
@@ -24,6 +24,7 @@ interface GardenState {
   modoSelecao: boolean;
   selecionadas: string[];
   ordenacao: Ordenacao;
+  enviandoComando: boolean;
 }
 
 type GardenAction =
@@ -35,6 +36,7 @@ type GardenAction =
       alertas: string[];
     }
   | { type: "CARREGAR_ERRO"; error: string }
+  | { type: "SENSOR_ATUALIZADO"; sensorData: SensorData }
   | { type: "TOGGLE_FAVORITA"; id: string; valor: boolean }
   | { type: "REMOVER_PLANTAS"; ids: string[] }
   | { type: "ENTRAR_MODO_SELECAO" }
@@ -42,7 +44,8 @@ type GardenAction =
   | { type: "TOGGLE_SELECAO"; id: string }
   | { type: "SELECIONAR_TODAS" }
   | { type: "DESSELECIONAR_TODAS" }
-  | { type: "MUDAR_ORDENACAO"; ordenacao: Ordenacao };
+  | { type: "MUDAR_ORDENACAO"; ordenacao: Ordenacao }
+  | { type: "ENVIANDO_COMANDO"; valor: boolean };
 
 const estadoInicial: GardenState = {
   plantas: [],
@@ -53,6 +56,7 @@ const estadoInicial: GardenState = {
   modoSelecao: false,
   selecionadas: [],
   ordenacao: "nome_asc",
+  enviandoComando: false,
 };
 
 const statusPeso: Record<Plant["statusSaude"], number> = {
@@ -93,6 +97,9 @@ function gardenReducer(state: GardenState, action: GardenAction): GardenState {
     case "CARREGAR_ERRO":
       return { ...state, loading: false, error: action.error };
 
+    case "SENSOR_ATUALIZADO":
+      return { ...state, sensorData: action.sensorData };
+
     case "TOGGLE_FAVORITA":
       return {
         ...state,
@@ -132,6 +139,9 @@ function gardenReducer(state: GardenState, action: GardenAction): GardenState {
     case "MUDAR_ORDENACAO":
       return { ...state, ordenacao: action.ordenacao };
 
+    case "ENVIANDO_COMANDO":
+      return { ...state, enviandoComando: action.valor };
+
     default:
       return state;
   }
@@ -141,9 +151,17 @@ export function useGardenViewModel() {
   const [state, dispatch] = useReducer(gardenReducer, estadoInicial);
   const { usuario } = useAuth();
 
+  const plantasRef = useRef<Plant[]>([]);
+
   useFocusEffect(
     useCallback(() => {
       carregarDados();
+
+      const unsubscribe = esp32Business.escutarSensores((sensorData) => {
+        dispatch({ type: "SENSOR_ATUALIZADO", sensorData });
+      });
+
+      return unsubscribe;
     }, []),
   );
 
@@ -154,12 +172,19 @@ export function useGardenViewModel() {
       const [dadosPlantas, dadosSensor, limites, notificacoes] =
         await Promise.all([
           gardenBusiness.getPlants(),
-          esp32Business.getSensorData(),
+          new Promise<SensorData>((resolve) => {
+            const unsub = esp32Business.escutarSensores((data) => {
+              unsub();
+              resolve(data);
+            });
+          }),
           sensorLimitesBusiness.getLimites(),
           uid
             ? notificacaoBusiness.getPreferencias(uid)
             : Promise.resolve({ alertasSensor: true, rotinas: true }),
         ]);
+
+      plantasRef.current = dadosPlantas;
 
       const alertas = notificacoes.alertasSensor
         ? gardenBusiness.verificarAlertas(dadosPlantas, dadosSensor, limites)
@@ -199,6 +224,15 @@ export function useGardenViewModel() {
     dispatch({ type: "REMOVER_PLANTAS", ids });
   }
 
+  async function solicitarAtualizacao(): Promise<void> {
+    dispatch({ type: "ENVIANDO_COMANDO", valor: true });
+    try {
+      await esp32Business.solicitarLeitura();
+    } finally {
+      dispatch({ type: "ENVIANDO_COMANDO", valor: false });
+    }
+  }
+
   const plantasOrdenadas = ordenarPlantas(state.plantas, state.ordenacao);
   const totalSaudaveis = state.plantas.filter(
     (p) => p.statusSaude === "saudavel",
@@ -222,6 +256,7 @@ export function useGardenViewModel() {
     todasSelecionadas,
     toggleFavorita,
     deletarPlantas,
+    solicitarAtualizacao,
     mudarOrdenacao: (o: Ordenacao) =>
       dispatch({ type: "MUDAR_ORDENACAO", ordenacao: o }),
     entrarModoSelecao: () => dispatch({ type: "ENTRAR_MODO_SELECAO" }),

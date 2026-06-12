@@ -19,9 +19,6 @@ export class SensorLimitesBusiness {
     if (limites.umidadeMin < 0 || limites.umidadeMin > 100) {
       return 'Umidade mínima deve estar entre 0% e 100%.';
     }
-    if (limites.luminosidadeMin < 0 || limites.luminosidadeMin > 10000) {
-      return 'Luminosidade mínima deve estar entre 0 e 10000 lx.';
-    }
     return null;
   }
 

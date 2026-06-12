@@ -203,8 +203,14 @@ export default function PlantDetailScreen() {
                 <Text style={styles.sensorLabel}>Temperatura</Text>
               </View>
               <View style={[styles.sensorCard, styles.sensorCardLuz]}>
-                <Ionicons name="sunny-outline" size={18} color="#BA7517" />
-                <Text style={styles.sensorValor}>{sensorData.luminosidade} lx</Text>
+                <Ionicons
+                  name={sensorData.luminosidade === 1 ? 'sunny-outline' : 'moon-outline'}
+                  size={18}
+                  color="#BA7517"
+                />
+                <Text style={styles.sensorValor}>
+                  {sensorData.luminosidade === 1 ? 'Claro' : 'Escuro'}
+                </Text>
                 <Text style={styles.sensorLabel}>Luz</Text>
               </View>
             </View>

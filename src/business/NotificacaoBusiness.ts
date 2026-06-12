@@ -12,6 +12,8 @@ export interface PreferenciasNotificacao {
 const notificacaoRepository = new NotificacaoRepository();
 
 const COOLDOWN_MS = 30 * 60 * 1000;
+const DOZE_HORAS_MS = 12 * 60 * 60 * 1000;
+const CHAVE_ESCURO_DESDE = '@gardencare:escuro_desde';
 
 const CHAVES = {
   temperaturaAlta: '@gardencare:notif_temp_alta',
@@ -90,12 +92,18 @@ export class NotificacaoBusiness {
       await limpar('umidadeBaixa');
     }
 
-    if (sensorData.luminosidade < limites.luminosidadeMin) {
-      if (await deveEnviar('luminosidadeBaixa')) {
-        await enviar('Luminosidade baixa', 'Mude as plantas para um local com mais luz natural.');
-        await registrarEnvio('luminosidadeBaixa');
+    if (sensorData.luminosidade === 0) {
+      const escuroDesde = await AsyncStorage.getItem(CHAVE_ESCURO_DESDE);
+      if (!escuroDesde) {
+        await AsyncStorage.setItem(CHAVE_ESCURO_DESDE, Date.now().toString());
+      } else if (Date.now() - parseInt(escuroDesde) >= DOZE_HORAS_MS) {
+        if (await deveEnviar('luminosidadeBaixa')) {
+          await enviar('Plantas sem luz', 'Suas plantas estão no escuro há mais de 12 horas. Leve-as para um local com luz natural.');
+          await registrarEnvio('luminosidadeBaixa');
+        }
       }
     } else {
+      await AsyncStorage.removeItem(CHAVE_ESCURO_DESDE);
       await limpar('luminosidadeBaixa');
     }
   }

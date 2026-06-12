@@ -150,6 +150,7 @@ export default function MyGardenScreen() {
     selecionadas,
     todasSelecionadas,
     ordenacao,
+    enviandoComando,
     toggleFavorita,
     deletarPlantas,
     mudarOrdenacao,
@@ -159,6 +160,7 @@ export default function MyGardenScreen() {
     selecionarTodas,
     desselecionarTodas,
     recarregar,
+    solicitarAtualizacao,
   } = useGardenViewModel();
 
   function confirmarExclusao() {
@@ -249,9 +251,37 @@ export default function MyGardenScreen() {
               <Text style={[styles.sensorLabel, { color: '#FFF8E1' }]}>Temperatura</Text>
             </View>
             <View style={[styles.sensorCard, { backgroundColor: '#BA7517' }]}>
-              <Ionicons name="sunny-outline" size={20} color="#FFF3E0" />
-              <Text style={[styles.sensorValor, { color: '#FFF3E0' }]}>{sensorData.luminosidade} lx</Text>
+              <Ionicons
+                name={sensorData.luminosidade === 1 ? 'sunny-outline' : 'moon-outline'}
+                size={20}
+                color="#FFF3E0"
+              />
+              <Text style={[styles.sensorValor, { color: '#FFF3E0' }]}>
+                {sensorData.luminosidade === 1 ? 'Claro' : 'Escuro'}
+              </Text>
               <Text style={[styles.sensorLabel, { color: '#FFF3E0' }]}>Luminosidade</Text>
+            </View>
+          </View>
+        )}
+
+        {!modoSelecao && sensorData?.esp32Online && (
+          <View style={styles.controleContainer}>
+            <View style={styles.controleHeader}>
+              <Ionicons name="hardware-chip-outline" size={16} color={cores.primary} />
+              <Text style={styles.controleTitulo}>Controle ESP32</Text>
+            </View>
+            <View style={styles.controleRow}>
+              <Text style={styles.controleLabel}>Forçar leitura dos sensores</Text>
+              <Pressable
+                style={[styles.controleButton, enviandoComando && styles.controleButtonDisabled]}
+                onPress={solicitarAtualizacao}
+                disabled={enviandoComando}
+              >
+                <Ionicons name="refresh-outline" size={14} color={cores.white} />
+                <Text style={styles.controleButtonTexto}>
+                  {enviandoComando ? 'Enviando...' : 'Atualizar'}
+                </Text>
+              </Pressable>
             </View>
           </View>
         )}

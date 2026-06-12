@@ -55,12 +55,10 @@ export class GardenBusiness {
   verificarAlertas(plantas: Plant[], sensorData: SensorData, limites?: {
     temperaturaMax: number;
     umidadeMin: number;
-    luminosidadeMin: number;
   }): string[] {
     const alertas: string[] = [];
     const tempMax = limites?.temperaturaMax ?? 35;
     const umidadeMin = limites?.umidadeMin ?? 30;
-    const luzMin = limites?.luminosidadeMin ?? 200;
 
     plantas.forEach((planta) => {
       if (sensorData.umidade < planta.limiteUmidade) {
@@ -78,8 +76,8 @@ export class GardenBusiness {
       alertas.push(`Umidade do ambiente baixa: ${sensorData.umidade}%`);
     }
 
-    if (sensorData.luminosidade < luzMin) {
-      alertas.push(`Luminosidade baixa: ${sensorData.luminosidade} lux`);
+    if (sensorData.luminosidade === 0) {
+      alertas.push('Plantas sem luz — leve para um local mais iluminado.');
     }
 
     return alertas;

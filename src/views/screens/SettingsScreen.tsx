@@ -139,7 +139,6 @@ export default function SettingsScreen() {
               { campo: 'temperaturaMin', label: 'Temperatura mínima (°C)', icone: 'thermometer-outline', cor: cores.textSecondary },
               { campo: 'temperaturaMax', label: 'Temperatura máxima (°C)', icone: 'thermometer-outline', cor: cores.error },
               { campo: 'umidadeMin', label: 'Umidade mínima (%)', icone: 'water-outline', cor: cores.textSecondary },
-              { campo: 'luminosidadeMin', label: 'Luminosidade mínima (lx)', icone: 'sunny-outline', cor: cores.textSecondary },
             ] as { campo: keyof LimitesSensor; label: string; icone: string; cor: string }[]
           ).map((item, index, arr) => (
             <View
