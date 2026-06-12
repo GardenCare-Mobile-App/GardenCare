@@ -10,7 +10,7 @@ export const createStyles = (cores: Cores, escuro: boolean) =>
     },
 
     header: {
-      backgroundColor: cores.primary,
+      backgroundColor: cores.acao,
       paddingTop: SIZES.padding,
       paddingBottom: SIZES.padding,
       paddingHorizontal: SIZES.padding,
@@ -164,8 +164,8 @@ export const createStyles = (cores: Cores, escuro: boolean) =>
       backgroundColor: cores.cardBackground,
     },
     chipAtivo: {
-      backgroundColor: cores.verdeEscuro,
-      borderColor: cores.verdeEscuro,
+      backgroundColor: cores.acao,
+      borderColor: cores.acao,
     },
     chipTexto: {
       fontSize: SIZES.fontCaption,
@@ -211,13 +211,13 @@ export const createStyles = (cores: Cores, escuro: boolean) =>
       alignItems: 'center',
       justifyContent: 'center',
       gap: 8,
-      backgroundColor: cores.primary,
+      backgroundColor: cores.acao,
       borderRadius: SIZES.radiusLarge,
       paddingVertical: 16,
       marginTop: 6,
       ...Platform.select({
         ios: {
-          shadowColor: cores.primary,
+          shadowColor: cores.acao,
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.3,
           shadowRadius: 8,

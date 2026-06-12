@@ -53,30 +53,4 @@ export const AuthBusiness = {
     if (!perfil) throw { code: 'auth/user-not-found' };
     return perfil;
   },
-
-  async entrarComGoogle(): Promise<PerfilUsuario> {
-    const user = await AuthRepository.loginComGoogle();
-
-    if (!user) {
-      throw new Error('falha autentificacao')
-    }
-
-    let perfil = await AuthRepository.buscarPerfil(user.uid)
-
-    if (!perfil) {
-      const novoPerfil: PerfilUsuario = {
-        uid: user.uid,
-        email: user.email || '',
-        nome: user.displayName || 'Usuário do Google',
-        criadoEm: new Date().toISOString(),
-
-      } as PerfilUsuario
-
-      await AuthRepository.salvarPerfil(novoPerfil);
-
-      perfil = novoPerfil
-    }
-    return perfil;
-  },
-
 };

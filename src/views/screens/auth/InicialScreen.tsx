@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import { useInicialViewModel } from '../../../viewmodels/auth/AuthInicialViewModels';
+import { useInicialViewModel } from '../../../viewmodels/auth/AuthInicialViewModel';
 import { styles } from '../../../styles/screens/auth/InicialScreen.styles';
 
 export const InitialScreen = () => {

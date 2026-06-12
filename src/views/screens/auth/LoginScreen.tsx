@@ -10,8 +10,6 @@ import { COLORS } from '../../../styles/globalStyles';
 
 export const LoginScreen = () => {
 
-  const { state, entrarComGoogle } = useLoginViewModel();
-
   const vm = useLoginViewModel();
 
   useFocusEffect(
@@ -88,20 +86,6 @@ export const LoginScreen = () => {
           <View style={styles.separator} />
         </View>
 
-          <View>
-      {/* 3. NOVO BOTÃO DO GOOGLE (Garante que também respeita o loading do state) */}
-      {state.loading ? (
-        <ActivityIndicator size="small" color="#4CAF50" />
-      ) : (
-        <TouchableOpacity  onPress={entrarComGoogle}>
-          <Text >Entrar com o Google</Text>
-        </TouchableOpacity>
-      )}
-
-      {/* Exibição de erros centralizada do Reducer */}
-      {state.erro && <Text >{state.erro}</Text>}
-    </View>
-
         <View style={styles.footer}>
           <Text style={styles.footerText}>Não possui conta?</Text>
             <TouchableOpacity onPress={vm.irParaRegistrar}>
@@ -113,4 +97,3 @@ export const LoginScreen = () => {
     </KeyboardAvoidingView>
   );
 }
-

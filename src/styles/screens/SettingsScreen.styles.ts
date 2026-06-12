@@ -7,7 +7,7 @@ export const createStyles = (cores: any) => StyleSheet.create({
     backgroundColor: cores.background,
   },
   header: {
-    backgroundColor: cores.primary,
+    backgroundColor: cores.acao,
     paddingTop: SIZES.padding,
     paddingBottom: SIZES.padding,
     paddingHorizontal: SIZES.padding,
@@ -81,8 +81,8 @@ export const createStyles = (cores: any) => StyleSheet.create({
     borderColor: cores.border,
   },
   temaOpcaoAtiva: {
-    backgroundColor: cores.primary,
-    borderColor: cores.primary,
+    backgroundColor: cores.acao,
+    borderColor: cores.acao,
   },
   temaOpcaoTexto: {
     fontSize: SIZES.fontSmall,
@@ -180,7 +180,7 @@ export const createStyles = (cores: any) => StyleSheet.create({
     textAlign: 'center',
   },
   salvarLimitesButton: {
-    backgroundColor: cores.primary,
+    backgroundColor: cores.acao,
     borderRadius: SIZES.radiusLarge,
     paddingVertical: 10,
     alignItems: 'center',

@@ -24,7 +24,7 @@ export const createStyles = (cores: Cores, escuro: boolean) =>
       paddingHorizontal: SIZES.padding,
     },
     retryButton: {
-      backgroundColor: cores.primary,
+      backgroundColor: cores.acao,
       paddingHorizontal: 24,
       paddingVertical: 10,
       borderRadius: SIZES.radiusLarge,
@@ -35,7 +35,7 @@ export const createStyles = (cores: Cores, escuro: boolean) =>
       fontSize: SIZES.fontCaption,
     },
     header: {
-      backgroundColor: cores.primary,
+      backgroundColor: cores.acao,
       paddingTop: SIZES.padding,
       paddingBottom: SIZES.padding,
       paddingHorizontal: SIZES.padding,
@@ -292,7 +292,7 @@ export const createStyles = (cores: Cores, escuro: boolean) =>
       marginTop: 10,
       paddingVertical: 10,
       borderRadius: SIZES.radiusSmall,
-      backgroundColor: cores.primary,
+      backgroundColor: cores.acao,
     },
     regaButtonText: {
       fontSize: SIZES.fontCaption,

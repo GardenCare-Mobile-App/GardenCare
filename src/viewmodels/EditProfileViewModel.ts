@@ -2,8 +2,10 @@ import { useReducer } from 'react';
 import { EditProfileBusiness, RegraValidacao } from '../business/EditProfilebusiness';
 import { PerfilUsuario } from '../models/User';
 import { verificarPermissoesParaFoto } from '../utils/PermissionUtils';
+import { FeedRepository } from '../repository/FeedRepository';
 
 const editProfileBusiness = new EditProfileBusiness();
+const feedRepository = new FeedRepository();
 
 const LIMITE_BIO = 25;
 
@@ -99,13 +101,17 @@ export function useEditProfileViewModel(perfil: PerfilUsuario) {
     dispatch({ type: 'SALVAR_INICIO' });
     try {
       if (state.fotoBase64) {
-        await editProfileBusiness.uploadFoto(state.fotoBase64);
+        const novaFotoURL = await editProfileBusiness.uploadFoto(state.fotoBase64);
+        await feedRepository.atualizarFotoAutor(perfil.uid, novaFotoURL);
       }
       await editProfileBusiness.salvarPerfil({
         nome: state.nome,
         pronomes: state.pronomes,
         bio: state.bio,
       });
+      if (state.nome.trim() !== perfil.nome.trim()) {
+        await feedRepository.atualizarNomeAutor(perfil.uid, state.nome.trim());
+      }
       dispatch({ type: 'SALVAR_SUCESSO' });
     } catch (e: any) {
       dispatch({ type: 'SALVAR_ERRO', erro: e.message ?? 'Erro ao salvar.' });

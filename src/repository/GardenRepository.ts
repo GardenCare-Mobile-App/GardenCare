@@ -51,4 +51,14 @@ export class GardenRepository {
   async deletarPlanta(id: string): Promise<void> {
     await deleteDoc(doc(db, 'Plantas', id));
   }
+
+  async getPlantasFavoritasPorUid(uid: string): Promise<Plant[]> {
+    const q = query(
+      collection(db, 'Plantas'),
+      where('uid', '==', uid),
+      where('favorita', '==', true)
+    );
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((d) => ({ id: d.id, ...d.data() })) as Plant[];
+  }
 }
