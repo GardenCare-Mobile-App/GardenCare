@@ -9,7 +9,6 @@ import { useAddPlantViewModel, OPCOES_ULTIMA_REGA } from '../../viewmodels/AddPl
 import { TipoPlanta } from '../../models/Plant';
 import { createStyles } from '../../styles/screens/AddPlantScreen.styles';
 
-const LOGO = require('../../../assets/logoGardenCare.png');
 
 const TIPOS: { valor: TipoPlanta; label: string; icone: string }[] = [
   { valor: 'tropical',  label: 'Tropical',  icone: 'leaf-outline' },
@@ -56,7 +55,6 @@ export default function AddPlantScreen() {
             <Ionicons name="arrow-back" size={24} color={cores.white} />
           </Pressable>
           <Text style={styles.headerTitle}>Adicionar Planta</Text>
-          <Image source={LOGO} style={styles.headerLogo} />
         </View>
 
         <ScrollView

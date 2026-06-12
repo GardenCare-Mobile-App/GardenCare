@@ -4,7 +4,6 @@ import {
   Text,
   Pressable,
   ScrollView,
-  Image,
   Alert,
   TextInput,
   ActivityIndicator,
@@ -88,12 +87,6 @@ export default function SettingsScreen() {
           <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
             <Ionicons name="arrow-back" size={24} color={cores.white} />
           </Pressable>
-          <View style={styles.logoHeaderWrapper}>
-            <Image
-              source={require('../../../assets/logoGardenCare.png')}
-              style={styles.logoHeader}
-            />
-          </View>
           <Text style={styles.headerTitle}>Configurações</Text>
         </View>
 

@@ -46,20 +46,6 @@ export const createStyles = (cores: Cores, escuro: boolean) =>
     backButton: {
       padding: 4,
     },
-    logoHeaderWrapper: {
-      width: 44,
-      height: 44,
-      borderRadius: 22,
-      backgroundColor: cores.white,
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: 4,
-    },
-    logoHeader: {
-      width: 36,
-      height: 36,
-      resizeMode: 'contain',
-    },
     headerTitle: {
       flex: 1,
       fontSize: SIZES.fontTitle,

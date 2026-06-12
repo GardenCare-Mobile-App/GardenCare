@@ -27,14 +27,6 @@ export const createStyles = (cores: Cores, escuro: boolean) =>
       fontWeight: 'bold',
       color: cores.white,
     },
-    headerLogo: {
-      width: 80,
-      height: 40,
-      resizeMode: 'contain',
-      transform: [{ rotate: '-10deg' }],
-      opacity: 0.9,
-    },
-
     fotoCard: {
       margin: SIZES.padding,
       marginBottom: 8,
