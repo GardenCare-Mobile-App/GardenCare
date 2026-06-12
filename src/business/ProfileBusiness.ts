@@ -1,9 +1,43 @@
-import axios from 'axios';
 import { PerfilUsuario } from '../models/User';
- 
+import { ProfileRepository } from '../repository/ProfileRepository';
+import { AuthRepository } from '../repository/auth/AuthRepository';
+
+const profileRepository = new ProfileRepository();
+
 export class ProfileBusiness {
-  async getPerfil(uid: string): Promise<PerfilUsuario> {
-    const response = await axios.get(`/api/usuarios/${uid}`);
-    return response.data;
+  async buscarPerfilPorUid(uid: string): Promise<PerfilUsuario | null> {
+    return AuthRepository.buscarPerfil(uid);
+  }
+
+  async getPerfil(): Promise<PerfilUsuario> {
+    const perfil = await profileRepository.getPerfil();
+
+    const erro = this.validarPerfil(perfil);
+    if (erro) throw new Error(erro);
+
+    return perfil;
+  }
+  async reautenticar(senha: string): Promise<void> {
+    return profileRepository.reautenticar(senha);
+  }
+
+  async excluirConta(): Promise<void> {
+    return profileRepository.excluirConta();
+  }
+
+  async atualizarFoto(base64: string): Promise<string> {
+    return profileRepository.uploadFoto(base64);
+  }
+  validarPerfil(perfil: PerfilUsuario): string | null {
+    if (!perfil.nome || perfil.nome.trim().length === 0) {
+      return 'O perfil precisa ter um nome.';
+    }
+    if (!perfil.email || !perfil.email.includes('@')) {
+      return 'O perfil precisa ter um email válido.';
+    }
+    if (!perfil.uid) {
+      return 'O perfil precisa ter um identificador único.';
+    }
+    return null;
   }
 }

@@ -1,20 +1,33 @@
 import React from 'react';
 import { StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import ProfileScreen from './src/views/screens/ProfileScreen';
-import MyGardenScreen from './src/views/screens/MyGardenScreen';
- 
-const Stack = createNativeStackNavigator();
- 
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import * as Notifications from 'expo-notifications';
+import { AuthProvider } from './src/context/AuthContext';
+import { ThemeProvider } from './src/context/Themecontext';
+import AppNavigator from './src/navigation/AppNavigator';
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
+
 export default function App() {
   return (
-    <NavigationContainer>
-      <StatusBar barStyle="light-content" />
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Profile" component={ProfileScreen} />
-        <Stack.Screen name="MyGarden" component={MyGardenScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <SafeAreaProvider>
+      <AuthProvider>
+        <ThemeProvider>
+          <NavigationContainer>
+            <StatusBar barStyle="light-content" />
+            <AppNavigator />
+          </NavigationContainer>
+        </ThemeProvider>
+      </AuthProvider>
+    </SafeAreaProvider>
   );
 }
