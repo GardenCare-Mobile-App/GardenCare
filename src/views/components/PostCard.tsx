@@ -60,7 +60,11 @@ export function PostCard({ post, uid, comentarios, carregandoComentarios, onCurt
   }
 
   return (
-    <View style={styles.card}>
+    <TouchableOpacity
+      style={styles.card}
+      activeOpacity={0.95}
+      onPress={() => navigation.navigate('PostDetail', { postId: post.id })}
+    >
 
       <TouchableOpacity style={styles.cardHeader} onPress={handlePressAutor}>
         {post.autorFotoURL ? (
@@ -154,6 +158,6 @@ export function PostCard({ post, uid, comentarios, carregandoComentarios, onCurt
         </View>
       )}
 
-    </View>
+    </TouchableOpacity>
   );
 }
