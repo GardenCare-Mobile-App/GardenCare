@@ -1,4 +1,5 @@
 import { Post } from '../models/Post';
+import { Comentario } from '../models/Comentario';
 import { PostDetailRepository } from '../repository/PostDetailRepository';
 
 const repo = new PostDetailRepository();
@@ -18,5 +19,19 @@ export class PostDetailBusiness {
 
   async deletarPost(postId: string): Promise<void> {
     await repo.deletarPost(postId);
+  }
+
+  async getComentarios(postId: string): Promise<Comentario[]> {
+    return repo.getComentarios(postId);
+  }
+
+  async comentarPost(
+    postId: string,
+    autorId: string,
+    autorNome: string,
+    autorFotoURL: string | undefined,
+    conteudo: string
+  ): Promise<void> {
+    return repo.comentarPost(postId, autorId, autorNome, autorFotoURL, conteudo);
   }
 }

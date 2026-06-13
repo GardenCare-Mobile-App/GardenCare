@@ -22,6 +22,7 @@ export const createStyles = (cores: Cores) =>
       paddingHorizontal: SIZES.padding,
     },
 
+    // header
     header: {
       backgroundColor: cores.primary,
       paddingTop: SIZES.padding,
@@ -44,31 +45,23 @@ export const createStyles = (cores: Cores) =>
       color: cores.white,
     },
 
-    postCard: {
-      backgroundColor: cores.cardBackground,
-      borderRadius: SIZES.radius,
-      borderWidth: 0.5,
-      borderColor: cores.border,
-      margin: SIZES.padding,
-      overflow: 'hidden',
-      ...Platform.select({
-        ios: {
-          shadowColor: cores.black,
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.08,
-          shadowRadius: 6,
-        },
-        android: { elevation: 3 },
-      }),
+    // post body (flat, sem card)
+    postSection: {
+      paddingHorizontal: SIZES.padding,
+      paddingTop: SIZES.padding,
     },
-
+    postCard: {
+      paddingHorizontal: SIZES.padding,
+      paddingTop: SIZES.padding,
+    },
+    conteudoContainer: {
+      marginTop: 12,
+    },
     autorRow: {
       flexDirection: 'row',
       alignItems: 'center',
       gap: 12,
-      padding: SIZES.padding,
-      borderBottomWidth: 0.5,
-      borderBottomColor: cores.border,
+      marginBottom: 12,
     },
     autorInfo: {
       flex: 1,
@@ -83,33 +76,80 @@ export const createStyles = (cores: Cores) =>
       color: cores.textSecondary,
       marginTop: 2,
     },
-
-    conteudoContainer: {
-      padding: SIZES.padding,
-    },
     conteudoTexto: {
-      fontSize: SIZES.fontBody,
+      fontSize: SIZES.fontBody + 1,
       color: cores.textPrimary,
-      lineHeight: 24,
+      lineHeight: 26,
     },
-
     imagemPost: {
       width: '100%',
-      height: 240,
+      height: 260,
       resizeMode: 'cover',
+      marginTop: 12,
+      borderRadius: SIZES.radiusSmall,
     },
 
+    // stats row  (ex: "12 curtidas · 4 comentários")
+    statsRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: SIZES.padding,
+      paddingVertical: 10,
+      gap: 8,
+    },
+    statsTexto: {
+      fontSize: SIZES.fontSubtitle,
+      color: cores.textSecondary,
+    },
+    statsSeparador: {
+      fontSize: SIZES.fontSubtitle,
+      color: cores.textSecondary,
+    },
+
+    // divider
+    divider: {
+      height: 0.5,
+      backgroundColor: cores.border,
+      marginHorizontal: SIZES.padding,
+    },
+
+    // actions row (curtir)
+    acoesRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: SIZES.padding,
+      paddingVertical: 6,
+    },
+    acaoBtn: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      borderRadius: SIZES.radius,
+    },
+    acaoTexto: {
+      fontSize: SIZES.fontSubtitle,
+      color: cores.textSecondary,
+    },
+    acaoTextoAtivo: {
+      color: cores.error,
+    },
+
+    // aliases com nomes antigos (compatibilidade)
     curtidasRow: {
       flexDirection: 'row',
       alignItems: 'center',
-      padding: SIZES.padding,
-      borderTopWidth: 0.5,
-      borderTopColor: cores.border,
+      paddingHorizontal: SIZES.padding,
+      paddingVertical: 6,
     },
     curtidasInfo: {
       flexDirection: 'row',
       alignItems: 'center',
       gap: 6,
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      borderRadius: SIZES.radius,
     },
     curtidasTexto: {
       fontSize: SIZES.fontSubtitle,
@@ -117,5 +157,91 @@ export const createStyles = (cores: Cores) =>
     },
     curtidasTextoAtivo: {
       color: cores.error,
+    },
+
+    // seção de comentários
+    comentariosSection: {
+      paddingTop: 4,
+      paddingBottom: 80, // espaço pro input bar
+    },
+    semComentarios: {
+      textAlign: 'center',
+      color: cores.textSecondary,
+      fontSize: SIZES.fontBody,
+      paddingVertical: 28,
+    },
+
+    // item de comentário
+    comentarioItem: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      gap: 10,
+      paddingHorizontal: SIZES.padding,
+      paddingVertical: 10,
+      borderBottomWidth: 0.5,
+      borderBottomColor: cores.border,
+    },
+    comentarioBalao: {
+      flex: 1,
+    },
+    comentarioAutor: {
+      fontSize: SIZES.fontCaption,
+      fontWeight: 'bold',
+      color: cores.textPrimary,
+      marginBottom: 2,
+    },
+    comentarioConteudo: {
+      fontSize: SIZES.fontBody,
+      color: cores.textPrimary,
+      lineHeight: 20,
+    },
+    comentarioData: {
+      fontSize: SIZES.fontSmall,
+      color: cores.textSecondary,
+      marginTop: 3,
+    },
+
+    // barra de input (fixa no bottom)
+    inputBar: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+      paddingHorizontal: SIZES.padding,
+      paddingVertical: 10,
+      borderTopWidth: 0.5,
+      borderTopColor: cores.border,
+      backgroundColor: cores.background,
+      ...Platform.select({
+        ios: {
+          shadowColor: cores.black,
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.06,
+          shadowRadius: 4,
+        },
+        android: { elevation: 4 },
+      }),
+    },
+    inputBarTextInput: {
+      flex: 1,
+      backgroundColor: cores.cardBackground,
+      borderRadius: 20,
+      borderWidth: 0.5,
+      borderColor: cores.border,
+      paddingHorizontal: 14,
+      paddingVertical: 8,
+      fontSize: SIZES.fontBody,
+      color: cores.textPrimary,
+      maxHeight: 100,
+    },
+    inputBarEnviar: {
+      width: 38,
+      height: 38,
+      borderRadius: 19,
+      backgroundColor: cores.primary,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    inputBarEnviarDesabilitado: {
+      backgroundColor: cores.border,
     },
   });
