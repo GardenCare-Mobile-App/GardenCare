@@ -1,4 +1,4 @@
-# GardenCare
+#  🌱 GardenCare
 
 Aplicativo mobile de monitoramento de plantas com integração IoT (ESP32), identificação de espécies por foto e feed colaborativo entre usuários.
 
