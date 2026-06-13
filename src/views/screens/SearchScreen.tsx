@@ -7,11 +7,13 @@ import { useSearchViewModel } from '../../viewmodels/SearchViewModel';
 import { PerfilUsuario } from '../../models/User';
 import { createStyles } from '../../styles/screens/SearchScreen.styles';
 import { useTheme } from '../../context/Themecontext';
+import { useAuth } from '../../context/AuthContext';
 
 export default function SearchScreen() {
   const navigation = useNavigation();
   const { cores } = useTheme();
   const styles = createStyles(cores);
+  const { usuario } = useAuth();
 
   const { resultados, carregando, erro, buscou, buscar, limpar } = useSearchViewModel();
   const [termo, setTermo] = useState('');
@@ -103,7 +105,7 @@ export default function SearchScreen() {
         <ActivityIndicator color={cores.primary} style={{ marginTop: 32 }} />
       ) : (
         <FlatList
-          data={resultados}
+          data={resultados.filter((u) => u.uid !== usuario?.uid)}
           keyExtractor={(item) => item.uid}
           renderItem={renderUsuario}
           contentContainerStyle={styles.lista}
