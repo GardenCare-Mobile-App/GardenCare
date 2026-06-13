@@ -41,7 +41,7 @@ function feedReducer(state: FeedState, action: FeedAction): FeedState {
     case 'CARREGAR_INICIO':
       return { ...state, carregando: true, erro: null };
     case 'CARREGAR_SUCESSO':
-      return { ...state, carregando: false, posts: action.posts };
+      return { ...state, carregando: false, posts: action.posts, comentarios: {}, carregandoComentarios: {} };
     case 'CARREGAR_ERRO':
       return { ...state, carregando: false, erro: action.erro };
     case 'ENVIAR_INICIO':

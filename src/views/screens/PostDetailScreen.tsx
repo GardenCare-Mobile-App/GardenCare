@@ -1,5 +1,8 @@
-import React, { useMemo } from 'react';
-import { View, Text, ScrollView, Pressable, Image, ActivityIndicator, Alert } from 'react-native';
+import React, { useMemo, useRef, useEffect } from 'react';
+import {
+  View, Text, ScrollView, Pressable, Image, ActivityIndicator,
+  Alert, KeyboardAvoidingView, Platform, TextInput,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { ArrowLeftIcon, HeartIcon } from 'phosphor-react-native';
@@ -28,9 +31,20 @@ export default function PostDetailScreen({ route, navigation }: any) {
   const { postId } = route.params as { postId: string };
   const { cores } = useTheme();
   const styles = useMemo(() => createStyles(cores), [cores]);
+  const scrollRef = useRef<ScrollView>(null);
 
-  const { post, loading, error, jaCurtiu, ehAutor, carregarPost, toggleCurtida, deletarPost } =
-    usePostDetailViewModel(postId);
+  const {
+    post, loading, error, jaCurtiu, ehAutor,
+    comentarios, loadingComentarios, enviando, textoComentario,
+    carregarPost, carregarComentarios, toggleCurtida, deletarPost,
+    enviarComentario, setTextoComentario,
+  } = usePostDetailViewModel(postId);
+
+  useEffect(() => {
+    if (comentarios.length > 0) {
+      scrollRef.current?.scrollToEnd({ animated: true });
+    }
+  }, [comentarios.length]);
 
   function confirmarExclusao() {
     Alert.alert(
@@ -53,7 +67,8 @@ export default function PostDetailScreen({ route, navigation }: any) {
   useFocusEffect(
     React.useCallback(() => {
       carregarPost();
-    }, [carregarPost])
+      carregarComentarios();
+    }, [carregarPost, carregarComentarios])
   );
 
   if (loading) {
@@ -95,47 +110,99 @@ export default function PostDetailScreen({ route, navigation }: any) {
         )}
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.postCard}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <ScrollView ref={scrollRef} showsVerticalScrollIndicator={false}>
+          <View style={styles.postCard}>
 
-          {/* autor */}
-          <View style={styles.autorRow}>
-            <AvatarPerfil fotoURL={post.autorFotoURL} nome={post.autorNome} tamanho={46} />
-            <View style={styles.autorInfo}>
-              <Text style={styles.autorNome}>{post.autorNome}</Text>
-              <Text style={styles.autorData}>{formatarData(post.criadoEm)}</Text>
+            {/* autor */}
+            <View style={styles.autorRow}>
+              <AvatarPerfil fotoURL={post.autorFotoURL} nome={post.autorNome} tamanho={46} />
+              <View style={styles.autorInfo}>
+                <Text style={styles.autorNome}>{post.autorNome}</Text>
+                <Text style={styles.autorData}>{formatarData(post.criadoEm)}</Text>
+              </View>
             </View>
+
+            {/* conteúdo do post */}
+            <View style={styles.conteudoContainer}>
+              <Text style={styles.conteudoTexto}>{post.conteudo}</Text>
+            </View>
+
+            {/* imagem (opcional) */}
+            {post.imagemURL ? (
+              <Image source={{ uri: post.imagemURL }} style={styles.imagemPost} />
+            ) : null}
+
+            {/* curtidas */}
+            <View style={styles.curtidasRow}>
+              <Pressable
+                style={({ pressed }) => [styles.curtidasInfo, { opacity: pressed ? 0.6 : 1 }]}
+                onPress={toggleCurtida}
+              >
+                <HeartIcon
+                  size={22}
+                  color={jaCurtiu ? cores.error : cores.textSecondary}
+                  weight={jaCurtiu ? 'fill' : 'regular'}
+                />
+                <Text style={[styles.curtidasTexto, jaCurtiu && styles.curtidasTextoAtivo]}>
+                  {totalCurtidas}
+                </Text>
+              </Pressable>
+            </View>
+
           </View>
 
-          {/* conteúdo do post */}
-          <View style={styles.conteudoContainer}>
-            <Text style={styles.conteudoTexto}>{post.conteudo}</Text>
+          <View style={styles.divider} />
+
+          {/* comentários */}
+          <View style={styles.comentariosSection}>
+            {loadingComentarios ? (
+              <ActivityIndicator size="small" color={cores.primary} style={{ marginVertical: 20 }} />
+            ) : comentarios.length === 0 ? (
+              <Text style={styles.semComentarios}>Nenhum comentário ainda.</Text>
+            ) : (
+              comentarios.map((c) => (
+                <View key={c.id} style={styles.comentarioItem}>
+                  <AvatarPerfil fotoURL={c.autorFotoURL} nome={c.autorNome} tamanho={36} />
+                  <View style={styles.comentarioBalao}>
+                    <Text style={styles.comentarioAutor}>{c.autorNome}</Text>
+                    <Text style={styles.comentarioConteudo}>{c.conteudo}</Text>
+                    <Text style={styles.comentarioData}>{formatarData(c.criadoEm)}</Text>
+                  </View>
+                </View>
+              ))
+            )}
           </View>
+        </ScrollView>
 
-          {/* imagem (opcional) */}
-          {post.imagemURL ? (
-            <Image source={{ uri: post.imagemURL }} style={styles.imagemPost} />
-          ) : null}
-
-          {/* curtidas */}
-          <View style={styles.curtidasRow}>
-            <Pressable
-              style={({ pressed }) => [styles.curtidasInfo, { opacity: pressed ? 0.6 : 1 }]}
-              onPress={toggleCurtida}
-            >
-              <HeartIcon
-                size={22}
-                color={jaCurtiu ? cores.error : cores.textSecondary}
-                weight={jaCurtiu ? 'fill' : 'regular'}
-              />
-              <Text style={[styles.curtidasTexto, jaCurtiu && styles.curtidasTextoAtivo]}>
-                {totalCurtidas}
-              </Text>
-            </Pressable>
-          </View>
-
+        {/* input bar */}
+        <View style={styles.inputBar}>
+          <TextInput
+            style={styles.inputBarTextInput}
+            placeholder="Adicione um comentário..."
+            placeholderTextColor={cores.textSecondary}
+            value={textoComentario}
+            onChangeText={setTextoComentario}
+            multiline
+          />
+          <Pressable
+            style={[
+              styles.inputBarEnviar,
+              (!textoComentario.trim() || enviando) && styles.inputBarEnviarDesabilitado,
+            ]}
+            onPress={enviarComentario}
+            disabled={!textoComentario.trim() || enviando}
+          >
+            {enviando
+              ? <ActivityIndicator size="small" color={cores.white} />
+              : <Ionicons name="send" size={18} color={cores.white} />
+            }
+          </Pressable>
         </View>
-      </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }

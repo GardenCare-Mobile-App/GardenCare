@@ -40,6 +40,10 @@ export function PostCard({ post, uid, comentarios, carregandoComentarios, onCurt
     }
   }
 
+  function handlePressPost() {
+    navigation.navigate('PostDetail', { postId: post.id });
+  }
+
   function handleToggleComentarios() {
     const novoEstado = !expandido;
     setExpandido(novoEstado);
@@ -73,11 +77,12 @@ export function PostCard({ post, uid, comentarios, carregandoComentarios, onCurt
         <Text style={styles.autorNome}>{post.autorNome}</Text>
       </TouchableOpacity>
 
-      <Text style={styles.conteudo}>{post.conteudo}</Text>
-
-      {post.imagemURL ? (
-        <Image source={{ uri: post.imagemURL }} style={styles.imagemPost} resizeMode="cover" />
-      ) : null}
+      <TouchableOpacity onPress={handlePressPost} activeOpacity={0.8}>
+        <Text style={styles.conteudo}>{post.conteudo}</Text>
+        {post.imagemURL ? (
+          <Image source={{ uri: post.imagemURL }} style={styles.imagemPost} resizeMode="cover" />
+        ) : null}
+      </TouchableOpacity>
 
       <View style={styles.acoesBar}>
         <TouchableOpacity style={styles.acaoBtn} onPress={() => onCurtida?.(post)} disabled={!onCurtida}>

@@ -17,6 +17,7 @@ import FollowListScreen from "../views/screens/FollowListScreen";
 import UserProfileScreen from "../views/screens/UserProfileScreen";
 import RoutineScreen from "../views/screens/RoutineScreen";
 import AddRoutineScreen from "../views/screens/AddRoutineScreen";
+import PostDetailScreen from "../views/screens/PostDetailScreen";
 
 import { InitialScreen } from "../views/screens/auth/InitialScreen";
 import { LoginScreen } from "../views/screens/auth/LoginScreen";
@@ -36,6 +37,7 @@ export type AppStackParamList = {
   AddRoutine: undefined;
   UserProfile: { uid: string };
   Rotinas: undefined;
+  PostDetail: { postId: string };
 };
 
 export type AuthStackParamList = {
@@ -82,6 +84,7 @@ export default function AppNavigator() {
           <Stack.Screen name="UserProfile" component={UserProfileScreen} />
           <Stack.Screen name="Rotinas" component={RoutineScreen} />
           <Stack.Screen name="AddRoutine" component={AddRoutineScreen} />
+          <Stack.Screen name="PostDetail" component={PostDetailScreen} />
         </>
       ) : (
         <>
